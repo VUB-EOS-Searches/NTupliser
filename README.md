@@ -33,4 +33,17 @@ Only if you want to recreate the EGM regression/smearing corrections that are al
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra file to have a setup function to make things easier
 git cms-merge-topic cms-egamma:Egamma80XMiniAODV2_946 #adds the c++ changes necessary to enable 2016 scale & smearing corrections
 ```
+
+***
+
+#EXO - event generation
+To get the generation package (including generation of cards):
+```bash
+git clone git@github.com:cms-sw/genproductions.git genproductions
+```
+
+The Higgs (gluon fusion produced) decay via scalars are found in bin/Powheg/production/2017/13TeV/Higgs/gg_H_quark-mass-effects_NNPDF31_13TeV and in
+https://github.com/cms-sw/genproductions/tree/master/bin/Powheg/production/pre2017/13TeV/gg_H_quark-mass-effects_JHUGenV628_HWWLNuQQ_NNPDF30_13TeV
+
 ---
+
