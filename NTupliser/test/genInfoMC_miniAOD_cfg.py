@@ -45,7 +45,7 @@ process.GlobalTag.globaltag = cms.string('94X_mc2017_realistic_v14')
 # The N-tupliser/cutFlow - butchered for this gen info tool!
 ####
 
-process.load("NTupliser.SingleTop.GenInfo_miniAOD_cfi")
+process.load("NTupliser.NTupliser.GenInfo_miniAOD_cfi")
 
 ## Source
 process.source = cms.Source("PoolSource",

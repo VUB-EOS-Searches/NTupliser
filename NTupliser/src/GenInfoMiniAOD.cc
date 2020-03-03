@@ -26,7 +26,7 @@
 #include "MagneticField/Engine/interface/MagneticField.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
 #include "Math/GenVector/PxPyPzM4D.h"
-#include "NTupliser/SingleTop/interface/GenInfoMiniAOD.h"
+#include "NTupliser/NTupliser/interface/GenInfoMiniAOD.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionFinder.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"

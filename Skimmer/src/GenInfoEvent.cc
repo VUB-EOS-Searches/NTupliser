@@ -1,5 +1,5 @@
 #define GenInfoEvent_cxx
-#include "NTupliser/STSkimmer/interface/GenInfoEvent.h"
+#include "NTupliser/Skimmer/interface/GenInfoEvent.h"
 
 #include <TCanvas.h>
 #include <TH2.h>

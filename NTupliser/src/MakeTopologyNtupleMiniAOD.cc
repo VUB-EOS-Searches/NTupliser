@@ -87,7 +87,7 @@
 #include "DataFormats/METReco/interface/SigInputObj.h"
 #include "DataFormats/TrackReco/interface/HitPattern.h"
 #include "Math/GenVector/PxPyPzM4D.h"
-#include "NTupliser/SingleTop/interface/MakeTopologyNtupleMiniAOD.h"
+#include "NTupliser/NTupliser/interface/MakeTopologyNtupleMiniAOD.h"
 #include "RecoLocalCalo/EcalRecAlgos/interface/EcalSeverityLevelAlgo.h"
 #include "RecoMET/METAlgorithms/interface/significanceAlgo.h"
 #include "TClonesArray.h"
