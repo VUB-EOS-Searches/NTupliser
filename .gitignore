@@ -9,4 +9,4 @@ __init__.py
 *.txt
 *.exe
 *.log
-SingleTop/test/crab_projects/
+NTupliser/test/crab_projects/

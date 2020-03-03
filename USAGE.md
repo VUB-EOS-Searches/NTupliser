@@ -121,13 +121,13 @@ prior to skimming. A solution to avoid having to copy large files over to the
 user’s area and skim the files directly from their T2 storage location is being
 looked into.
 
-In the directory `SingleTop/skimMacros/`, one finds the small program used to
+In the directory `NTupliser/skimMacros/`, one finds the small program used to
 produce the skims used in the analysis code. After compiling the exe, source the
 setup file and run cmsenv (as it is implicit, I’ll state it explicitly, this
 program needs to be located in a CMSSW setup) - in that order! Afterwards,
 execute “skims.exe”:
 
-In the directory `SingleTop/skimMacros/`, one finds the small program used to
+In the directory `NTupliser/skimMacros/`, one finds the small program used to
 produce the skims used in the analysis code. Compile and execute `skims.exe`:
 
 ```sh
