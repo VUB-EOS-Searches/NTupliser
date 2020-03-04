@@ -25,8 +25,8 @@ process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-intEvts  =  cms.untracked.int32(10000)
-uintEvts = cms.untracked.uint32(10000)
+intEvts  =  cms.untracked.int32(10)
+uintEvts = cms.untracked.uint32(10)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
@@ -72,9 +72,9 @@ process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, '93X_mc2017_realistic_v3', '')
 
-mass = cms.vstring('1')
-decayWidth = cms.vstring('0.0197327e-11/tau0')
-lifetime = cms.vstring('tau0')
+#mass = cms.vstring('100')
+#decayWidth = cms.vstring('0.0197327e-11/tau0')
+#lifetime = cms.vstring('tau0')
 
 process.generator = cms.EDFilter("Pythia8HadronizerFilter",
     PythiaParameters = cms.PSet(
@@ -83,7 +83,7 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
             'pythia8PowhegEmissionVetoSettings', 
             'processParameters'),
         processParameters = cms.vstring('POWHEG:nFinal = 1', 
-            '9000006:all = sk   skbar    0        0          0       mass  decayWidth  1.0  75.0 lifetime', 
+            '9000006:all = sk   skbar    0        0          0       1  0.0197327e-11/tau0  1.0  75.0 tau0', 
             '9000006:oneChannel = 1  1.0 101  1 -1', 
             '9000006:mayDecay = on', 
             '9000006:isResonance = on', 
