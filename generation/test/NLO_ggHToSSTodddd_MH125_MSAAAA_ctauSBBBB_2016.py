@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/GenProduction/python/NLO_HToSSTobbbb_MH125_MS55_ctauS10_13TeV.py --fileout file:Higgs_GEN_SIM.root -s LHE,GEN,SIM --mc --eventcontent RAWSIM --geometry DB:Extended --era Run2_2017 --conditions 93X_mc2017_realistic_v3 --datatier GEN-SIM --no_exec -n 10 --python_filename NLO_ggHToSSTobbbb_MH125_MS55_ctauS10_TuneCP2_13TeV_pythia8_GENSIM.py --beamspot Realistic25ns13TeVEarly2017Collision
+# with command line options: Configuration/GenProduction/python/NLO_HToSSTobbbb_MH125_MS55_ctauS10_13TeV.py --fileout file:Higgs_GEN_SIM.root -s LHE,GEN,SIM --mc --eventcontent RAWSIM --geometry DB:Extended --era Run2_2017 --93X_mc2017_realistic_v3 --datatier GEN-SIM --no_exec -n 10 --python_filename NLO_ggHToSSTobbbb_MH125_MS55_ctauS10_TuneCP2_13TeV_pythia8_GENSIM.py --beamspot Realistic25ns13TeVEarly2017Collision
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -25,8 +25,8 @@ process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-intEvts  =  cms.untracked.int32(10000)
-uintEvts = cms.untracked.uint32(10000)
+intEvts  = cms.untracked.int32(1000)
+uintEvts = cms.untracked.uint32(1000)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
@@ -70,11 +70,7 @@ SelectEvents = cms.untracked.PSet(
 process.XMLFromDBSource.label = cms.string("Extended")
 process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '93X_mc2017_realistic_v3', '')
-
-mass = cms.vstring('1')
-decayWidth = cms.vstring('0.0197327e-11/tau0')
-lifetime = cms.vstring('tau0')
+process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mc2017_realistic_v14', '')
 
 process.generator = cms.EDFilter("Pythia8HadronizerFilter",
     PythiaParameters = cms.PSet(
@@ -83,7 +79,7 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
             'pythia8PowhegEmissionVetoSettings', 
             'processParameters'),
         processParameters = cms.vstring('POWHEG:nFinal = 1', 
-            '9000006:all = sk   skbar    0        0          0       mass  decayWidth  1.0  75.0 lifetime', 
+            '9000006:all = sk   skbar    0        0          0       MMMM  XXXX  1.0  75.0 LLLL', 
             '9000006:oneChannel = 1  1.0 101  1 -1', 
             '9000006:mayDecay = on', 
             '9000006:isResonance = on', 
