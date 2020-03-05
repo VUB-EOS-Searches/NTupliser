@@ -32,7 +32,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:Higgs_GEN_SIM.root'),
+    fileNames = cms.untracked.vstring('file:Higgs_GEN_SIM_2017.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
