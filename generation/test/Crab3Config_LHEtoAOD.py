@@ -21,5 +21,5 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.publication = True
 config.Data.outputDatasetTag = 'CRAB3_MC_ST_TZ_2L_Zeta_Zut_160927'
 
-config.Site.storageSite = 'T2_UK_London_Brunel'
+config.Site.storageSite = 'T2_UK_London_Brunel' #T2_UK_London_IC
 #config.Site.blacklist = ['T2_UK_London_Brunel']
