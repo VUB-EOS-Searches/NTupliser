@@ -19,14 +19,14 @@ process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.GeometrySimDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.Generator_cff')
-process.load('IOMC.EventVertexGenerators.VtxSmearedRealistic25ns13TeVEarly2017Collision_cfi')
+process.load('IOMC.EventVertexGenerators.VtxSmearedRealistic25ns13TeVEarly2018Collision_cfi')
 process.load('GeneratorInterface.Core.genFilterSummary_cff')
 process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-intEvts  = cms.untracked.int32(1000)
-uintEvts = cms.untracked.uint32(1000)
+intEvts  = cms.untracked.int32(100)
+uintEvts = cms.untracked.uint32(100)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
@@ -59,7 +59,7 @@ SelectEvents = cms.untracked.PSet(
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('file:Higgs_GEN_SIM.root'),
+    fileName = cms.untracked.string('file:Higgs_GEN_SIM_2018.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
@@ -79,7 +79,8 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
             'pythia8PowhegEmissionVetoSettings', 
             'processParameters'),
         processParameters = cms.vstring('POWHEG:nFinal = 1', 
-            '9000006:all = sk   skbar    0        0          0       MMMM  XXXX  1.0  75.0 LLLL', 
+#            '9000006:all = sk   skbar    0        0          0       Mass  decay width  1.0  75.0 lifetime',
+            '9000006:all = sk   skbar    0        0          0       2.0  0.0197327e-11/tau0  1.0  75.0 tau0',
             '9000006:oneChannel = 1  1.0 101  1 -1', 
             '9000006:mayDecay = on', 
             '9000006:isResonance = on', 
