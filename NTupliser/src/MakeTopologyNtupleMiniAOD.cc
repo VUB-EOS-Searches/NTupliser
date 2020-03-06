@@ -100,7 +100,7 @@
 
 #include "DataFormats/Common/interface/View.h"
 #include <string>
-#include "NTupliser/SingleTop/interface/MakeTopologyNtupleMiniAOD.h"
+#include "NTupliser/NTupliser/interface/MakeTopologyNtupleMiniAOD.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 

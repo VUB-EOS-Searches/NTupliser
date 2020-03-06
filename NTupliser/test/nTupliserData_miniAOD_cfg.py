@@ -217,7 +217,7 @@ process.egcorrMET = cms.Sequence(
 # The N-tupliser/cutFlow
 ####
 
-process.load("NTupliser.SingleTop.MakeTopologyNtuple_miniAOD_cfi")
+process.load("NTupliser.NTupliser.MakeTopologyNtuple_miniAOD_cfi")
 process.makeTopologyNtupleMiniAOD.flavorHistoryTag=cms.bool(False) # change to false at your convenience
 process.makeTopologyNtupleMiniAOD.runMCInfo=cms.bool(False) # prevent checking gen info
 process.makeTopologyNtupleMiniAOD.runPUReWeight=cms.bool(False) #Run the reweighting for MC. I think I'm doing this right, but I might check anyway.

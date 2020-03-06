@@ -50,7 +50,7 @@
 
 #include "DataFormats/Common/interface/View.h"
 #include <string>
-#include "NTupliser/SingleTop/interface/GenInfoMiniAOD.h"
+#include "NTupliser/NTupliser/interface/GenInfoMiniAOD.h"
 
 GenInfoMiniAOD::GenInfoMiniAOD(const edm::ParameterSet& iConfig):
     histocontainer_(),
