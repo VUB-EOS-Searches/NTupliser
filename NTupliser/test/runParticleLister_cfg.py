@@ -12,7 +12,8 @@ process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-	'file:/scratch/eepgadm/data/tZq/AOD.root',	
+#	'file:/scratch/eepgadm/data/tZq/AOD.root',	
+        'file:/vols/cms/adm10/MC/NLO_HToSSTobbbb_MH125_MS2_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_10K.root',
         )
 )
 
