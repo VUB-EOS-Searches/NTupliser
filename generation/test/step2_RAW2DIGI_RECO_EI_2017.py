@@ -29,7 +29,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:step1_2017.root'),
+    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/DIGIPREMIX_S2_DATAMIX_L1_DIGI2RAW_HLT/step1_2017_1K.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -54,7 +54,7 @@ process.AODSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(31457280),
-    fileName = cms.untracked.string('file:step2_2017.root'),
+    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_1K.root'),
     outputCommands = process.AODSIMEventContent.outputCommands
 )
 
@@ -78,7 +78,7 @@ associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
 process.options.numberOfThreads=cms.untracked.uint32(8)
-process.options.numberOfStreams=cms.untracked.uint32(0)
+process.options.numberOfStreams=cms.untracked.uint32(8)
 
 
 # Customisation from command line

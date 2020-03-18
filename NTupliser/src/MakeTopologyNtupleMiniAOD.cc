@@ -134,6 +134,8 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
           iConfig.getParameter<edm::InputTag>("conversionsToken"))}
     , eleLabel_{mayConsume<pat::ElectronCollection>(
           iConfig.getParameter<edm::InputTag>("electronTag"))}
+    , phoLabel_{mayConsume<pat::PhotonCollection>(
+          iConfig.getParameter<edm::InputTag>("photonTag"))}
     , muoLabel_{iConfig.getParameter<edm::InputTag>("muonTag")}
     , jetLabel_{iConfig.getParameter<edm::InputTag>("jetLabel")}
     , genJetsToken_{consumes<reco::GenJetCollection>(
@@ -141,7 +143,7 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , tauLabel_{iConfig.getParameter<edm::InputTag>("tauTag")}
     , metLabel_{iConfig.getParameter<edm::InputTag>("metTag")}
     , patPhotonsToken_{mayConsume<pat::PhotonCollection>(
-          iConfig.getParameter<edm::InputTag>("photonToken"))}
+          iConfig.getParameter<edm::InputTag>("photonPFToken"))}
     , patElectronsToken_{mayConsume<pat::ElectronCollection>(
           iConfig.getParameter<edm::InputTag>("electronPFToken"))}
     , tauPFTag_{iConfig.getParameter<edm::InputTag>("tauPFTag")}
@@ -433,6 +435,122 @@ void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::PhotonCollection> phoIn_, const std::string& ID, edm::EDGetTokenT<pat::PhotonCollection> phoInOrg_) {
+  // info for 'default conversion finder
+  edm::Handle<std::vector<pat::PackedCandidate>> lostTracks;
+  iEvent.getByToken(trackToken_, lostTracks);
+  edm::ESHandle<MagneticField> magneticField;
+  iSetup.get<IdealMagneticFieldRecord>().get(magneticField);
+  
+  fillBeamSpot(iEvent, iSetup);
+  fillGeneralTracks(iEvent, iSetup);
+  
+  edm::Handle<pat::PhotonCollection> photonHandle;
+  iEvent.getByToken(phoIn_, photonHandle);
+  const pat::PhotonCollection& photons{*photonHandle};
+  
+  // Original collection used for id-decisions
+  edm::Handle<pat::PhotonCollection> photonOrgHandle;
+  iEvent.getByToken(phoInOrg_, photonOrgHandle);
+  // const pat::PhotonCollection& PhotonsOrg = *PhotonOrgHandle;
+  
+  // Electron conversions
+  edm::Handle<reco::ConversionCollection> Conversions;
+  iEvent.getByToken(conversionsToken_, Conversions);
+  
+  // Get the rho isolation co-efficient here
+  edm::Handle<double> rhoHand_;
+  iEvent.getByToken(rhoToken_, rhoHand_);
+  rhoIso = *(rhoHand_.product());
+  
+  photonEts.clear();
+  for (const auto& photon : photons) {
+    double et{photon.et()};
+    photonEts.emplace_back(et);
+  }
+  
+  std::vector<size_t> etSortedIndex{
+    IndexSorter<std::vector<float>>(photonEts, true)()};
+
+  // Primary vertex
+  edm::Handle<reco::VertexCollection> pvHandle;
+  iEvent.getByToken(pvLabel_, pvHandle);
+  
+  numEle[ID] = 0;
+  
+  for (size_t ipho{0}; ipho < etSortedIndex.size()
+	 && numPho[ID] < numeric_cast<int>(NPHOTONSMAX);
+       ++ipho) {
+    size_t jpho{etSortedIndex[ipho]};
+    const pat::Photon& pho{(*photonHandle)[jpho]};
+    
+    pat::PhotonRef refpho{photonOrgHandle,
+	numeric_cast<unsigned int>(jpho)};
+
+//    int photonConversionTag{-1};
+    
+    numPho[ID]++;
+    
+    photon_e[ID][numPho[ID] - 1] = pho.energy();
+    photon_sigmaE[ID][numPho[ID] - 1] = pho.userFloat("ecalEnergyErrPostCorr");
+    photon_eT[ID][numPho[ID] - 1] = pho.et();
+    photon_phi[ID][numPho[ID] - 1] = pho.phi();
+    photon_eta[ID][numPho[ID] - 1] = pho.eta();
+    photon_pt[ID][numPho[ID] - 1] = pho.pt();
+    photon_CalibE[ID][numPho[ID] - 1] = pho.userFloat("ecalEnergyPostCorr");
+    photon_CalibEt[ID][numPho[ID] - 1] = pho.et()*pho.userFloat("ecalEnergyPostCorr")/pho.energy();
+    photon_SCE[ID][numPho[ID] - 1] = pho.superCluster()->energy();
+    photon_SCRawE[ID][numPho[ID] - 1] = pho.superCluster()->rawEnergy();
+    photon_ESEnP1[ID][numPho[ID] - 1] = pho.superCluster()->preshowerEnergyPlane1();
+    photon_ESEnP2[ID][numPho[ID] - 1] = pho.superCluster()->preshowerEnergyPlane2();
+    photon_SCEta[ID][numPho[ID] - 1] = pho.superCluster()->eta();
+    photon_SCEtaWidth[ID][numPho[ID] - 1] = pho.superCluster()->etaWidth();
+    photon_SCPhi[ID][numPho[ID] - 1] = pho.superCluster()->phi();
+    photon_SCPhiWidth[ID][numPho[ID] - 1] = pho.superCluster()->phiWidth();
+    photon_SCBrem[ID][numPho[ID] - 1] = (pho.superCluster()->phiWidth()/pho.superCluster()->etaWidth());
+    photon_hasPixelSeed[ID][numPho[ID] - 1] = pho.hasPixelSeed();
+    photon_EleVeto[ID][numPho[ID] - 1] = pho.passElectronVeto();
+    photon_R9[ID][numPho[ID] - 1] = pho.r9();
+    photon_HoverE[ID][numPho[ID] - 1] = pho.hadTowOverEm();
+    photon_SigmaIEtaIEtaFull5x5[ID][numPho[ID] - 1] = pho.full5x5_sigmaIetaIeta();
+    photon_SigmaIEtaIPhiFull5x5[ID][numPho[ID] - 1] = 0;
+    photon_SigmaIPhiIPhiFull5x5[ID][numPho[ID] - 1] = 0;
+    photon_E2x2Full5x5[ID][numPho[ID] - 1] = 0;;
+    photon_E5x5Full5x5[ID][numPho[ID] - 1] = pho.full5x5_e5x5();
+    photon_R9Full5x5[ID][numPho[ID] - 1] = pho.full5x5_r9();
+    photon_PFChIso[ID][numPho[ID] - 1] = pho.userFloat("phoChargedIsolation"); 
+    photon_PFPhoIso[ID][numPho[ID] - 1] = pho.userFloat("phoPhotonIsolation");
+    photon_PFNeuIso[ID][numPho[ID] - 1] = pho.userFloat("phoNeutralHadronIsolation");
+    photon_PFChWorstIso[ID][numPho[ID] - 1] = pho.userFloat("phoWorstChargedIsolation");
+    photon_MIPTotEnergy[ID][numPho[ID] - 1] = pho.mipTotEnergy();
+    if (is2016rereco_) {
+      photon_CutIdLoose[ID][numPho[ID] - 1] =
+	pho.photonID("cutBasedPhotonID-Spring16-V2p2-loose");
+      photon_CutIdMedium[ID][numPho[ID] - 1] =
+	pho.photonID("cutBasedPhotonID-Spring16-V2p2-medium");
+      photon_CutIdTight[ID][numPho[ID] - 1] =
+	pho.photonID("cutBasedPhotonID-Spring16-V2p2-tight");
+      photon_mvaIdWp80[ID][numPho[ID] - 1] =
+	pho.photonID("mvaPhoID-Spring16-nonTrig-V1-wp80");
+      photon_mvaIdWp90[ID][numPho[ID] - 1] =
+	pho.photonID("mvaPhoID-Spring16-nonTrig-V1-wp90");
+    }
+    else {
+      photon_CutIdLoose[ID][numPho[ID] - 1] =
+	pho.photonID("cutBasedPhotonID-Fall17-94X-V1-loose");
+      photon_CutIdMedium[ID][numPho[ID] - 1] =
+	pho.photonID("cutBasedPhotonID-Fall17-94X-V1-medium");
+      photon_CutIdTight[ID][numPho[ID] - 1] =
+	pho.photonID("cutBasedPhotonID-Fall17-94X-V1-tight");
+      photon_mvaIdWp80[ID][numPho[ID] - 1] =
+	pho.photonID("mvaPhoID-RunIIFall17-v1-wp80");
+      photon_mvaIdWp90[ID][numPho[ID] - 1] =
+	pho.photonID("mvaPhoID-RunIIFall17-v1-wp90");
+    }
+  }  
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillElectrons(
     const edm::Event& iEvent,
     const edm::EventSetup& iSetup,
@@ -577,17 +695,6 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
         if (is2016rereco_)
         {
             electronSortedCutIdVeto[ID][numEle[ID] - 1] =
-                ele.electronID("cutBasedElectronID-Fall17-94X-V1-veto");
-            electronSortedCutIdLoose[ID][numEle[ID] - 1] =
-                ele.electronID("cutBasedElectronID-Fall17-94X-V1-loose");
-            electronSortedCutIdMedium[ID][numEle[ID] - 1] =
-                ele.electronID("cutBasedElectronID-Fall17-94X-V1-medium");
-            electronSortedCutIdTight[ID][numEle[ID] - 1] =
-                ele.electronID("cutBasedElectronID-Fall17-94X-V1-tight");
-        }
-        else
-        {
-            electronSortedCutIdVeto[ID][numEle[ID] - 1] =
                 ele.electronID("cutBasedElectronID-Summer16-80X-V1-veto");
             electronSortedCutIdLoose[ID][numEle[ID] - 1] =
                 ele.electronID("cutBasedElectronID-Summer16-80X-V1-loose");
@@ -595,6 +702,29 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
                 ele.electronID("cutBasedElectronID-Summer16-80X-V1-medium");
             electronSortedCutIdTight[ID][numEle[ID] - 1] =
                 ele.electronID("cutBasedElectronID-Summer16-80X-V1-tight");
+            electronSortedMvaIdWp80[ID][numEle[ID] - 1] =
+                ele.electronID("mvaEleID-Spring16-GeneralPurpose-V1-wp80");
+            electronSortedMvaIdWp90[ID][numEle[ID] - 1] =
+                ele.electronID("mvaEleID-Spring16-GeneralPurpose-V1-wp90");
+            electronSortedMvaIdWpLoose[ID][numEle[ID] - 1] =
+                ele.electronID("mvaEleID-Spring16-GeneralPurpose-V1-wp90");
+        }
+        else
+        {
+            electronSortedCutIdVeto[ID][numEle[ID] - 1] =
+                ele.electronID("cutBasedElectronID-Fall17-94X-V1-veto");
+            electronSortedCutIdLoose[ID][numEle[ID] - 1] =
+                ele.electronID("cutBasedElectronID-Fall17-94X-V1-loose");
+            electronSortedCutIdMedium[ID][numEle[ID] - 1] =
+                ele.electronID("cutBasedElectronID-Fall17-94X-V1-medium");
+            electronSortedCutIdTight[ID][numEle[ID] - 1] =
+                ele.electronID("cutBasedElectronID-Fall17-94X-V1-tight");
+            electronSortedMvaIdWp80[ID][numEle[ID] - 1] =
+                ele.electronID("mvaEleID-Fall17-iso-V1-wp80");
+            electronSortedMvaIdWp90[ID][numEle[ID] - 1] =
+                ele.electronID("mvaEleID-Fall17-iso-V1-wp90");
+            electronSortedMvaIdWpLoose[ID][numEle[ID] - 1] =
+                ele.electronID("mvaEleID-Fall17-iso-V1-wpLoose");
         }
         electronSortedChargedHadronIso[ID][numEle[ID] - 1] =
             ele.chargedHadronIso();
@@ -2083,7 +2213,7 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
 /////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::clearTauArrays(const std::string& ID)
 {
-    ntaus[ID] = 0;
+    numTaus[ID] = 0;
     tau_e[ID].clear();
     tau_phi[ID].clear();
     tau_eta[ID].clear();
@@ -2091,11 +2221,48 @@ void MakeTopologyNtupleMiniAOD::clearTauArrays(const std::string& ID)
 }
 void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID)
 {
-    nphotons[ID] = 0;
+    numPho[ID] = 0;
+
+    photonEts.clear(); // just used for sorting
+
     photon_e[ID].clear();
+    photon_sigmaE[ID].clear();
+    photon_eT[ID].clear();
     photon_phi[ID].clear();
     photon_eta[ID].clear();
     photon_pt[ID].clear();
+    photon_CalibE[ID].clear();
+    photon_CalibEt[ID].clear();
+    photon_SCE[ID].clear();
+    photon_SCRawE[ID].clear();
+    photon_ESEnP1[ID].clear();
+    photon_ESEnP2[ID].clear();
+    photon_SCEta[ID].clear();
+    photon_SCEtaWidth[ID].clear();
+    photon_SCPhi[ID].clear();
+    photon_SCPhiWidth[ID].clear();
+    photon_SCBrem[ID].clear();
+    photon_hasPixelSeed[ID].clear();
+    photon_EleVeto[ID].clear();
+    photon_R9[ID].clear();
+    photon_HoverE[ID].clear();
+    photon_ESEffSigmaRR[ID].clear();
+    photon_SigmaIEtaIEtaFull5x5[ID].clear();
+    photon_SigmaIEtaIPhiFull5x5[ID].clear();
+    photon_SigmaIPhiIPhiFull5x5[ID].clear();
+    photon_E2x2Full5x5[ID].clear();
+    photon_E5x5Full5x5[ID].clear();
+    photon_R9Full5x5[ID].clear();
+    photon_PFChIso[ID].clear();
+    photon_PFPhoIso[ID].clear();
+    photon_PFNeuIso[ID].clear();
+    photon_PFChWorstIso[ID].clear();
+    photon_MIPTotEnergy[ID].clear();    
+    photon_CutIdLoose[ID].clear();
+    photon_CutIdMedium[ID].clear();
+    photon_CutIdTight[ID].clear();
+    photon_mvaIdWp80[ID].clear();
+    photon_mvaIdWp90[ID].clear();
 }
 void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID)
 {
@@ -2122,6 +2289,9 @@ void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID)
     electronSortedCutIdLoose[ID].clear();
     electronSortedCutIdMedium[ID].clear();
     electronSortedCutIdTight[ID].clear();
+    electronSortedMvaIdWp80[ID].clear();
+    electronSortedMvaIdWp90[ID].clear();
+    electronSortedMvaIdWpLoose[ID].clear();
 
     electronSortedChargedHadronIso[ID].clear();
     electronSortedNeutralHadronIso[ID].clear();
@@ -2570,6 +2740,7 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
     clearmuonarrays("PF");
     clearMetArrays("PF");
     clearTauArrays("PF");
+    clearPhotonArrays("PF");
 
     clearjetarrays("AK5PF");
 
@@ -2668,6 +2839,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     // fillMuons(iEvent, iSetup, muoLabel_, "Calo");
     fillMuons(iEvent, iSetup, patMuonsToken_, "PF");
     fillElectrons(iEvent, iSetup, patElectronsToken_, "PF", eleLabel_);
+    fillPhotons(iEvent, iSetup, patPhotonsToken_, "PF", phoLabel_);
 
     // fillJets(iEvent, iSetup, jetLabel_, "Calo");
     // Putting MET info before jets so it can be used for jet smearing.
@@ -2765,6 +2937,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     // bookJetBranches("Calo", "Calo");
     // bookMETBranches("Calo", "Calo");
     // bookTauBranches("Calo", "Calo");
+    // bookPhotonBranches("Calo", "Calo");
 
     bookElectronBranches("PF", "PF2PAT");
     bookMuonBranches("PF", "PF2PAT");
@@ -2772,6 +2945,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     bookPFJetBranches("PF", "PF2PAT");
     bookMETBranches("PF", "PF2PAT");
     bookTauBranches("PF", "PF2PAT");
+    bookPhotonBranches("PF", "PF2PAT");
 
     // bookJetBranches("AK5PF", "AK5PF");
     // bookPFJetBranches("AK5PF", "AK5PF");
@@ -2916,7 +3090,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
 void MakeTopologyNtupleMiniAOD::bookTauBranches(const std::string& ID,
                                                 const std::string& name)
 {
-    ntaus[ID] = 0;
+    numTaus[ID] = 0;
 
     std::vector<float> tempVecF(NTAUSMAX);
     tau_e[ID] = tempVecF;
@@ -2925,7 +3099,7 @@ void MakeTopologyNtupleMiniAOD::bookTauBranches(const std::string& ID,
     tau_pt[ID] = tempVecF;
 
     mytree_->Branch(("numTau" + name).c_str(),
-                    &ntaus[ID],
+                    &numTaus[ID],
                     ("numTau" + name + "/I").c_str());
 
     std::string prefix{"tau" + name};
@@ -2941,6 +3115,68 @@ void MakeTopologyNtupleMiniAOD::bookTauBranches(const std::string& ID,
     mytree_->Branch((prefix + "Eta").c_str(),
                     &tau_eta[ID][0],
                     (prefix + "Eta[numTau" + name + "]/F").c_str());
+}
+
+// book photon branches:
+void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
+                                                   const std::string& name)
+{
+    // Initialise maps so ROOT wont panic
+    std::vector<float> tempVecF(NPHOTONSMAX);
+    std::vector<int> tempVecI(NPHOTONSMAX);
+    boost::container::vector<bool> tempVecB(NPHOTONSMAX);
+
+    numPho[ID] = -1;
+
+    photon_e[ID] = tempVecF;
+    photon_sigmaE[ID] = tempVecF;
+    photon_eT[ID] = tempVecF;
+    photon_phi[ID] = tempVecF;
+    photon_eta[ID] = tempVecF;
+    photon_pt[ID] = tempVecF;
+    photon_CalibE[ID] = tempVecF;
+    photon_CalibEt[ID] = tempVecF;
+    photon_SCE[ID] = tempVecF;
+    photon_SCRawE[ID] = tempVecF;
+    photon_ESEnP1[ID] = tempVecF;
+    photon_ESEnP2[ID] = tempVecF;
+    photon_SCEta[ID] = tempVecF;
+    photon_SCEtaWidth[ID] = tempVecF;
+    photon_SCPhi[ID] = tempVecF;
+    photon_SCPhiWidth[ID] = tempVecF;
+    photon_SCBrem[ID] = tempVecF;
+    photon_hasPixelSeed[ID] = tempVecI;
+    photon_EleVeto[ID] = tempVecI;
+    photon_R9[ID] = tempVecF;
+    photon_HoverE[ID] = tempVecF;
+    photon_ESEffSigmaRR[ID] = tempVecF;
+    photon_SigmaIEtaIEtaFull5x5[ID] = tempVecF;
+    photon_SigmaIEtaIPhiFull5x5[ID] = tempVecF;
+    photon_SigmaIPhiIPhiFull5x5[ID] = tempVecF;
+    photon_E2x2Full5x5[ID] = tempVecF;
+    photon_E5x5Full5x5[ID] = tempVecF;
+    photon_R9Full5x5[ID] = tempVecF;
+    photon_PFChIso[ID] = tempVecF;
+    photon_PFPhoIso[ID] = tempVecF;
+    photon_PFNeuIso[ID] = tempVecF;
+    photon_PFChWorstIso[ID] = tempVecF;
+    photon_MIPTotEnergy[ID] = tempVecF;    
+    photon_CutIdLoose[ID] = tempVecI;
+    photon_CutIdMedium[ID] = tempVecI;
+    photon_CutIdTight[ID] = tempVecI;     
+    photon_mvaIdWp80[ID] = tempVecI;;
+    photon_mvaIdWp90[ID] = tempVecI;;
+
+    std::string prefix{"ele" + name};
+    mytree_->Branch(("numPho" + name).c_str(),
+                    &numEle[ID],
+                    ("numEle" + name + "/I").c_str());
+
+    // Dynamic ID's
+
+    mytree_->Branch((prefix + "E").c_str(),
+                    &electronSortedE[ID][0],
+                    (prefix + "E[numEle" + name + "]/F").c_str());
 }
 
 // book electron branches:
@@ -2975,6 +3211,9 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID,
     electronSortedCutIdLoose[ID] = tempVecI;
     electronSortedCutIdMedium[ID] = tempVecI;
     electronSortedCutIdTight[ID] = tempVecI;
+    electronSortedMvaIdWp80[ID] = tempVecI;
+    electronSortedMvaIdWp90[ID] = tempVecI;
+    electronSortedMvaIdWpLoose[ID] = tempVecI;
 
     electronSortedChargedHadronIso[ID] = tempVecF;
     electronSortedNeutralHadronIso[ID] = tempVecF;
@@ -3115,6 +3354,15 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID,
     mytree_->Branch((prefix + "CutIdTight").c_str(),
                     &electronSortedCutIdTight[ID][0],
                     (prefix + "CutIdTight[numEle" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "MvaIdWp80").c_str(),
+                    &electronSortedMvaIdWp80[ID][0],
+                    (prefix + "MvaIdWp80[numEle" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "MvaIdWp90").c_str(),
+       	       	    &electronSortedMvaIdWp90[ID][0],
+                    (prefix + "MvaIdWp90[numEle" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "MvaIdWpLoose").c_str(),
+                    &electronSortedMvaIdWpLoose[ID][0],
+                    (prefix + "MvaIdWpLoose[numEle" + name + "]/I").c_str());
 
     mytree_->Branch((prefix + "ImpactTransDist").c_str(),
                     &electronSortedImpactTransDist[ID][0],
@@ -3213,7 +3461,6 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID,
     mytree_->Branch((prefix + "EcalEnergy").c_str(),
                     &electronSortedEcalEnergy[ID][0],
                     (prefix + "EcalEnergy[numEle" + name + "]/F").c_str());
-
     mytree_->Branch((prefix + "SCEta").c_str(),
                     &electronSortedSuperClusterEta[ID][0],
                     (prefix + "SCEta[numEle" + name + "]/F").c_str());

@@ -2,12 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/GenProduction/python/NLO_HToSSTobbbb_MH125_MS55_ctauS10_13TeV.py --fileout file:Higgs_GEN_SIM.root -s LHE,GEN,SIM --mc --eventcontent RAWSIM --geometry DB:Extended --era Run2_2017 --93X_mc2017_realistic_v3 --datatier GEN-SIM --no_exec -n 10 --python_filename NLO_ggHToSSTobbbb_MH125_MS55_ctauS10_TuneCP2_13TeV_pythia8_GENSIM.py --beamspot Realistic25ns13TeVEarly2017Collision
+# with command line options: NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV.py --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --era Run2_2016 --beamspot Realistic50ns13TeVCollision --fileout file:step0.root --step GEN,SIM --no_exec --filein file:in.root
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process('SIM',eras.Run2_2017)
+process = cms.Process('SIM',eras.Run2_2016)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -16,20 +16,17 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-process.load('Configuration.StandardSequences.GeometrySimDB_cff')
+process.load('Configuration.Geometry.GeometrySimDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.Generator_cff')
-process.load('IOMC.EventVertexGenerators.VtxSmearedRealistic25ns13TeVEarly2017Collision_cfi')
+process.load('IOMC.EventVertexGenerators.VtxSmearedRealistic50ns13TeVCollision_cfi')
 process.load('GeneratorInterface.Core.genFilterSummary_cff')
 process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-intEvts  = cms.untracked.int32(1000)
-uintEvts = cms.untracked.uint32(1000)
-
 process.maxEvents = cms.untracked.PSet(
-    input = intEvts
+    input = cms.untracked.int32(10)
 )
 
 # Input source
@@ -41,7 +38,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/GenProduction/python/NLO_HToSSTobbbb_MH125_MS55_ctauS10_13TeV.py nevts:1000'),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/NLO_HToSSTobbbb_MH125_MS55_ctauS10_13TeV.py nevts:10'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -59,10 +56,11 @@ SelectEvents = cms.untracked.PSet(
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('file:Higgs_GEN_SIM_2016.root'),
+    fileName = cms.untracked.string('file:Higgs_GEN_SIM.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
+
 
 # Additional output definition
 
@@ -70,7 +68,7 @@ SelectEvents = cms.untracked.PSet(
 process.XMLFromDBSource.label = cms.string("Extended")
 process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mc2017_realistic_v14', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v6', '')
 
 process.generator = cms.EDFilter("Pythia8HadronizerFilter",
     PythiaParameters = cms.PSet(
@@ -130,25 +128,25 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
 
 process.externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/powheg/V2/gg_H_quark-mass-effects_NNPDF31_13TeV_M125/v1/gg_H_quark-mass-effects_NNPDF31_13TeV_M125_slc6_amd64_gcc630_CMSSW_9_3_0.tgz'),
-    nEvents = uintEvts,
+    nEvents = cms.untracked.uint32(10),
     numberOfParameters = cms.uint32(1),
     outputFile = cms.string('cmsgrid_final.lhe'),
     scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')
 )
 
-
 process.ProductionFilterSequence = cms.Sequence(process.generator)
 
 # Path and EndPath definitions
-process.lhe_step = cms.Path(process.externalLHEProducer)
-process.generation_step = cms.Path(process.pgen)
-process.simulation_step = cms.Path(process.psim)
+process.lhe_step = cms.Path(process.externalLHEProducer) 
+process.generation_step = cms.Path(process.pgen) 
+process.simulation_step = cms.Path(process.psim) 
 process.genfiltersummary_step = cms.EndPath(process.genFilterSummary)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.RAWSIMoutput_step = cms.EndPath(process.RAWSIMoutput)
 
 # Schedule definition
 process.schedule = cms.Schedule(process.lhe_step,process.generation_step,process.genfiltersummary_step,process.simulation_step,process.endjob_step,process.RAWSIMoutput_step)
+
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 # filter all path with the production filter sequence
@@ -163,4 +161,5 @@ for path in process.paths:
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
 process = customiseEarlyDelete(process)
 # End adding early deletion
+
 

@@ -25,8 +25,8 @@ process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-intEvts  =  cms.untracked.int32(10000)
-uintEvts = cms.untracked.uint32(10000)
+intEvts  =  cms.untracked.int32(1000)
+uintEvts = cms.untracked.uint32(1000)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
@@ -59,8 +59,8 @@ SelectEvents = cms.untracked.PSet(
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-#    fileName = cms.untracked.string('file:Higgs_GEN_SIM_2017.root'),
-    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS1_ctauS10_13TeV/GEN-SIM/Higgs_GEN_SIM_2017_10K.root'),
+    fileName = cms.untracked.string('file:Higgs_GEN_SIM_2017.root'),
+#    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS1_ctauS10_13TeV/GEN-SIM/Higgs_GEN_SIM_2017_10K.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
@@ -86,7 +86,7 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
         processParameters = cms.vstring('POWHEG:nFinal = 1', 
 #            '9000006:all = sk   skbar    0        0          0       Mass  decay width  1.0  75.0 lifetime',
 #            '9000006:all = sk   skbar    0        0          0       2.0  0.0197327e-11/tau0  1.0  75.0 tau0', 
-            '9000006:all = sk   skbar    0        0          0       1.0  1.9732e-14  1.0  75.0 10',
+            '9000006:all = sk   skbar    0        0          0       55.0  1.9732e-14  1.0  75.0 10',
             '9000006:oneChannel = 1  1.0 101  1 -1', 
             '9000006:mayDecay = on', 
             '9000006:isResonance = on', 
@@ -153,6 +153,10 @@ process.simulation_step = cms.Path(process.psim)
 process.genfiltersummary_step = cms.EndPath(process.genFilterSummary)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.RAWSIMoutput_step = cms.EndPath(process.RAWSIMoutput)
+
+#Setup FWK for multithreaded
+#process.options.numberOfThreads=cms.untracked.uint32(8)
+#process.options.numberOfStreams=cms.untracked.uint32(8)
 
 # Schedule definition
 process.schedule = cms.Schedule(process.lhe_step,process.generation_step,process.genfiltersummary_step,process.simulation_step,process.endjob_step,process.RAWSIMoutput_step)

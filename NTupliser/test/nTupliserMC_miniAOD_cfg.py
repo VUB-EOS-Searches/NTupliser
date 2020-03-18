@@ -91,6 +91,12 @@ process.jetCorrection = cms.Sequence( process.patJetCorrFactorsUpdatedJEC * proc
 ## All embedded in 2017 miniAODv2
 
 ###############################
+###### Photon ID ############
+###############################
+
+## All embedded in 2017 miniAODv2
+
+###############################
 ##### MET Uncertainities ######
 ###############################
 
@@ -139,6 +145,7 @@ process.makeTopologyNtupleMiniAOD.doCuts=cms.bool(False) # if set to false will 
 
 #Make the inputs for the n-tupliser right.
 process.makeTopologyNtupleMiniAOD.electronPFToken = cms.InputTag("slimmedElectrons")
+process.makeTopologyNtupleMiniAOD.photonPFToken = cms.InputTag("slimmedPhotons")
 process.makeTopologyNtupleMiniAOD.tauPFTag = cms.InputTag("slimmedTaus")
 process.makeTopologyNtupleMiniAOD.muonPFToken = cms.InputTag("slimmedMuons")
 process.makeTopologyNtupleMiniAOD.jetPFToken = cms.InputTag("updatedPatJetsUpdatedJEC") # Originally slimmedJets, patJetsReapplyJEC is the jet collection with reapplied JECs
@@ -152,10 +159,12 @@ process.source = cms.Source("PoolSource",
 )
 
 ## Maximal Number of Events
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source.fileNames = [
-	'file:/scratch/eepgadm/data/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/06176A4A-3942-E811-9191-008CFA165F5C.root',
+#	'file:/scratch/eepgadm/data/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/06176A4A-3942-E811-9191-008CFA165F5C.root',
+        'file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS1_ctauS10_13TeV/PAT_miniAOD/miniAOD_2017_10K.root',
+#        'file:MS_40/HToSTodddd_MH125_MS40_miniAOD_2017_100.root',
        ]
 
 from PhysicsTools.PatAlgos.patEventContent_cff import *

@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 from FWCore.ParameterSet.VarParsing import VarParsing
 
 options = VarParsing ('python')
-options.setDefault('maxEvents', 3)
+options.setDefault('maxEvents', 5)
 options.parseArguments()
 
 process = cms.Process("USER")
@@ -13,7 +13,7 @@ process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
 #	'file:/scratch/eepgadm/data/tZq/AOD.root',	
-        'file:/vols/cms/adm10/MC/NLO_HToSSTobbbb_MH125_MS2_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_10K.root',
+        'file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS40_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_100.root',
         )
 )
 
@@ -22,7 +22,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 
 
 process.printTree = cms.EDAnalyzer("ParticleListDrawer",
-  maxEventsToPrint = cms.untracked.int32(3),
+  maxEventsToPrint = cms.untracked.int32(-1),
   printVertex = cms.untracked.bool(False),
   src = cms.InputTag("genParticles")
 )

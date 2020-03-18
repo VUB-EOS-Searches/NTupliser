@@ -83,9 +83,7 @@ int main(int argc, char* argv[])
 
             const std::string numName{std::to_string(fileNum)};
             const std::string numNamePlus{std::to_string(fileNum + 2)};
-            const std::string dataDir{"/scratch/data/tZqSkimsRun201"s
-                                      + (is2016 ? "6/" : "7/") + datasetName
-                                      + "/"};
+            const std::string dataDir{"/vols/cms/adm10/"};
             const std::string outFilePath{dataDir + "skimFile" + numName
                                           + ".root"};
 

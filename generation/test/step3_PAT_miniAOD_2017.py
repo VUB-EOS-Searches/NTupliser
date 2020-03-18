@@ -28,7 +28,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:step2_2017.root'),
+    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_1K.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -55,7 +55,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
     dropMetaData = cms.untracked.string('ALL'),
     eventAutoFlushCompressedSize = cms.untracked.int32(-900),
     fastCloning = cms.untracked.bool(False),
-    fileName = cms.untracked.string('file:miniAOD_2017.root'),
+    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/PAT_miniAOD/miniAOD_2017_1K.root'),
     outputCommands = process.MINIAODSIMEventContent.outputCommands,
     overrideBranchesSplitLevel = cms.untracked.VPSet(cms.untracked.PSet(
         branch = cms.untracked.string('patPackedCandidates_packedPFCandidates__*'),
@@ -154,7 +154,7 @@ associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
 process.options.numberOfThreads=cms.untracked.uint32(8)
-process.options.numberOfStreams=cms.untracked.uint32(0)
+process.options.numberOfStreams=cms.untracked.uint32(8)
 
 #do not add changes to your config after this point (unless you know what you are doing)
 from FWCore.ParameterSet.Utilities import convertToUnscheduled

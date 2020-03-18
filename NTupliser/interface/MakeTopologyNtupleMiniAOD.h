@@ -51,6 +51,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     edm::EDGetTokenT<reco::ConversionCollection> conversionsToken_;
 
     edm::EDGetTokenT<pat::ElectronCollection> eleLabel_;
+    edm::EDGetTokenT<pat::PhotonCollection> phoLabel_;
     edm::InputTag muoLabel_;
     edm::InputTag jetLabel_;
     //  edm::InputTag genJetTag_; // Need to replace
@@ -187,6 +188,11 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
                        edm::EDGetTokenT<pat::ElectronCollection>,
                        const std::string&,
                        edm::EDGetTokenT<pat::ElectronCollection>);
+    void fillPhotons(const edm::Event&,
+                       const edm::EventSetup&,
+                       edm::EDGetTokenT<pat::PhotonCollection>,
+                       const std::string&,
+                       edm::EDGetTokenT<pat::PhotonCollection>);
     void fillMissingET(const edm::Event&,
                        const edm::EventSetup&,
                        edm::EDGetTokenT<pat::METCollection>,
@@ -268,6 +274,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int numGeneralTracks{};
     std::map<std::string, int> numJet;
     std::map<std::string, int> numEle;
+    std::map<std::string, int> numPho;
     std::map<std::string, int> numMuo;
 
     math::XYZPoint beamSpotPoint_;
@@ -318,6 +325,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
         void); // clearing generalTracks info, used by cleararrays
 
     std::vector<float> electronEts; // just used for sorting
+    std::vector<float> photonEts; // just used for sorting
+    std::vector<float> muonEts; // just used for sorting
+    std::vector<float> correctedJetEts; // just used for sorting
 
     float beamSpotX{};
     float beamSpotY{};
@@ -358,6 +368,12 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> electronSortedCutIdLoose;
     std::map<std::string, std::vector<int>> electronSortedCutIdMedium;
     std::map<std::string, std::vector<int>> electronSortedCutIdTight;
+    std::map<std::string, std::vector<int>> electronSortedMvaIdWp80;
+    std::map<std::string, std::vector<int>> electronSortedMvaIdWp90;
+    std::map<std::string, std::vector<int>> electronSortedMvaIdWpLoose;
+    std::map<std::string, std::vector<int>> electronSortedMvaIdNoIsoWp80;
+    std::map<std::string, std::vector<int>> electronSortedMvaIdNoIsoWp90;
+    std::map<std::string, std::vector<int>> electronSortedMvaIdWpNoIsoLoose;
 
     std::map<std::string, std::vector<float>> electronSortedChargedHadronIso;
     std::map<std::string, std::vector<float>> electronSortedNeutralHadronIso;
@@ -467,6 +483,52 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genElectronSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genElectronSortedHardProcess;
 
+    // hardcoded, do NOT change unless you also change the size of the arrays
+    // that are saved in the root tree...
+    static constexpr size_t NPHOTONSMAX{30};
+
+    std::map<std::string, std::vector<float>> photon_e;
+    std::map<std::string, std::vector<float>> photon_sigmaE;
+    std::map<std::string, std::vector<float>> photon_eT;
+    std::map<std::string, std::vector<float>> photon_phi;
+    std::map<std::string, std::vector<float>> photon_eta;
+    std::map<std::string, std::vector<float>> photon_pt;
+    std::map<std::string, std::vector<float>> photon_CalibE;
+    std::map<std::string, std::vector<float>> photon_CalibEt;
+    std::map<std::string, std::vector<float>> photon_SCE;
+    std::map<std::string, std::vector<float>> photon_SCRawE;
+    std::map<std::string, std::vector<float>> photon_ESEnP1;
+    std::map<std::string, std::vector<float>> photon_ESEnP2;
+    std::map<std::string, std::vector<float>> photon_SCEta;
+    std::map<std::string, std::vector<float>> photon_SCEtaWidth;
+    std::map<std::string, std::vector<float>> photon_SCPhi;
+    std::map<std::string, std::vector<float>> photon_SCPhiWidth;
+    std::map<std::string, std::vector<float>> photon_SCBrem;
+    std::map<std::string, std::vector<int>> photon_hasPixelSeed;
+    std::map<std::string, std::vector<int>> photon_EleVeto;
+    std::map<std::string, std::vector<float>> photon_R9;
+    std::map<std::string, std::vector<float>> photon_HoverE;
+    std::map<std::string, std::vector<float>> photon_ESEffSigmaRR;
+    std::map<std::string, std::vector<float>> photon_SigmaIEtaIEtaFull5x5;
+    std::map<std::string, std::vector<float>> photon_SigmaIEtaIPhiFull5x5;
+    std::map<std::string, std::vector<float>> photon_SigmaIPhiIPhiFull5x5;
+    std::map<std::string, std::vector<float>> photon_E2x2Full5x5;
+    std::map<std::string, std::vector<float>> photon_E5x5Full5x5;
+    std::map<std::string, std::vector<float>> photon_R9Full5x5;
+    std::map<std::string, std::vector<float>> photon_PFChIso;
+    std::map<std::string, std::vector<float>> photon_PFPhoIso;
+    std::map<std::string, std::vector<float>> photon_PFNeuIso;
+    std::map<std::string, std::vector<float>> photon_PFChWorstIso;
+    std::map<std::string, std::vector<float>> photon_MIPTotEnergy;    
+    std::map<std::string, std::vector<int>> photon_CutIdLoose;
+    std::map<std::string, std::vector<int>> photon_CutIdMedium;
+    std::map<std::string, std::vector<int>> photon_CutIdTight;
+    std::map<std::string, std::vector<int>> photon_mvaIdWp80;
+    std::map<std::string, std::vector<int>> photon_mvaIdWp90;
+
+    // gen branches
+
+
     // MC Truth
     size_t nT{};
     size_t nThadronic{};
@@ -561,7 +623,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float mhtSignif{};
 
     static constexpr size_t NMUONSMAX{20};
-    std::vector<float> muonEts;
     std::map<std::string, std::vector<float>> muonSortedE;
     std::map<std::string, std::vector<float>> muonSortedEt;
     std::map<std::string, std::vector<float>> muonSortedPt;
@@ -657,7 +718,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     JetCorrectionUncertainty* jecPFUncertainty{};
     JetCorrectionUncertainty* jecJPTUncertainty{};
 
-    std::vector<float> correctedJetEts;
     std::map<std::string, std::vector<double>> jetSortedE;
     std::map<std::string, std::vector<double>> jetSortedEt;
     std::map<std::string, std::vector<double>> jetSortedPt;
@@ -801,13 +861,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     // basic 4-vectors for photons,taus as we're not interested in them.
     static constexpr size_t NTAUSMAX{20};
-    static constexpr size_t NPHOTONSMAX{20};
-    std::map<std::string, int> ntaus;
-    std::map<std::string, int> nphotons;
-    std::map<std::string, std::vector<float>> photon_e;
-    std::map<std::string, std::vector<float>> photon_phi;
-    std::map<std::string, std::vector<float>> photon_eta;
-    std::map<std::string, std::vector<float>> photon_pt;
+    std::map<std::string, int> numTaus;
     std::map<std::string, std::vector<float>> tau_e;
     std::map<std::string, std::vector<float>> tau_phi;
     std::map<std::string, std::vector<float>> tau_eta;
