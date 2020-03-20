@@ -491,77 +491,80 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
     
     numPho[ID]++;
     
-    photon_e[ID][numPho[ID] - 1] = pho.energy();
-    photon_sigmaE[ID][numPho[ID] - 1] = pho.userFloat("ecalEnergyErrPostCorr");
-    photon_eT[ID][numPho[ID] - 1] = pho.et();
-    photon_phi[ID][numPho[ID] - 1] = pho.phi();
-    photon_eta[ID][numPho[ID] - 1] = pho.eta();
-    photon_pt[ID][numPho[ID] - 1] = pho.pt();
-    photon_CalibE[ID][numPho[ID] - 1] = pho.userFloat("ecalEnergyPostCorr");
-    photon_CalibEt[ID][numPho[ID] - 1] = pho.et()*pho.userFloat("ecalEnergyPostCorr")/pho.energy();
-    photon_SCE[ID][numPho[ID] - 1] = pho.superCluster()->energy();
-    photon_SCRawE[ID][numPho[ID] - 1] = pho.superCluster()->rawEnergy();
-    photon_ESEnP1[ID][numPho[ID] - 1] = pho.superCluster()->preshowerEnergyPlane1();
-    photon_ESEnP2[ID][numPho[ID] - 1] = pho.superCluster()->preshowerEnergyPlane2();
-    photon_SCEta[ID][numPho[ID] - 1] = pho.superCluster()->eta();
-    photon_SCEtaWidth[ID][numPho[ID] - 1] = pho.superCluster()->etaWidth();
-    photon_SCPhi[ID][numPho[ID] - 1] = pho.superCluster()->phi();
-    photon_SCPhiWidth[ID][numPho[ID] - 1] = pho.superCluster()->phiWidth();
-    photon_SCBrem[ID][numPho[ID] - 1] = (pho.superCluster()->phiWidth()/pho.superCluster()->etaWidth());
-    photon_hasPixelSeed[ID][numPho[ID] - 1] = pho.hasPixelSeed();
-    photon_EleVeto[ID][numPho[ID] - 1] = pho.passElectronVeto();
-    photon_R9[ID][numPho[ID] - 1] = pho.r9();
-    photon_HoverE[ID][numPho[ID] - 1] = pho.hadTowOverEm();
-    photon_SigmaIEtaIEtaFull5x5[ID][numPho[ID] - 1] = pho.full5x5_sigmaIetaIeta();
-    photon_SigmaIEtaIPhiFull5x5[ID][numPho[ID] - 1] = 0;
-    photon_SigmaIPhiIPhiFull5x5[ID][numPho[ID] - 1] = 0;
-    photon_E2x2Full5x5[ID][numPho[ID] - 1] = 0;;
-    photon_E5x5Full5x5[ID][numPho[ID] - 1] = pho.full5x5_e5x5();
-    photon_R9Full5x5[ID][numPho[ID] - 1] = pho.full5x5_r9();
-    photon_PFChIso[ID][numPho[ID] - 1] = pho.userFloat("phoChargedIsolation"); 
-    photon_PFPhoIso[ID][numPho[ID] - 1] = pho.userFloat("phoPhotonIsolation");
-    photon_PFNeuIso[ID][numPho[ID] - 1] = pho.userFloat("phoNeutralHadronIsolation");
-    photon_PFChWorstIso[ID][numPho[ID] - 1] = pho.userFloat("phoWorstChargedIsolation");
-    photon_MIPTotEnergy[ID][numPho[ID] - 1] = pho.mipTotEnergy();
+    photonSortedE[ID][numPho[ID] - 1] = pho.energy();
+    photonSortedSigmaE[ID][numPho[ID] - 1] = pho.userFloat("ecalEnergyErrPostCorr");
+    photonSortedET[ID][numPho[ID] - 1] = pho.et();
+    photonSortedPhi[ID][numPho[ID] - 1] = pho.phi();
+    photonSortedEta[ID][numPho[ID] - 1] = pho.eta();
+    photonSortedPt[ID][numPho[ID] - 1] = pho.pt();
+    photonSortedPx[ID][numPho[ID] - 1] = pho.px();
+    photonSortedPy[ID][numPho[ID] - 1] = pho.py();
+    photonSortedPz[ID][numPho[ID] - 1] = pho.pz();
+    photonSortedCalibE[ID][numPho[ID] - 1] = pho.userFloat("ecalEnergyPostCorr");
+    photonSortedCalibEt[ID][numPho[ID] - 1] = pho.et()*pho.userFloat("ecalEnergyPostCorr")/pho.energy();
+    photonSortedSCE[ID][numPho[ID] - 1] = pho.superCluster()->energy();
+    photonSortedSCRawE[ID][numPho[ID] - 1] = pho.superCluster()->rawEnergy();
+    photonSortedESEnP1[ID][numPho[ID] - 1] = pho.superCluster()->preshowerEnergyPlane1();
+    photonSortedESEnP2[ID][numPho[ID] - 1] = pho.superCluster()->preshowerEnergyPlane2();
+    photonSortedSCEta[ID][numPho[ID] - 1] = pho.superCluster()->eta();
+    photonSortedSCEtaWidth[ID][numPho[ID] - 1] = pho.superCluster()->etaWidth();
+    photonSortedSCPhi[ID][numPho[ID] - 1] = pho.superCluster()->phi();
+    photonSortedSCPhiWidth[ID][numPho[ID] - 1] = pho.superCluster()->phiWidth();
+    photonSortedSCBrem[ID][numPho[ID] - 1] = (pho.superCluster()->phiWidth()/pho.superCluster()->etaWidth());
+    photonSortedHasPixelSeed[ID][numPho[ID] - 1] = pho.hasPixelSeed();
+    photonSortedEleVeto[ID][numPho[ID] - 1] = pho.passElectronVeto();
+    photonSortedR9[ID][numPho[ID] - 1] = pho.r9();
+    photonSortedHoverE[ID][numPho[ID] - 1] = pho.hadTowOverEm();
+    photonSortedSigmaIEtaIEtaFull5x5[ID][numPho[ID] - 1] = pho.full5x5_sigmaIetaIeta();
+    photonSortedSigmaIEtaIPhiFull5x5[ID][numPho[ID] - 1] = 0;
+    photonSortedSigmaIPhiIPhiFull5x5[ID][numPho[ID] - 1] = 0;
+    photonSortedE2x2Full5x5[ID][numPho[ID] - 1] = 0;;
+    photonSortedE5x5Full5x5[ID][numPho[ID] - 1] = pho.full5x5_e5x5();
+    photonSortedR9Full5x5[ID][numPho[ID] - 1] = pho.full5x5_r9();
+    photonSortedPFChIso[ID][numPho[ID] - 1] = pho.userFloat("phoChargedIsolation"); 
+    photonSortedPFPhoIso[ID][numPho[ID] - 1] = pho.userFloat("phoPhotonIsolation");
+    photonSortedPFNeuIso[ID][numPho[ID] - 1] = pho.userFloat("phoNeutralHadronIsolation");
+    photonSortedPFChWorstIso[ID][numPho[ID] - 1] = pho.userFloat("phoWorstChargedIsolation");
+    photonSortedMIPTotEnergy[ID][numPho[ID] - 1] = pho.mipTotEnergy();
     if (is2016rereco_) {
-      photon_CutIdLoose[ID][numPho[ID] - 1] =
+      photonSortedCutIdLoose[ID][numPho[ID] - 1] =
 	pho.photonID("cutBasedPhotonID-Spring16-V2p2-loose");
-      photon_CutIdMedium[ID][numPho[ID] - 1] =
+      photonSortedCutIdMedium[ID][numPho[ID] - 1] =
 	pho.photonID("cutBasedPhotonID-Spring16-V2p2-medium");
-      photon_CutIdTight[ID][numPho[ID] - 1] =
+      photonSortedCutIdTight[ID][numPho[ID] - 1] =
 	pho.photonID("cutBasedPhotonID-Spring16-V2p2-tight");
-      photon_mvaIdWp80[ID][numPho[ID] - 1] =
+      photonSortedMvaIdWp80[ID][numPho[ID] - 1] =
 	pho.photonID("mvaPhoID-Spring16-nonTrig-V1-wp80");
-      photon_mvaIdWp90[ID][numPho[ID] - 1] =
+      photonSortedMvaIdWp90[ID][numPho[ID] - 1] =
 	pho.photonID("mvaPhoID-Spring16-nonTrig-V1-wp90");
     }
     else {
-      photon_CutIdLoose[ID][numPho[ID] - 1] =
+      photonSortedCutIdLoose[ID][numPho[ID] - 1] =
 	pho.photonID("cutBasedPhotonID-Fall17-94X-V1-loose");
-      photon_CutIdMedium[ID][numPho[ID] - 1] =
+      photonSortedCutIdMedium[ID][numPho[ID] - 1] =
 	pho.photonID("cutBasedPhotonID-Fall17-94X-V1-medium");
-      photon_CutIdTight[ID][numPho[ID] - 1] =
+      photonSortedCutIdTight[ID][numPho[ID] - 1] =
 	pho.photonID("cutBasedPhotonID-Fall17-94X-V1-tight");
-      photon_mvaIdWp80[ID][numPho[ID] - 1] =
+      photonSortedMvaIdWp80[ID][numPho[ID] - 1] =
 	pho.photonID("mvaPhoID-RunIIFall17-v1-wp80");
-      photon_mvaIdWp90[ID][numPho[ID] - 1] =
+      photonSortedMvaIdWp90[ID][numPho[ID] - 1] =
 	pho.photonID("mvaPhoID-RunIIFall17-v1-wp90");
     }
     if (!pho.genParticleRef().isNull()) {
-      genPhotonPt[ID][numPho[ID] - 1] = pho.genPhoton()->pt();
-      genPhotonEt[ID][numPho[ID] - 1] = pho.genPhoton()->et();
-      genPhotonEta[ID][numPho[ID] - 1] = pho.genPhoton()->eta();
-      genPhotonTheta[ID][numPho[ID] - 1] = pho.genPhoton()->theta();
-      genPhotonPhi[ID][numPho[ID] - 1] = pho.genPhoton()->phi();
-      genPhotonPx[ID][numPho[ID] - 1] = pho.genPhoton()->px();
-      genPhotonPy[ID][numPho[ID] - 1] = pho.genPhoton()->py();
-      genPhotonPz[ID][numPho[ID] - 1] = pho.genPhoton()->pz();
-      genPhotonCharge[ID][numPho[ID] - 1] = pho.genPhoton()->charge();
-      genPhotonPdgId[ID][numPho[ID] - 1] = pho.genPhoton()->pdgId();
-      genPhotonMotherId[ID][numPho[ID] - 1] = pho.genPhoton()->mother()->pdgId();
-      genPhotonIsPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isPhoton();
-      genPhotonIsConvertedPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isConvertedPhoton();
-      genPhotonIsJet[ID][numPho[ID] - 1] = pho.genPhoton()->isJet();
+      genPhotonSortedPt[ID][numPho[ID] - 1] = pho.genPhoton()->pt();
+      genPhotonSortedET[ID][numPho[ID] - 1] = pho.genPhoton()->et();
+      genPhotonSortedEta[ID][numPho[ID] - 1] = pho.genPhoton()->eta();
+      genPhotonSortedTheta[ID][numPho[ID] - 1] = pho.genPhoton()->theta();
+      genPhotonSortedPhi[ID][numPho[ID] - 1] = pho.genPhoton()->phi();
+      genPhotonSortedPx[ID][numPho[ID] - 1] = pho.genPhoton()->px();
+      genPhotonSortedPy[ID][numPho[ID] - 1] = pho.genPhoton()->py();
+      genPhotonSortedPz[ID][numPho[ID] - 1] = pho.genPhoton()->pz();
+      genPhotonSortedCharge[ID][numPho[ID] - 1] = pho.genPhoton()->charge();
+      genPhotonSortedPdgId[ID][numPho[ID] - 1] = pho.genPhoton()->pdgId();
+      genPhotonSortedMotherId[ID][numPho[ID] - 1] = pho.genPhoton()->mother()->pdgId();
+      genPhotonSortedIsPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isPhoton();
+      genPhotonSortedIsConvertedPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isConvertedPhoton();
+      genPhotonSortedIsJet[ID][numPho[ID] - 1] = pho.genPhoton()->isJet();
     }
   }  
 }
@@ -2241,58 +2244,62 @@ void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID)
 
     photonEts.clear(); // just used for sorting
 
-    photon_e[ID].clear();
-    photon_sigmaE[ID].clear();
-    photon_eT[ID].clear();
-    photon_phi[ID].clear();
-    photon_eta[ID].clear();
-    photon_pt[ID].clear();
-    photon_CalibE[ID].clear();
-    photon_CalibEt[ID].clear();
-    photon_SCE[ID].clear();
-    photon_SCRawE[ID].clear();
-    photon_ESEnP1[ID].clear();
-    photon_ESEnP2[ID].clear();
-    photon_SCEta[ID].clear();
-    photon_SCEtaWidth[ID].clear();
-    photon_SCPhi[ID].clear();
-    photon_SCPhiWidth[ID].clear();
-    photon_SCBrem[ID].clear();
-    photon_hasPixelSeed[ID].clear();
-    photon_EleVeto[ID].clear();
-    photon_R9[ID].clear();
-    photon_HoverE[ID].clear();
-    photon_ESEffSigmaRR[ID].clear();
-    photon_SigmaIEtaIEtaFull5x5[ID].clear();
-    photon_SigmaIEtaIPhiFull5x5[ID].clear();
-    photon_SigmaIPhiIPhiFull5x5[ID].clear();
-    photon_E2x2Full5x5[ID].clear();
-    photon_E5x5Full5x5[ID].clear();
-    photon_R9Full5x5[ID].clear();
-    photon_PFChIso[ID].clear();
-    photon_PFPhoIso[ID].clear();
-    photon_PFNeuIso[ID].clear();
-    photon_PFChWorstIso[ID].clear();
-    photon_MIPTotEnergy[ID].clear();    
-    photon_CutIdLoose[ID].clear();
-    photon_CutIdMedium[ID].clear();
-    photon_CutIdTight[ID].clear();
-    photon_mvaIdWp80[ID].clear();
-    photon_mvaIdWp90[ID].clear();
+    photonSortedE[ID].clear();
+    photonSortedSigmaE[ID].clear();
+    photonSortedET[ID].clear();
+    photonSortedPhi[ID].clear();
+    photonSortedEta[ID].clear();
+    photonSortedPt[ID].clear();
+    photonSortedPx[ID].clear();
+    photonSortedPy[ID].clear();
+    photonSortedPz[ID].clear();
+    photonSortedCalibE[ID].clear();
+    photonSortedCalibEt[ID].clear();
+    photonSortedSCE[ID].clear();
+    photonSortedSCRawE[ID].clear();
+    photonSortedESEnP1[ID].clear();
+    photonSortedESEnP2[ID].clear();
+    photonSortedSCEta[ID].clear();
+    photonSortedSCEtaWidth[ID].clear();
+    photonSortedSCPhi[ID].clear();
+    photonSortedSCPhiWidth[ID].clear();
+    photonSortedSCBrem[ID].clear();
+    photonSortedHasPixelSeed[ID].clear();
+    photonSortedEleVeto[ID].clear();
+    photonSortedR9[ID].clear();
+    photonSortedHoverE[ID].clear();
+    photonSortedESEffSigmaRR[ID].clear();
+    photonSortedSigmaIEtaIEtaFull5x5[ID].clear();
+    photonSortedSigmaIEtaIPhiFull5x5[ID].clear();
+    photonSortedSigmaIPhiIPhiFull5x5[ID].clear();
+    photonSortedE2x2Full5x5[ID].clear();
+    photonSortedE5x5Full5x5[ID].clear();
+    photonSortedR9Full5x5[ID].clear();
+    photonSortedPFChIso[ID].clear();
+    photonSortedPFPhoIso[ID].clear();
+    photonSortedPFNeuIso[ID].clear();
+    photonSortedPFChWorstIso[ID].clear();
+    photonSortedMIPTotEnergy[ID].clear();    
+    photonSortedCutIdLoose[ID].clear();
+    photonSortedCutIdMedium[ID].clear();
+    photonSortedCutIdTight[ID].clear();
+    photonSortedMvaIdWp80[ID].clear();
+    photonSortedMvaIdWp90[ID].clear();
 
-    genPhotonPt[ID].clear();
-    genPhotonEt[ID].clear();
-    genPhotonEta[ID].clear();
-    genPhotonTheta[ID].clear();
-    genPhotonPhi[ID].clear();
-    genPhotonPx[ID].clear();
-    genPhotonPy[ID].clear();
-    genPhotonCharge[ID].clear();
-    genPhotonPdgId[ID].clear();
-    genPhotonMotherId[ID].clear();
-    genPhotonIsPhoton[ID].clear();
-    genPhotonIsConvertedPhoton[ID].clear();
-    genPhotonIsJet[ID].clear();
+    genPhotonSortedPt[ID].clear();
+    genPhotonSortedET[ID].clear();
+    genPhotonSortedEta[ID].clear();
+    genPhotonSortedTheta[ID].clear();
+    genPhotonSortedPhi[ID].clear();
+    genPhotonSortedPx[ID].clear();
+    genPhotonSortedPy[ID].clear();
+    genPhotonSortedPz[ID].clear();
+    genPhotonSortedCharge[ID].clear();
+    genPhotonSortedPdgId[ID].clear();
+    genPhotonSortedMotherId[ID].clear();
+    genPhotonSortedIsPhoton[ID].clear();
+    genPhotonSortedIsConvertedPhoton[ID].clear();
+    genPhotonSortedIsJet[ID].clear();
 
 }
 void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID)
@@ -3159,59 +3166,62 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
 
     numPho[ID] = -1;
 
-    photon_e[ID] = tempVecF;
-    photon_sigmaE[ID] = tempVecF;
-    photon_eT[ID] = tempVecF;
-    photon_phi[ID] = tempVecF;
-    photon_eta[ID] = tempVecF;
-    photon_pt[ID] = tempVecF;
-    photon_CalibE[ID] = tempVecF;
-    photon_CalibEt[ID] = tempVecF;
-    photon_SCE[ID] = tempVecF;
-    photon_SCRawE[ID] = tempVecF;
-    photon_ESEnP1[ID] = tempVecF;
-    photon_ESEnP2[ID] = tempVecF;
-    photon_SCEta[ID] = tempVecF;
-    photon_SCEtaWidth[ID] = tempVecF;
-    photon_SCPhi[ID] = tempVecF;
-    photon_SCPhiWidth[ID] = tempVecF;
-    photon_SCBrem[ID] = tempVecF;
-    photon_hasPixelSeed[ID] = tempVecI;
-    photon_EleVeto[ID] = tempVecI;
-    photon_R9[ID] = tempVecF;
-    photon_HoverE[ID] = tempVecF;
-    photon_ESEffSigmaRR[ID] = tempVecF;
-    photon_SigmaIEtaIEtaFull5x5[ID] = tempVecF;
-    photon_SigmaIEtaIPhiFull5x5[ID] = tempVecF;
-    photon_SigmaIPhiIPhiFull5x5[ID] = tempVecF;
-    photon_E2x2Full5x5[ID] = tempVecF;
-    photon_E5x5Full5x5[ID] = tempVecF;
-    photon_R9Full5x5[ID] = tempVecF;
-    photon_PFChIso[ID] = tempVecF;
-    photon_PFPhoIso[ID] = tempVecF;
-    photon_PFNeuIso[ID] = tempVecF;
-    photon_PFChWorstIso[ID] = tempVecF;
-    photon_MIPTotEnergy[ID] = tempVecF;    
-    photon_CutIdLoose[ID] = tempVecI;
-    photon_CutIdMedium[ID] = tempVecI;
-    photon_CutIdTight[ID] = tempVecI;     
-    photon_mvaIdWp80[ID] = tempVecI;;
-    photon_mvaIdWp90[ID] = tempVecI;;
+    photonSortedE[ID] = tempVecF;
+    photonSortedSigmaE[ID] = tempVecF;
+    photonSortedET[ID] = tempVecF;
+    photonSortedPhi[ID] = tempVecF;
+    photonSortedEta[ID] = tempVecF;
+    photonSortedPt[ID] = tempVecF;
+    photonSortedPx[ID] = tempVecF;
+    photonSortedPy[ID] = tempVecF;
+    photonSortedPz[ID] = tempVecF;
+    photonSortedCalibE[ID] = tempVecF;
+    photonSortedCalibEt[ID] = tempVecF;
+    photonSortedSCE[ID] = tempVecF;
+    photonSortedSCRawE[ID] = tempVecF;
+    photonSortedESEnP1[ID] = tempVecF;
+    photonSortedESEnP2[ID] = tempVecF;
+    photonSortedSCEta[ID] = tempVecF;
+    photonSortedSCEtaWidth[ID] = tempVecF;
+    photonSortedSCPhi[ID] = tempVecF;
+    photonSortedSCPhiWidth[ID] = tempVecF;
+    photonSortedSCBrem[ID] = tempVecF;
+    photonSortedHasPixelSeed[ID] = tempVecI;
+    photonSortedEleVeto[ID] = tempVecI;
+    photonSortedR9[ID] = tempVecF;
+    photonSortedHoverE[ID] = tempVecF;
+    photonSortedESEffSigmaRR[ID] = tempVecF;
+    photonSortedSigmaIEtaIEtaFull5x5[ID] = tempVecF;
+    photonSortedSigmaIEtaIPhiFull5x5[ID] = tempVecF;
+    photonSortedSigmaIPhiIPhiFull5x5[ID] = tempVecF;
+    photonSortedE2x2Full5x5[ID] = tempVecF;
+    photonSortedE5x5Full5x5[ID] = tempVecF;
+    photonSortedR9Full5x5[ID] = tempVecF;
+    photonSortedPFChIso[ID] = tempVecF;
+    photonSortedPFPhoIso[ID] = tempVecF;
+    photonSortedPFNeuIso[ID] = tempVecF;
+    photonSortedPFChWorstIso[ID] = tempVecF;
+    photonSortedMIPTotEnergy[ID] = tempVecF;    
+    photonSortedCutIdLoose[ID] = tempVecI;
+    photonSortedCutIdMedium[ID] = tempVecI;
+    photonSortedCutIdTight[ID] = tempVecI;     
+    photonSortedMvaIdWp80[ID] = tempVecI;;
+    photonSortedMvaIdWp90[ID] = tempVecI;;
 
-    genPhotonPt[ID] = tempVecF;
-    genPhotonEt[ID] = tempVecF;
-    genPhotonEta[ID] = tempVecF;
-    genPhotonTheta[ID] = tempVecF;
-    genPhotonPhi[ID] = tempVecF;
-    genPhotonPx[ID] = tempVecF;
-    genPhotonPy[ID] = tempVecF;
-    genPhotonPz[ID] = tempVecF;
-    genPhotonCharge[ID] = tempVecI;
-    genPhotonPdgId[ID] = tempVecI;
-    genPhotonMotherId[ID] = tempVecI;
-    genPhotonIsPhoton[ID] = tempVecI;
-    genPhotonIsConvertedPhoton[ID] = tempVecI;
-    genPhotonIsJet[ID] = tempVecI;
+    genPhotonSortedPt[ID] = tempVecF;
+    genPhotonSortedET[ID] = tempVecF;
+    genPhotonSortedEta[ID] = tempVecF;
+    genPhotonSortedTheta[ID] = tempVecF;
+    genPhotonSortedPhi[ID] = tempVecF;
+    genPhotonSortedPx[ID] = tempVecF;
+    genPhotonSortedPy[ID] = tempVecF;
+    genPhotonSortedPz[ID] = tempVecF;
+    genPhotonSortedCharge[ID] = tempVecI;
+    genPhotonSortedPdgId[ID] = tempVecI;
+    genPhotonSortedMotherId[ID] = tempVecI;
+    genPhotonSortedIsPhoton[ID] = tempVecI;
+    genPhotonSortedIsConvertedPhoton[ID] = tempVecI;
+    genPhotonSortedIsJet[ID] = tempVecI;
 
     std::string prefix{"pho" + name};
     mytree_->Branch(("numPho" + name).c_str(),
@@ -3219,7 +3229,175 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
                     ("numPho" + name + "/I").c_str());
 
     // Dynamic ID's
+    mytree_->Branch((prefix + "E").c_str(),
+                    &photonSortedE[ID][0],
+                    (prefix + "E[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SigmaE").c_str(),
+                    &photonSortedSigmaE[ID][0],
+                    (prefix + "SigmaE[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ET").c_str(),
+                    &photonSortedET[ID][0],
+                    (prefix + "ET[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Phi").c_str(),
+                    &photonSortedPhi[ID][0],
+                    (prefix + "Phi[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Eta").c_str(),
+                    &photonSortedEta[ID][0],
+                    (prefix + "Eta[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Pt").c_str(),
+                    &photonSortedPt[ID][0],
+                    (prefix + "Pt[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Px").c_str(),
+                    &photonSortedPx[ID][0],
+                    (prefix + "Px[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Py").c_str(),
+                    &photonSortedPy[ID][0],
+                    (prefix + "Py[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Pz").c_str(),
+                    &photonSortedPz[ID][0],
+                    (prefix + "Pz[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "CalibE").c_str(),
+                    &photonSortedCalibE[ID][0],
+                    (prefix + "CalibE[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "CalibEt").c_str(),
+                    &photonSortedCalibEt[ID][0],
+                    (prefix + "CalibEt[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SCE").c_str(),
+                    &photonSortedSCE[ID][0],
+                    (prefix + "SCE[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SCRawE").c_str(),
+                    &photonSortedSCRawE[ID][0],
+                    (prefix + "SCRawE[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ESEnP1").c_str(),
+                    &photonSortedESEnP1[ID][0],
+                    (prefix + "ESEnP1[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ESEnP2").c_str(),
+                    &photonSortedESEnP2[ID][0],
+                    (prefix + "ESEnP2[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SCEta").c_str(),
+                    &photonSortedSCEta[ID][0],
+                    (prefix + "SCEta[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SCEtaWidth").c_str(),
+                    &photonSortedSCEtaWidth[ID][0],
+                    (prefix + "SCEtaWidth[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SCPhi").c_str(),
+                    &photonSortedSCPhi[ID][0],
+                    (prefix + "SCPhi[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SCPhiWidth").c_str(),
+                    &photonSortedSCPhiWidth[ID][0],
+                    (prefix + "SCPhiWidth[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SCBrem").c_str(),
+                    &photonSortedSCBrem[ID][0],
+                    (prefix + "SCBrem[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "HasPixelSeed").c_str(),
+                    &photonSortedHasPixelSeed[ID][0],
+                    (prefix + "HasPixelSeed[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "EleVeto").c_str(),
+                    &photonSortedEleVeto[ID][0],
+                    (prefix + "EleVeto[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "R9").c_str(),
+                    &photonSortedR9[ID][0],
+                    (prefix + "R9[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "HoverE").c_str(),
+                    &photonSortedHoverE[ID][0],
+                    (prefix + "HoverE[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ESEffSigmaRR").c_str(),
+                    &photonSortedESEffSigmaRR[ID][0],
+                    (prefix + "ESEffSigmaRR[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SigmaIEtaIEtaFull5x5").c_str(),
+                    &photonSortedSigmaIEtaIEtaFull5x5[ID][0],
+                    (prefix + "SigmaIEtaIEtaFull5x5[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SigmaIEtaIPhiFull5x5").c_str(),
+                    &photonSortedSigmaIEtaIPhiFull5x5[ID][0],
+                    (prefix + "SigmaIEtaIPhiFull5x5[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "SigmaIPhiIPhiFull5x5").c_str(),
+                    &photonSortedSigmaIPhiIPhiFull5x5[ID][0],
+                    (prefix + "SigmaIPhiIPhiFull5x5[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "E2x2Full5x5").c_str(),
+                    &photonSortedE2x2Full5x5[ID][0],
+                    (prefix + "E2x2Full5x5[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "E5x5Full5x5").c_str(),
+                    &photonSortedE5x5Full5x5[ID][0],
+                    (prefix + "E5x5Full5x5[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "R9Full5x5").c_str(),
+                    &photonSortedR9Full5x5[ID][0],
+                    (prefix + "R9Full5x5[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PFChIso").c_str(),
+                    &photonSortedPFChIso[ID][0],
+                    (prefix + "PFChIso[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PFPhoIso").c_str(),
+                    &photonSortedPFPhoIso[ID][0],
+                    (prefix + "PFPhoIso[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PFNeuIso").c_str(),
+                    &photonSortedPFNeuIso[ID][0],
+                    (prefix + "PFNeuIso[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PFChWorstIso").c_str(),
+                    &photonSortedPFChWorstIso[ID][0],
+                    (prefix + "PFChWorstIso[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "MIPTotEnergy").c_str(),
+                    &photonSortedMIPTotEnergy[ID][0],
+                    (prefix + "MIPTotEnergy[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "CutIdLoose").c_str(),
+                    &photonSortedCutIdLoose[ID][0],
+                    (prefix + "CutIdLoose[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "CutIdMedium").c_str(),
+                    &photonSortedCutIdMedium[ID][0],
+                    (prefix + "CutIdMedium[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "CutIdTight").c_str(),
+                    &photonSortedCutIdTight[ID][0],
+                    (prefix + "CutIdTight[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "MvaIdWp80").c_str(),
+                    &photonSortedMvaIdWp80[ID][0],
+                    (prefix + "MvaIdWp80[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "MvaIdWp90").c_str(),
+                    &photonSortedMvaIdWp90[ID][0],
+                    (prefix + "MvaIdWp90[numPho" + name + "]/F").c_str());
 
+    // gen branches
+    if (runMCInfo_) {
+      mytree_->Branch(("genPho" + name + "Pt").c_str(),
+		      &genPhotonSortedPt[ID][0],
+		      ("genPho" + name + "PhoPT[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "ET").c_str(),
+                      &genPhotonSortedET[ID][0],
+                      ("genPho" + name + "PhoET[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "Eta").c_str(),
+                      &genPhotonSortedEta[ID][0],
+                      ("genPho" + name + "PhoEta[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "Theta").c_str(),
+                      &genPhotonSortedTheta[ID][0],
+                      ("genPho" + name + "PhoTheta[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "Phi").c_str(),
+                      &genPhotonSortedPhi[ID][0],
+                      ("genPho" + name + "PhoPhi[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "Px").c_str(),
+                      &genPhotonSortedPx[ID][0],
+                      ("genPho" + name + "PhoPx[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "Py").c_str(),
+                      &genPhotonSortedPy[ID][0],
+                      ("genPho" + name + "PhoPy[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "Pz").c_str(),
+                      &genPhotonSortedPz[ID][0],
+                      ("genPho" + name + "PhoPz[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "Charge").c_str(),
+                      &genPhotonSortedCharge[ID][0],
+                      ("genPho" + name + "PhoCharge[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "PdgId").c_str(),
+                      &genPhotonSortedPdgId[ID][0],
+                      ("genPho" + name + "PhoPdgId[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "MotherId").c_str(),
+                      &genPhotonSortedMotherId[ID][0],
+                      ("genPho" + name + "PhoMotherId[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "IsPhoton").c_str(),
+                      &genPhotonSortedIsPhoton[ID][0],
+                      ("genPho" + name + "PhoIsPhoton[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "IsConvertedPhoton").c_str(),
+                      &genPhotonSortedIsConvertedPhoton[ID][0],
+                      ("genPho" + name + "PhoIsConvertedPhoton[numPho" + name + "]/F").c_str());
+      mytree_->Branch(("genPho" + name + "IsJet").c_str(),
+                      &genPhotonSortedIsJet[ID][0],
+                      ("genPho" + name + "PhoIsJet[numPho" + name + "]/F").c_str());
+    }
 }
 
 // book electron branches:
