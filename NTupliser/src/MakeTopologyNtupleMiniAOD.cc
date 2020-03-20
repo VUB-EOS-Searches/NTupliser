@@ -547,6 +547,22 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
       photon_mvaIdWp90[ID][numPho[ID] - 1] =
 	pho.photonID("mvaPhoID-RunIIFall17-v1-wp90");
     }
+    if (!pho.genParticleRef().isNull()) {
+      genPhotonPt[ID][numPho[ID] - 1] = pho.genPhoton()->pt();
+      genPhotonEt[ID][numPho[ID] - 1] = pho.genPhoton()->et();
+      genPhotonEta[ID][numPho[ID] - 1] = pho.genPhoton()->eta();
+      genPhotonTheta[ID][numPho[ID] - 1] = pho.genPhoton()->theta();
+      genPhotonPhi[ID][numPho[ID] - 1] = pho.genPhoton()->phi();
+      genPhotonPx[ID][numPho[ID] - 1] = pho.genPhoton()->px();
+      genPhotonPy[ID][numPho[ID] - 1] = pho.genPhoton()->py();
+      genPhotonPz[ID][numPho[ID] - 1] = pho.genPhoton()->pz();
+      genPhotonCharge[ID][numPho[ID] - 1] = pho.genPhoton()->charge();
+      genPhotonPdgId[ID][numPho[ID] - 1] = pho.genPhoton()->pdgId();
+      genPhotonMotherId[ID][numPho[ID] - 1] = pho.genPhoton()->mother()->pdgId();
+      genPhotonIsPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isPhoton();
+      genPhotonIsConvertedPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isConvertedPhoton();
+      genPhotonIsJet[ID][numPho[ID] - 1] = pho.genPhoton()->isJet();
+    }
   }  
 }
 
@@ -2263,6 +2279,21 @@ void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID)
     photon_CutIdTight[ID].clear();
     photon_mvaIdWp80[ID].clear();
     photon_mvaIdWp90[ID].clear();
+
+    genPhotonPt[ID].clear();
+    genPhotonEt[ID].clear();
+    genPhotonEta[ID].clear();
+    genPhotonTheta[ID].clear();
+    genPhotonPhi[ID].clear();
+    genPhotonPx[ID].clear();
+    genPhotonPy[ID].clear();
+    genPhotonCharge[ID].clear();
+    genPhotonPdgId[ID].clear();
+    genPhotonMotherId[ID].clear();
+    genPhotonIsPhoton[ID].clear();
+    genPhotonIsConvertedPhoton[ID].clear();
+    genPhotonIsJet[ID].clear();
+
 }
 void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID)
 {
@@ -3167,16 +3198,28 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
     photon_mvaIdWp80[ID] = tempVecI;;
     photon_mvaIdWp90[ID] = tempVecI;;
 
-    std::string prefix{"ele" + name};
+    genPhotonPt[ID] = tempVecF;
+    genPhotonEt[ID] = tempVecF;
+    genPhotonEta[ID] = tempVecF;
+    genPhotonTheta[ID] = tempVecF;
+    genPhotonPhi[ID] = tempVecF;
+    genPhotonPx[ID] = tempVecF;
+    genPhotonPy[ID] = tempVecF;
+    genPhotonPz[ID] = tempVecF;
+    genPhotonCharge[ID] = tempVecI;
+    genPhotonPdgId[ID] = tempVecI;
+    genPhotonMotherId[ID] = tempVecI;
+    genPhotonIsPhoton[ID] = tempVecI;
+    genPhotonIsConvertedPhoton[ID] = tempVecI;
+    genPhotonIsJet[ID] = tempVecI;
+
+    std::string prefix{"pho" + name};
     mytree_->Branch(("numPho" + name).c_str(),
-                    &numEle[ID],
-                    ("numEle" + name + "/I").c_str());
+                    &numPho[ID],
+                    ("numPho" + name + "/I").c_str());
 
     // Dynamic ID's
 
-    mytree_->Branch((prefix + "E").c_str(),
-                    &electronSortedE[ID][0],
-                    (prefix + "E[numEle" + name + "]/F").c_str());
 }
 
 // book electron branches:

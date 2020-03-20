@@ -526,6 +526,21 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> photon_mvaIdWp80;
     std::map<std::string, std::vector<int>> photon_mvaIdWp90;
 
+    std::map<std::string, std::vector<float>> genPhotonPt;
+    std::map<std::string, std::vector<float>> genPhotonEt;
+    std::map<std::string, std::vector<float>> genPhotonEta;
+    std::map<std::string, std::vector<float>> genPhotonTheta;
+    std::map<std::string, std::vector<float>> genPhotonPhi;
+    std::map<std::string, std::vector<float>> genPhotonPx;
+    std::map<std::string, std::vector<float>> genPhotonPy;
+    std::map<std::string, std::vector<float>> genPhotonPz;
+    std::map<std::string, std::vector<int>> genPhotonCharge;
+    std::map<std::string, std::vector<int>> genPhotonPdgId;
+    std::map<std::string, std::vector<int>> genPhotonMotherId;
+    std::map<std::string, std::vector<int>> genPhotonIsPhoton;
+    std::map<std::string, std::vector<int>> genPhotonIsConvertedPhoton;
+    std::map<std::string, std::vector<int>> genPhotonIsJet;
+
     // gen branches
 
 
