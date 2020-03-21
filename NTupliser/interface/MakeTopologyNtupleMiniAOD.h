@@ -492,6 +492,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> photonSortedET;
     std::map<std::string, std::vector<float>> photonSortedPhi;
     std::map<std::string, std::vector<float>> photonSortedEta;
+    std::map<std::string, std::vector<float>> photonSortedTheta;
     std::map<std::string, std::vector<float>> photonSortedPt;
     std::map<std::string, std::vector<float>> photonSortedPx;
     std::map<std::string, std::vector<float>> photonSortedPy;

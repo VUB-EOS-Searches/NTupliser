@@ -496,6 +496,7 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
     photonSortedET[ID][numPho[ID] - 1] = pho.et();
     photonSortedPhi[ID][numPho[ID] - 1] = pho.phi();
     photonSortedEta[ID][numPho[ID] - 1] = pho.eta();
+    photonSortedTheta[ID][numPho[ID] - 1] = pho.theta();
     photonSortedPt[ID][numPho[ID] - 1] = pho.pt();
     photonSortedPx[ID][numPho[ID] - 1] = pho.px();
     photonSortedPy[ID][numPho[ID] - 1] = pho.py();
@@ -2249,6 +2250,7 @@ void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID)
     photonSortedET[ID].clear();
     photonSortedPhi[ID].clear();
     photonSortedEta[ID].clear();
+    photonSortedTheta[ID].clear();
     photonSortedPt[ID].clear();
     photonSortedPx[ID].clear();
     photonSortedPy[ID].clear();
@@ -3171,6 +3173,7 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
     photonSortedET[ID] = tempVecF;
     photonSortedPhi[ID] = tempVecF;
     photonSortedEta[ID] = tempVecF;
+    photonSortedTheta[ID] = tempVecF;
     photonSortedPt[ID] = tempVecF;
     photonSortedPx[ID] = tempVecF;
     photonSortedPy[ID] = tempVecF;
@@ -3244,6 +3247,9 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
     mytree_->Branch((prefix + "Eta").c_str(),
                     &photonSortedEta[ID][0],
                     (prefix + "Eta[numPho" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Theta").c_str(),
+                    &photonSortedTheta[ID][0],
+                    (prefix + "Theta[numPho" + name + "]/F").c_str());
     mytree_->Branch((prefix + "Pt").c_str(),
                     &photonSortedPt[ID][0],
                     (prefix + "Pt[numPho" + name + "]/F").c_str());
@@ -3291,10 +3297,10 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
                     (prefix + "SCBrem[numPho" + name + "]/F").c_str());
     mytree_->Branch((prefix + "HasPixelSeed").c_str(),
                     &photonSortedHasPixelSeed[ID][0],
-                    (prefix + "HasPixelSeed[numPho" + name + "]/F").c_str());
+                    (prefix + "HasPixelSeed[numPho" + name + "]/I").c_str());
     mytree_->Branch((prefix + "EleVeto").c_str(),
                     &photonSortedEleVeto[ID][0],
-                    (prefix + "EleVeto[numPho" + name + "]/F").c_str());
+                    (prefix + "EleVeto[numPho" + name + "]/I").c_str());
     mytree_->Branch((prefix + "R9").c_str(),
                     &photonSortedR9[ID][0],
                     (prefix + "R9[numPho" + name + "]/F").c_str());
@@ -3339,19 +3345,19 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
                     (prefix + "MIPTotEnergy[numPho" + name + "]/F").c_str());
     mytree_->Branch((prefix + "CutIdLoose").c_str(),
                     &photonSortedCutIdLoose[ID][0],
-                    (prefix + "CutIdLoose[numPho" + name + "]/F").c_str());
+                    (prefix + "CutIdLoose[numPho" + name + "]/I").c_str());
     mytree_->Branch((prefix + "CutIdMedium").c_str(),
                     &photonSortedCutIdMedium[ID][0],
-                    (prefix + "CutIdMedium[numPho" + name + "]/F").c_str());
+                    (prefix + "CutIdMedium[numPho" + name + "]/I").c_str());
     mytree_->Branch((prefix + "CutIdTight").c_str(),
                     &photonSortedCutIdTight[ID][0],
-                    (prefix + "CutIdTight[numPho" + name + "]/F").c_str());
+                    (prefix + "CutIdTight[numPho" + name + "]/I").c_str());
     mytree_->Branch((prefix + "MvaIdWp80").c_str(),
                     &photonSortedMvaIdWp80[ID][0],
-                    (prefix + "MvaIdWp80[numPho" + name + "]/F").c_str());
+                    (prefix + "MvaIdWp80[numPho" + name + "]/I").c_str());
     mytree_->Branch((prefix + "MvaIdWp90").c_str(),
                     &photonSortedMvaIdWp90[ID][0],
-                    (prefix + "MvaIdWp90[numPho" + name + "]/F").c_str());
+                    (prefix + "MvaIdWp90[numPho" + name + "]/I").c_str());
 
     // gen branches
     if (runMCInfo_) {
@@ -3381,22 +3387,22 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
                       ("genPho" + name + "PhoPz[numPho" + name + "]/F").c_str());
       mytree_->Branch(("genPho" + name + "Charge").c_str(),
                       &genPhotonSortedCharge[ID][0],
-                      ("genPho" + name + "PhoCharge[numPho" + name + "]/F").c_str());
+                      ("genPho" + name + "PhoCharge[numPho" + name + "]/I").c_str());
       mytree_->Branch(("genPho" + name + "PdgId").c_str(),
                       &genPhotonSortedPdgId[ID][0],
-                      ("genPho" + name + "PhoPdgId[numPho" + name + "]/F").c_str());
+                      ("genPho" + name + "PhoPdgId[numPho" + name + "]/I").c_str());
       mytree_->Branch(("genPho" + name + "MotherId").c_str(),
                       &genPhotonSortedMotherId[ID][0],
-                      ("genPho" + name + "PhoMotherId[numPho" + name + "]/F").c_str());
+                      ("genPho" + name + "PhoMotherId[numPho" + name + "]/I").c_str());
       mytree_->Branch(("genPho" + name + "IsPhoton").c_str(),
                       &genPhotonSortedIsPhoton[ID][0],
-                      ("genPho" + name + "PhoIsPhoton[numPho" + name + "]/F").c_str());
+                      ("genPho" + name + "PhoIsPhoton[numPho" + name + "]/I").c_str());
       mytree_->Branch(("genPho" + name + "IsConvertedPhoton").c_str(),
                       &genPhotonSortedIsConvertedPhoton[ID][0],
-                      ("genPho" + name + "PhoIsConvertedPhoton[numPho" + name + "]/F").c_str());
+                      ("genPho" + name + "PhoIsConvertedPhoton[numPho" + name + "]/I").c_str());
       mytree_->Branch(("genPho" + name + "IsJet").c_str(),
                       &genPhotonSortedIsJet[ID][0],
-                      ("genPho" + name + "PhoIsJet[numPho" + name + "]/F").c_str());
+                      ("genPho" + name + "PhoIsJet[numPho" + name + "]/I").c_str());
     }
 }
 
