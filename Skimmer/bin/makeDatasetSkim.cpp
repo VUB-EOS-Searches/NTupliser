@@ -83,8 +83,11 @@ int main(int argc, char* argv[])
 
             const std::string numName{std::to_string(fileNum)};
             const std::string numNamePlus{std::to_string(fileNum + 2)};
-            const std::string dataDir{"/vols/cms/adm10/"};
-            const std::string outFilePath{dataDir + "skimFile" + numName
+//            const std::string dataDir{"/vols/cms/adm10/"};
+//            const std::string outFilePath{dataDir + "skimFile" + numName
+//                                          + ".root"};
+
+            const std::string outFilePath{datasetName + "/skimFile" + numName
                                           + ".root"};
 
             if (fs::is_regular_file(outFilePath))
@@ -156,7 +159,7 @@ int main(int argc, char* argv[])
                 constexpr double MIN_MUON_PATPT{9};
                 constexpr double MAX_MUON_ETA{2.8};
                 constexpr double MAX_MUON_RELISO{0.5};
-                constexpr int MIN_LEPTONS{2};
+                constexpr int MIN_LEPTONS{0};
 
                 for (int j{0}; j < event.numElePF2PAT; j++)
                 {
