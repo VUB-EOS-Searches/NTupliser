@@ -25,8 +25,8 @@ process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-intEvts  =  cms.untracked.int32(1000)
-uintEvts = cms.untracked.uint32(1000)
+intEvts  =  cms.untracked.int32(10000)
+uintEvts = cms.untracked.uint32(10000)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
@@ -41,7 +41,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/GenProduction/python/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV.py nevts:1000'),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/NLO_HToSSTodddd_MH125_MS40_ctauS10_13TeV.py nevts:1000'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -84,9 +84,9 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
             'pythia8PowhegEmissionVetoSettings', 
             'processParameters'),
         processParameters = cms.vstring('POWHEG:nFinal = 1', 
-#            '9000006:all = sk   skbar    0        0          0       Mass  decay width  1.0  75.0 lifetime',
+#            <particle id="..." name, antiName, spinType=, chargeType, colType, m0, mWidth, mMin, mMax, tau0> ##tau0 = nominal proper lifetime (mm/c) 
 #            '9000006:all = sk   skbar    0        0          0       2.0  0.0197327e-11/tau0  1.0  75.0 tau0', 
-            '9000006:all = sk   skbar    0        0          0       55.0  1.9732e-14  1.0  75.0 10',
+            '9000006:all = sk   skbar    0        0          0       40.0  1.9732e-14  1.0  75.0 10',
             '9000006:oneChannel = 1  1.0 101  1 -1', 
             '9000006:mayDecay = on', 
             '9000006:isResonance = on', 
