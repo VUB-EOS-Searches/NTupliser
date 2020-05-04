@@ -36,7 +36,7 @@ process.maxEvents = cms.untracked.PSet(
 process.source = cms.Source("LHESource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
     fileNames = cms.untracked.vstring(
-    'file:/vols/cms/adm10/MC/LHE/Powheg/examples/gg_H_quark-mass-effects_NNPDF30_13TeV',
+    'file:/vols/cms/adm10/MC/LHE/Powheg/examples/gg_H_quark-mass-effects_NNPDF30_13TeV/cmsgrid_final.lhe',
     ),
     inputCommands = cms.untracked.vstring('keep *', 
         'drop LHEXMLStringProduct_*_*_*')
