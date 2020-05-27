@@ -1161,62 +1161,63 @@ class AnalysisEvent
     TBranch* b_tauPF2PATPt; //!
     TBranch* b_tauPF2PATPhi; //!
     TBranch* b_tauPF2PATEta; //!
-    TBranch* phoPF2PATE; //!
-    TBranch* phoPF2PATSigmaE; //!
-    TBranch* phoPF2PATET; //!
-    TBranch* phoPF2PATPhi; //!
-    TBranch* phoPF2PATEta; //!
-    TBranch* phoPF2PATTheta; //!
-    TBranch* phoPF2PATPt; //!
-    TBranch* phoPF2PATPx; //!
-    TBranch* phoPF2PATPy; //!
-    TBranch* phoPF2PATPz; //!
-    TBranch* phoPF2PATCalibE; //!
-    TBranch* phoPF2PATCalibEt; //!
-    TBranch* phoPF2PATSCE; //!
-    TBranch* phoPF2PATSCRawE; //!
-    TBranch* phoPF2PATESEnP1; //!
-    TBranch* phoPF2PATESEnP2; //!
-    TBranch* phoPF2PATSCEta; //!
-    TBranch* phoPF2PATSCEtaWidth; //!
-    TBranch* phoPF2PATSCPhi; //!
-    TBranch* phoPF2PATSCPhiWidth; //!
-    TBranch* phoPF2PATSCBrem; //!
-    TBranch* phoPF2PATHasPixelSeed; //!
-    TBranch* phoPF2PATEleVeto; //!
-    TBranch* phoPF2PATR9; //!
-    TBranch* phoPF2PATHoverE; //!
-    TBranch* phoPF2PATESEffSigmaRR; //!
-    TBranch* phoPF2PATSigmaIEtaIEtaFull5x5; //!
-    TBranch* phoPF2PATSigmaIEtaIPhiFull5x5; //!
-    TBranch* phoPF2PATSigmaIPhiIPhiFull5x5; //!
-    TBranch* phoPF2PATE2x2Full5x5; //!
-    TBranch* phoPF2PATE5x5Full5x5; //!
-    TBranch* phoPF2PATR9Full5x5; //!
-    TBranch* phoPF2PATPFChIso; //!
-    TBranch* phoPF2PATPFPhoIso ; //!
-    TBranch* phoPF2PATPFNeuIso; //!
-    TBranch* phoPF2PATPFChWorstIso; //!
-    TBranch* phoPF2PATMIPTotEnergy; //!
-    TBranch* phoPF2PATCutIdLoose; //!
-    TBranch* phoPF2PATCutIdMedium; //!
-    TBranch* phoPF2PATCutIdTight; //!
-    TBranch* phoPF2PATMvaIdWp80; //!
-    TBranch* phoPF2PATMvaIdWp90; //!
-    TBranch* genPhoPF2PATPt; //!
-    TBranch* genPhoPF2PATET; //!
-    TBranch* genPhoPF2PATEta; //!
-    TBranch* genPhoPF2PATTheta; //!
-    TBranch* genPhoPF2PATPhi; //!
-    TBranch* genPhoPF2PATPx; //!
-    TBranch* genPhoPF2PATPy; //!
-    TBranch* genPhoPF2PATPz; //!
-    TBranch* genPhoPF2PATCharge; //!
-    TBranch* genPhoPF2PATPdgId; //!
-    TBranch* genPhoPF2PATMotherId; //!
-    TBranch* genPhoPF2PATIsPhoton; //!
-    TBranch* genPhoPF2PATIsConvertedPhoton; //!
-    TBranch* genPhoPF2PATIsJet; //!
+    TBranch* b_numPhotonPF2PAT; //!
+    TBranch* b_phoPF2PATE; //!
+    TBranch* b_phoPF2PATSigmaE; //!
+    TBranch* b_phoPF2PATET; //!
+    TBranch* b_phoPF2PATPhi; //!
+    TBranch* b_phoPF2PATEta; //!
+    TBranch* b_phoPF2PATTheta; //!
+    TBranch* b_phoPF2PATPt; //!
+    TBranch* b_phoPF2PATPx; //!
+    TBranch* b_phoPF2PATPy; //!
+    TBranch* b_phoPF2PATPz; //!
+    TBranch* b_phoPF2PATCalibE; //!
+    TBranch* b_phoPF2PATCalibEt; //!
+    TBranch* b_phoPF2PATSCE; //!
+    TBranch* b_phoPF2PATSCRawE; //!
+    TBranch* b_phoPF2PATESEnP1; //!
+    TBranch* b_phoPF2PATESEnP2; //!
+    TBranch* b_phoPF2PATSCEta; //!
+    TBranch* b_phoPF2PATSCEtaWidth; //!
+    TBranch* b_phoPF2PATSCPhi; //!
+    TBranch* b_phoPF2PATSCPhiWidth; //!
+    TBranch* b_phoPF2PATSCBrem; //!
+    TBranch* b_phoPF2PATHasPixelSeed; //!
+    TBranch* b_phoPF2PATEleVeto; //!
+    TBranch* b_phoPF2PATR9; //!
+    TBranch* b_phoPF2PATHoverE; //!
+    TBranch* b_phoPF2PATESEffSigmaRR; //!
+    TBranch* b_phoPF2PATSigmaIEtaIEtaFull5x5; //!
+    TBranch* b_phoPF2PATSigmaIEtaIPhiFull5x5; //!
+    TBranch* b_phoPF2PATSigmaIPhiIPhiFull5x5; //!
+    TBranch* b_phoPF2PATE2x2Full5x5; //!
+    TBranch* b_phoPF2PATE5x5Full5x5; //!
+    TBranch* b_phoPF2PATR9Full5x5; //!
+    TBranch* b_phoPF2PATPFChIso; //!
+    TBranch* b_phoPF2PATPFPhoIso ; //!
+    TBranch* b_phoPF2PATPFNeuIso; //!
+    TBranch* b_phoPF2PATPFChWorstIso; //!
+    TBranch* b_phoPF2PATMIPTotEnergy; //!
+    TBranch* b_phoPF2PATCutIdLoose; //!
+    TBranch* b_phoPF2PATCutIdMedium; //!
+    TBranch* b_phoPF2PATCutIdTight; //!
+    TBranch* b_phoPF2PATMvaIdWp80; //!
+    TBranch* b_phoPF2PATMvaIdWp90; //!
+    TBranch* b_genPhoPF2PATPt; //!
+    TBranch* b_genPhoPF2PATET; //!
+    TBranch* b_genPhoPF2PATEta; //!
+    TBranch* b_genPhoPF2PATTheta; //!
+    TBranch* b_genPhoPF2PATPhi; //!
+    TBranch* b_genPhoPF2PATPx; //!
+    TBranch* b_genPhoPF2PATPy; //!
+    TBranch* b_genPhoPF2PATPz; //!
+    TBranch* b_genPhoPF2PATCharge; //!
+    TBranch* b_genPhoPF2PATPdgId; //!
+    TBranch* b_genPhoPF2PATMotherId; //!
+    TBranch* b_genPhoPF2PATIsPhoton; //!
+    TBranch* b_genPhoPF2PATIsConvertedPhoton; //!
+    TBranch* b_genPhoPF2PATIsJet; //!
     TBranch* b_numGeneralTracks; //!
     TBranch* b_generalTracksPt; //!
     TBranch* b_generalTracksEta; //!
@@ -2093,7 +2094,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
 
    fChain->SetBranchAddress("numPhotonPF2PAT", &numPhotonPF2PAT, &b_numPhotonPF2PAT);
    fChain->SetBranchAddress("phoPF2PATE", &phoPF2PATE, &b_phoPF2PATE);
-   fChain->SetBranchAddress("phoPF2PATSigma", &phoPF2PATSigma, &b_phoPF2PATSigma);
+   fChain->SetBranchAddress("phoPF2PATSigmaE", &phoPF2PATSigmaE, &b_phoPF2PATSigmaE);
    fChain->SetBranchAddress("phoPF2PATET", &phoPF2PATET, &b_phoPF2PATET);
    fChain->SetBranchAddress("phoPF2PATPhi", &phoPF2PATPhi, &b_phoPF2PATPhi);
    fChain->SetBranchAddress("phoPF2PATEta", &phoPF2PATEta, &b_phoPF2PATEta);
@@ -2131,7 +2132,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("phoPF2PATMIPTotEnergy", &phoPF2PATMIPTotEnergy, &b_phoPF2PATMIPTotEnergy);
    fChain->SetBranchAddress("phoPF2PATCutIdLoose", &phoPF2PATCutIdLoose, &b_phoPF2PATCutIdLoose);
    fChain->SetBranchAddress("phoPF2PATCutIdMedium", &phoPF2PATCutIdMedium, &b_phoPF2PATCutIdMedium);
-   fChain->SetBranchAddress("phoPF2PATCutIdTight", &"phoPF2PATCutIdTight, &b_phoPF2PATCutIdTight);
+   fChain->SetBranchAddress("phoPF2PATCutIdTight", &phoPF2PATCutIdTight, &b_phoPF2PATCutIdTight);
    fChain->SetBranchAddress("phoPF2PATMvaIdWp80", &phoPF2PATMvaIdWp80, &b_phoPF2PATMvaIdWp80);
    fChain->SetBranchAddress("phoPF2PATMvaIdWp90", &phoPF2PATMvaIdWp90, &b_phoPF2PATMvaIdWp90);
    if (isMC) {
