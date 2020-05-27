@@ -581,6 +581,58 @@ class AnalysisEvent
     Int_t HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v4;
     Int_t HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v5;
 
+    // 2017 Displaced Jet Triggers
+//    Int_t HLT_HT430_DisplacedDijet40_DisplacedTrack_v10; // Already in MET trigger list
+//    Int_t HLT_HT430_DisplacedDijet60_DisplacedTrack_v10; // Already in MET trigger list
+//    Int_t HLT_HT430_DisplacedDijet80_DisplacedTrack_v10; // Already in MET trigger list
+    Int_t HLT_HT400_DisplacedDijet40_DisplacedTrack_v10;
+
+//    Int_t HLT_HT650_DisplacedDijet60_Inclusive_v10; // Already in MET trigger list
+    Int_t HLT_HT550_DisplacedDijet80_Inclusive_v8;
+    Int_t HLT_HT550_DisplacedDijet60_Inclusive_v10;
+//    Int_t HLT_HT650_DisplacedDijet80_Inclusive_v11; // Already in MET trigger list
+//    Int_t HLT_HT750_DisplacedDijet80_Inclusive_v11; // Already in MET trigger list
+
+    // 2017 Photon Triggers
+    Int_t HLT_DoublePhoton33_CaloIdL_v5;
+    Int_t HLT_DoublePhoton70_v5;
+    Int_t HLT_DoublePhoton85_v13;
+    Int_t HLT_TriplePhoton_20_20_20_CaloIdLV2_v2;
+    Int_t HLT_TriplePhoton_20_20_20_CaloIdLV2_R9IdVL_v2;
+    Int_t HLT_TriplePhoton_30_30_10_CaloIdLV2_v3;
+    Int_t HLT_TriplePhoton_30_30_10_CaloIdLV2_R9IdVL_v3;
+    Int_t HLT_TriplePhoton_35_35_5_CaloIdLV2_R9IdVL_v3;
+    Int_t HLT_Photon25_v2;
+    Int_t HLT_Photon33_v4;
+    Int_t HLT_Photon50_v12;
+    Int_t HLT_Photon75_v12;
+    Int_t HLT_Photon90_v12;
+    Int_t HLT_Photon120_v12;
+    Int_t HLT_Photon150_v5;
+    Int_t HLT_Photon175_v13;
+    Int_t HLT_Photon200_v12;
+    Int_t HLT_Photon50_R9Id90_HE10_IsoM_v13;
+    Int_t HLT_Photon75_R9Id90_HE10_IsoM_v13;
+    Int_t HLT_Photon90_R9Id90_HE10_IsoM_v13;
+    Int_t HLT_Photon120_R9Id90_HE10_IsoM_v13;
+    Int_t HLT_Photon165_R9Id90_HE10_IsoM_v14;
+    Int_t HLT_Photon90_CaloIdL_PFHT700_v12;
+
+    Int_t HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v12;
+    Int_t HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass95_v12;
+    Int_t HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13;
+    Int_t HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12;
+    Int_t HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12;
+    Int_t HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13;
+
+    Int_t HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_v4;
+    Int_t HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15_v7;
+    Int_t HLT_Photon20_HoverELoose_v9;
+    Int_t HLT_Photon30_HoverELoose_v9;
+    Int_t HLT_Photon40_HoverELoose_v9;
+    Int_t HLT_Photon50_HoverELoose_v9;
+    Int_t HLT_Photon60_HoverELoose_v9;
+
     // 2016 MET Triggers
     Int_t HLT_MET200_v1;
     Int_t HLT_MET200_v2;
@@ -1109,6 +1161,62 @@ class AnalysisEvent
     TBranch* b_tauPF2PATPt; //!
     TBranch* b_tauPF2PATPhi; //!
     TBranch* b_tauPF2PATEta; //!
+    TBranch* phoPF2PATE; //!
+    TBranch* phoPF2PATSigmaE; //!
+    TBranch* phoPF2PATET; //!
+    TBranch* phoPF2PATPhi; //!
+    TBranch* phoPF2PATEta; //!
+    TBranch* phoPF2PATTheta; //!
+    TBranch* phoPF2PATPt; //!
+    TBranch* phoPF2PATPx; //!
+    TBranch* phoPF2PATPy; //!
+    TBranch* phoPF2PATPz; //!
+    TBranch* phoPF2PATCalibE; //!
+    TBranch* phoPF2PATCalibEt; //!
+    TBranch* phoPF2PATSCE; //!
+    TBranch* phoPF2PATSCRawE; //!
+    TBranch* phoPF2PATESEnP1; //!
+    TBranch* phoPF2PATESEnP2; //!
+    TBranch* phoPF2PATSCEta; //!
+    TBranch* phoPF2PATSCEtaWidth; //!
+    TBranch* phoPF2PATSCPhi; //!
+    TBranch* phoPF2PATSCPhiWidth; //!
+    TBranch* phoPF2PATSCBrem; //!
+    TBranch* phoPF2PATHasPixelSeed; //!
+    TBranch* phoPF2PATEleVeto; //!
+    TBranch* phoPF2PATR9; //!
+    TBranch* phoPF2PATHoverE; //!
+    TBranch* phoPF2PATESEffSigmaRR; //!
+    TBranch* phoPF2PATSigmaIEtaIEtaFull5x5; //!
+    TBranch* phoPF2PATSigmaIEtaIPhiFull5x5; //!
+    TBranch* phoPF2PATSigmaIPhiIPhiFull5x5; //!
+    TBranch* phoPF2PATE2x2Full5x5; //!
+    TBranch* phoPF2PATE5x5Full5x5; //!
+    TBranch* phoPF2PATR9Full5x5; //!
+    TBranch* phoPF2PATPFChIso; //!
+    TBranch* phoPF2PATPFPhoIso ; //!
+    TBranch* phoPF2PATPFNeuIso; //!
+    TBranch* phoPF2PATPFChWorstIso; //!
+    TBranch* phoPF2PATMIPTotEnergy; //!
+    TBranch* phoPF2PATCutIdLoose; //!
+    TBranch* phoPF2PATCutIdMedium; //!
+    TBranch* phoPF2PATCutIdTight; //!
+    TBranch* phoPF2PATMvaIdWp80; //!
+    TBranch* phoPF2PATMvaIdWp90; //!
+    TBranch* genPhoPF2PATPt; //!
+    TBranch* genPhoPF2PATET; //!
+    TBranch* genPhoPF2PATEta; //!
+    TBranch* genPhoPF2PATTheta; //!
+    TBranch* genPhoPF2PATPhi; //!
+    TBranch* genPhoPF2PATPx; //!
+    TBranch* genPhoPF2PATPy; //!
+    TBranch* genPhoPF2PATPz; //!
+    TBranch* genPhoPF2PATCharge; //!
+    TBranch* genPhoPF2PATPdgId; //!
+    TBranch* genPhoPF2PATMotherId; //!
+    TBranch* genPhoPF2PATIsPhoton; //!
+    TBranch* genPhoPF2PATIsConvertedPhoton; //!
+    TBranch* genPhoPF2PATIsJet; //!
     TBranch* b_numGeneralTracks; //!
     TBranch* b_generalTracksPt; //!
     TBranch* b_generalTracksEta; //!
@@ -1320,6 +1428,55 @@ class AnalysisEvent
     TBranch* b_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v9;
     TBranch* b_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v10;
     TBranch* b_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v11;
+
+//    TBranch* b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v10; // Already in MET trigger list
+//    TBranch* b_HLT_HT430_DisplacedDijet60_DisplacedTrack_v10; // Already in MET trigger list
+//    TBranch* b_HLT_HT430_DisplacedDijet80_DisplacedTrack_v10; // Already in MET trigger list
+    TBranch* b_HLT_HT400_DisplacedDijet40_DisplacedTrack_v10;
+//    TBranch* b_HLT_HT650_DisplacedDijet60_Inclusive_v10; // Already in MET trigger list
+    TBranch* b_HLT_HT550_DisplacedDijet80_Inclusive_v8;
+    TBranch* b_HLT_HT550_DisplacedDijet60_Inclusive_v10;
+//    TBranch* b_HLT_HT650_DisplacedDijet80_Inclusive_v11; // Already in MET trigger list
+//    TBranch* b_HLT_HT750_DisplacedDijet80_Inclusive_v11; // Already in MET trigger list
+
+    TBranch* b_HLT_DoublePhoton33_CaloIdL_v5;
+    TBranch* b_HLT_DoublePhoton70_v5;
+    TBranch* b_HLT_DoublePhoton85_v13;
+    TBranch* b_HLT_TriplePhoton_20_20_20_CaloIdLV2_v2;
+    TBranch* b_HLT_TriplePhoton_20_20_20_CaloIdLV2_R9IdVL_v2;
+    TBranch* b_HLT_TriplePhoton_30_30_10_CaloIdLV2_v3;
+    TBranch* b_HLT_TriplePhoton_30_30_10_CaloIdLV2_R9IdVL_v3;
+    TBranch* b_HLT_TriplePhoton_35_35_5_CaloIdLV2_R9IdVL_v3;
+    TBranch* b_HLT_Photon25_v2;
+    TBranch* b_HLT_Photon33_v4;
+    TBranch* b_HLT_Photon50_v12;
+    TBranch* b_HLT_Photon75_v12;
+    TBranch* b_HLT_Photon90_v12;
+    TBranch* b_HLT_Photon120_v12;
+    TBranch* b_HLT_Photon150_v5;
+    TBranch* b_HLT_Photon175_v13;
+    TBranch* b_HLT_Photon200_v12;
+    TBranch* b_HLT_Photon50_R9Id90_HE10_IsoM_v13;
+    TBranch* b_HLT_Photon75_R9Id90_HE10_IsoM_v13;
+    TBranch* b_HLT_Photon90_R9Id90_HE10_IsoM_v13;
+    TBranch* b_HLT_Photon120_R9Id90_HE10_IsoM_v13;
+    TBranch* b_HLT_Photon165_R9Id90_HE10_IsoM_v14;
+    TBranch* b_HLT_Photon90_CaloIdL_PFHT700_v12;
+
+    TBranch* b_HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v12;
+    TBranch* b_HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass95_v12;
+    TBranch* b_HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13;
+    TBranch* b_HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12;
+    TBranch* b_HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12;
+    TBranch* b_HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13;
+
+    TBranch* b_HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_v4;
+    TBranch* b_HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15_v7;
+    TBranch* b_HLT_Photon20_HoverELoose_v9;
+    TBranch* b_HLT_Photon30_HoverELoose_v9;
+    TBranch* b_HLT_Photon40_HoverELoose_v9;
+    TBranch* b_HLT_Photon50_HoverELoose_v9;
+    TBranch* b_HLT_Photon60_HoverELoose_v9;
 
     TBranch* b_HLT_MET200_v1;
     TBranch* b_HLT_MET200_v2;
@@ -1933,6 +2090,67 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("tauPF2PATPt", &tauPF2PATPt, &b_tauPF2PATPt);
    fChain->SetBranchAddress("tauPF2PATPhi", &tauPF2PATPhi, &b_tauPF2PATPhi);
    fChain->SetBranchAddress("tauPF2PATEta", &tauPF2PATEta, &b_tauPF2PATEta);
+
+   fChain->SetBranchAddress("numPhotonPF2PAT", &numPhotonPF2PAT, &b_numPhotonPF2PAT);
+   fChain->SetBranchAddress("phoPF2PATE", &phoPF2PATE, &b_phoPF2PATE);
+   fChain->SetBranchAddress("phoPF2PATSigma", &phoPF2PATSigma, &b_phoPF2PATSigma);
+   fChain->SetBranchAddress("phoPF2PATET", &phoPF2PATET, &b_phoPF2PATET);
+   fChain->SetBranchAddress("phoPF2PATPhi", &phoPF2PATPhi, &b_phoPF2PATPhi);
+   fChain->SetBranchAddress("phoPF2PATEta", &phoPF2PATEta, &b_phoPF2PATEta);
+   fChain->SetBranchAddress("phoPF2PATTheta", &phoPF2PATTheta, &b_phoPF2PATTheta);
+   fChain->SetBranchAddress("phoPF2PATPt", &phoPF2PATPt, &b_phoPF2PATPt);
+   fChain->SetBranchAddress("phoPF2PATPx", &phoPF2PATPx, &b_phoPF2PATPx);
+   fChain->SetBranchAddress("phoPF2PATPy", &phoPF2PATPy, &b_phoPF2PATPy);
+   fChain->SetBranchAddress("phoPF2PATPz", &phoPF2PATPz, &b_phoPF2PATPz);
+   fChain->SetBranchAddress("phoPF2PATCalibE", &phoPF2PATCalibE, &b_phoPF2PATCalibE);
+   fChain->SetBranchAddress("phoPF2PATCalibEt", &phoPF2PATCalibEt, &b_phoPF2PATCalibEt);
+   fChain->SetBranchAddress("phoPF2PATSCE", &phoPF2PATSCE, &b_phoPF2PATSCE);
+   fChain->SetBranchAddress("phoPF2PATSCRawE", &phoPF2PATSCRawE, &b_phoPF2PATSCRawE);
+   fChain->SetBranchAddress("phoPF2PATESEnP1", &phoPF2PATESEnP1, &b_phoPF2PATESEnP1);
+   fChain->SetBranchAddress("phoPF2PATESEnP2", &phoPF2PATESEnP2, &b_phoPF2PATESEnP1);
+   fChain->SetBranchAddress("phoPF2PATSCEta", &phoPF2PATSCEta, &b_phoPF2PATSCEta);
+   fChain->SetBranchAddress("phoPF2PATSCEtaWidth", &phoPF2PATSCEtaWidth, &b_phoPF2PATSCEtaWidth);
+   fChain->SetBranchAddress("phoPF2PATSCPhi", &phoPF2PATSCPhi, &b_phoPF2PATSCPhi);
+   fChain->SetBranchAddress("phoPF2PATSCPhiWidth", &phoPF2PATSCPhiWidth, &b_phoPF2PATSCPhiWidth);
+   fChain->SetBranchAddress("phoPF2PATSCBrem", &phoPF2PATSCBrem, &b_phoPF2PATSCBrem);
+   fChain->SetBranchAddress("phoPF2PATHasPixelSeed", &phoPF2PATHasPixelSeed, &b_phoPF2PATHasPixelSeed);
+   fChain->SetBranchAddress("phoPF2PATEleVeto", &phoPF2PATEleVeto, &b_phoPF2PATEleVeto);
+   fChain->SetBranchAddress("phoPF2PATR9", &phoPF2PATR9, &b_phoPF2PATR9);
+   fChain->SetBranchAddress("phoPF2PATHoverE", &phoPF2PATHoverE, &b_phoPF2PATHoverE);
+   fChain->SetBranchAddress("phoPF2PATESEffSigmaRR", &phoPF2PATESEffSigmaRR, &b_phoPF2PATESEffSigmaRR);
+   fChain->SetBranchAddress("phoPF2PATSigmaIEtaIEtaFull5x5", &phoPF2PATSigmaIEtaIEtaFull5x5, &b_phoPF2PATSigmaIEtaIEtaFull5x5);
+   fChain->SetBranchAddress("phoPF2PATSigmaIEtaIPhiFull5x5", &phoPF2PATSigmaIEtaIPhiFull5x5, &b_phoPF2PATSigmaIEtaIPhiFull5x5);
+   fChain->SetBranchAddress("phoPF2PATSigmaIPhiIPhiFull5x5", &phoPF2PATSigmaIPhiIPhiFull5x5, &b_phoPF2PATSigmaIPhiIPhiFull5x5);
+   fChain->SetBranchAddress("phoPF2PATE2x2Full5x5", &phoPF2PATE2x2Full5x5, &b_phoPF2PATE2x2Full5x5);
+   fChain->SetBranchAddress("phoPF2PATE5x5Full5x5", &phoPF2PATE5x5Full5x5, &b_phoPF2PATE5x5Full5x5);
+   fChain->SetBranchAddress("phoPF2PATR9Full5x5", &phoPF2PATR9Full5x5, &b_phoPF2PATR9Full5x5);
+   fChain->SetBranchAddress("phoPF2PATPFChIso", &phoPF2PATPFChIso, &b_phoPF2PATPFChIso);
+   fChain->SetBranchAddress("phoPF2PATPFPhoIso", &phoPF2PATPFPhoIso, &b_phoPF2PATPFPhoIso);
+   fChain->SetBranchAddress("phoPF2PATPFNeuIso", &phoPF2PATPFNeuIso, &b_phoPF2PATPFNeuIso);
+   fChain->SetBranchAddress("phoPF2PATPFChWorstIso", &phoPF2PATPFChWorstIso, &b_phoPF2PATPFChWorstIso);
+   fChain->SetBranchAddress("phoPF2PATMIPTotEnergy", &phoPF2PATMIPTotEnergy, &b_phoPF2PATMIPTotEnergy);
+   fChain->SetBranchAddress("phoPF2PATCutIdLoose", &phoPF2PATCutIdLoose, &b_phoPF2PATCutIdLoose);
+   fChain->SetBranchAddress("phoPF2PATCutIdMedium", &phoPF2PATCutIdMedium, &b_phoPF2PATCutIdMedium);
+   fChain->SetBranchAddress("phoPF2PATCutIdTight", &"phoPF2PATCutIdTight, &b_phoPF2PATCutIdTight);
+   fChain->SetBranchAddress("phoPF2PATMvaIdWp80", &phoPF2PATMvaIdWp80, &b_phoPF2PATMvaIdWp80);
+   fChain->SetBranchAddress("phoPF2PATMvaIdWp90", &phoPF2PATMvaIdWp90, &b_phoPF2PATMvaIdWp90);
+   if (isMC) {
+      fChain->SetBranchAddress("genPhoPF2PATPt", &genPhoPF2PATPt, &b_genPhoPF2PATPt);
+      fChain->SetBranchAddress("genPhoPF2PATET", &genPhoPF2PATET, &b_genPhoPF2PATET);
+      fChain->SetBranchAddress("genPhoPF2PATEta", &genPhoPF2PATEta, &b_genPhoPF2PATEta);
+      fChain->SetBranchAddress("genPhoPF2PATTheta", &genPhoPF2PATTheta, &b_genPhoPF2PATTheta);
+      fChain->SetBranchAddress("genPhoPF2PATPhi", &genPhoPF2PATPhi, &b_genPhoPF2PATPhi);
+      fChain->SetBranchAddress("genPhoPF2PATPx", &genPhoPF2PATPx, &b_genPhoPF2PATPx);
+      fChain->SetBranchAddress("genPhoPF2PATPy", &genPhoPF2PATPy, &b_genPhoPF2PATPy);
+      fChain->SetBranchAddress("genPhoPF2PATPz", &genPhoPF2PATPz, &b_genPhoPF2PATPz);
+      fChain->SetBranchAddress("genPhoPF2PATCharge", &genPhoPF2PATCharge, &b_genPhoPF2PATCharge);
+      fChain->SetBranchAddress("genPhoPF2PATPdgId", &genPhoPF2PATPdgId, &b_genPhoPF2PATPdgId);
+      fChain->SetBranchAddress("genPhoPF2PATMotherId", &genPhoPF2PATMotherId, &b_genPhoPF2PATMotherId);
+      fChain->SetBranchAddress("genPhoPF2PATIsPhoton", &genPhoPF2PATIsPhoton, &b_genPhoPF2PATIsPhoton);
+      fChain->SetBranchAddress("genPhoPF2PATIsConvertedPhoton", &genPhoPF2PATIsConvertedPhoton, &b_genPhoPF2PATIsConvertedPhoton);
+      fChain->SetBranchAddress("genPhoPF2PATIsJet", &genPhoPF2PATIsJet, &b_genPhoPF2PATIsJet);
+   }
+
    fChain->SetBranchAddress("numGeneralTracks", &numGeneralTracks, &b_numGeneralTracks);
    fChain->SetBranchAddress("generalTracksPt", generalTracksPt, &b_generalTracksPt);
    fChain->SetBranchAddress("generalTracksEta", generalTracksEta, &b_generalTracksEta);
@@ -2158,6 +2376,63 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v3", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v3, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v3);
    fChain->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v4", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v4, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v4);
    fChain->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v5", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v5, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v5);
+
+   // Displacced jets trigger branches 2017
+   if ( !is2016 ) {
+//       fChain->SetBranchAddress("HLT_HT430_DisplacedDijet40_DisplacedTrack_v10", &HLT_HT430_DisplacedDijet40_DisplacedTrack_v10, &b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v10); // Already in MET trigger list
+//       fChain->SetBranchAddress("HLT_HT430_DisplacedDijet60_DisplacedTrack_v10", &HLT_HT430_DisplacedDijet60_DisplacedTrack_v10, &b_HLT_HT430_DisplacedDijet60_DisplacedTrack_v10); // Already in MET trigger list
+//       fChain->SetBranchAddress("HLT_HT430_DisplacedDijet80_DisplacedTrack_v10", &HLT_HT430_DisplacedDijet80_DisplacedTrack_v10, &b_HLT_HT430_DisplacedDijet80_DisplacedTrack_v10); // Already in MET trigger list
+       fChain->SetBranchAddress("HLT_HT400_DisplacedDijet40_DisplacedTrack_v10", &HLT_HT400_DisplacedDijet40_DisplacedTrack_v10, &b_HLT_HT400_DisplacedDijet40_DisplacedTrack_v10);
+//       fChain->SetBranchAddress("HLT_HT650_DisplacedDijet60_Inclusive_v10", &HLT_HT650_DisplacedDijet60_Inclusive_v10, &b_HLT_HT650_DisplacedDijet60_Inclusive_v10); // Already in MET trigger list
+       fChain->SetBranchAddress("HLT_HT550_DisplacedDijet80_Inclusive_v8", &HLT_HT550_DisplacedDijet80_Inclusive_v8, &b_HLT_HT550_DisplacedDijet80_Inclusive_v8);
+       fChain->SetBranchAddress("HLT_HT550_DisplacedDijet60_Inclusive_v10", &HLT_HT550_DisplacedDijet60_Inclusive_v10, &b_HLT_HT550_DisplacedDijet60_Inclusive_v10);
+//       fChain->SetBranchAddress("HLT_HT650_DisplacedDijet80_Inclusive_v11", &HLT_HT650_DisplacedDijet80_Inclusive_v11, &b_HLT_HT650_DisplacedDijet80_Inclusive_v11); // Already in MET trigger list
+//       fChain->SetBranchAddress("HLT_HT750_DisplacedDijet80_Inclusive_v11", &HLT_HT750_DisplacedDijet80_Inclusive_v11, &b_HLT_HT750_DisplacedDijet80_Inclusive_v11); // Already in MET trigger list
+   }
+
+   // Photon trigger branches 2017
+   if ( !is2016 ) {
+       fChain->SetBranchAddress("HLT_DoublePhoton33_CaloIdL_v5", &HLT_DoublePhoton33_CaloIdL_v5, &b_HLT_DoublePhoton33_CaloIdL_v5);
+       fChain->SetBranchAddress("HLT_DoublePhoton70_v5", &HLT_DoublePhoton70_v5, &b_HLT_DoublePhoton70_v5);
+       fChain->SetBranchAddress("HLT_DoublePhoton85_v13", &HLT_DoublePhoton85_v13, &b_HLT_DoublePhoton85_v13);
+       fChain->SetBranchAddress("HLT_TriplePhoton_20_20_20_CaloIdLV2_v2", &HLT_TriplePhoton_20_20_20_CaloIdLV2_v2, &b_HLT_TriplePhoton_20_20_20_CaloIdLV2_v2);
+       fChain->SetBranchAddress("HLT_TriplePhoton_20_20_20_CaloIdLV2_R9IdVL_v2", &HLT_TriplePhoton_20_20_20_CaloIdLV2_R9IdVL_v2, &b_HLT_TriplePhoton_20_20_20_CaloIdLV2_R9IdVL_v2);
+       fChain->SetBranchAddress("HLT_TriplePhoton_30_30_10_CaloIdLV2_v3", &HLT_TriplePhoton_30_30_10_CaloIdLV2_v3, &b_HLT_TriplePhoton_30_30_10_CaloIdLV2_v3);
+       fChain->SetBranchAddress("HLT_TriplePhoton_30_30_10_CaloIdLV2_R9IdVL_v3", &HLT_TriplePhoton_30_30_10_CaloIdLV2_v3, &b_HLT_TriplePhoton_30_30_10_CaloIdLV2_R9IdVL_v3);
+       fChain->SetBranchAddress("HLT_TriplePhoton_35_35_5_CaloIdLV2_R9IdVL_v3", &HLT_TriplePhoton_35_35_5_CaloIdLV2_R9IdVL_v3, &b_HLT_TriplePhoton_35_35_5_CaloIdLV2_R9IdVL_v3);
+       fChain->SetBranchAddress("HLT_Photon25_v2", &HLT_Photon25_v2, &b_HLT_Photon25_v2);
+       fChain->SetBranchAddress("HLT_Photon33_v4", &HLT_Photon33_v4, &b_HLT_Photon33_v4);
+       fChain->SetBranchAddress("HLT_Photon50_v12", &HLT_Photon50_v12, &b_HLT_Photon50_v12);
+       fChain->SetBranchAddress("HLT_Photon75_v12", &HLT_Photon75_v12, &b_HLT_Photon75_v12);
+       fChain->SetBranchAddress("HLT_Photon90_v12", &HLT_Photon90_v12, &b_HLT_Photon90_v12);
+       fChain->SetBranchAddress("HLT_Photon120_v12", &HLT_Photon120_v12, &b_HLT_Photon120_v12);
+       fChain->SetBranchAddress("HLT_Photon150_v5", &HLT_Photon150_v5, &b_HLT_Photon150_v5);
+       fChain->SetBranchAddress("HLT_Photon175_v13", &HLT_Photon175_v13, &b_HLT_Photon175_v13);
+       fChain->SetBranchAddress("HLT_Photon200_v12", &HLT_Photon200_v12, &b_HLT_Photon200_v12);
+       fChain->SetBranchAddress("HLT_Photon50_R9Id90_HE10_IsoM_v13", &HLT_Photon50_R9Id90_HE10_IsoM_v13, &b_HLT_Photon50_R9Id90_HE10_IsoM_v13);
+       fChain->SetBranchAddress("HLT_Photon75_R9Id90_HE10_IsoM_v13", &HLT_Photon75_R9Id90_HE10_IsoM_v13, &b_HLT_Photon75_R9Id90_HE10_IsoM_v13);
+       fChain->SetBranchAddress("HLT_Photon90_R9Id90_HE10_IsoM_v13", &HLT_Photon90_R9Id90_HE10_IsoM_v13, &b_HLT_Photon90_R9Id90_HE10_IsoM_v13);
+       fChain->SetBranchAddress("HLT_Photon120_R9Id90_HE10_IsoM_v13", &HLT_Photon120_R9Id90_HE10_IsoM_v13, &b_HLT_Photon120_R9Id90_HE10_IsoM_v13);
+       fChain->SetBranchAddress("HLT_Photon165_R9Id90_HE10_IsoM_v14", &HLT_Photon165_R9Id90_HE10_IsoM_v14, &b_HLT_Photon165_R9Id90_HE10_IsoM_v14);
+       fChain->SetBranchAddress("HLT_Photon90_CaloIdL_PFHT700_v12", &HLT_Photon90_CaloIdL_PFHT700_v12, &b_HLT_Photon90_CaloIdL_PFHT700_v12);
+
+       fChain->SetBranchAddress("HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v12", &HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v12, &b_HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v12);
+       fChain->SetBranchAddress("HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass95_v12", &HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass95_v12, &b_HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass95_v12);
+       fChain->SetBranchAddress("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13", &HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13, &b_HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13);
+       fChain->SetBranchAddress("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12", &HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12, &b_HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12);
+       fChain->SetBranchAddress("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12", &HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12, &b_HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12);
+       fChain->SetBranchAddress("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13", &HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13, &b_HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13);
+   
+       fChain->SetBranchAddress("HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_v4", &HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_v4, &b_HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_v4);
+       fChain->SetBranchAddress("HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15_v7", &HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15_v7, &b_HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15_v7);
+       fChain->SetBranchAddress("HLT_Photon20_HoverELoose_v9", &HLT_Photon20_HoverELoose_v9, &b_HLT_Photon20_HoverELoose_v9);
+       fChain->SetBranchAddress("HLT_Photon30_HoverELoose_v9", &HLT_Photon30_HoverELoose_v9, &b_HLT_Photon30_HoverELoose_v9);
+       fChain->SetBranchAddress("HLT_Photon40_HoverELoose_v9", &HLT_Photon40_HoverELoose_v9, &b_HLT_Photon40_HoverELoose_v9);
+       fChain->SetBranchAddress("HLT_Photon50_HoverELoose_v9", &HLT_Photon50_HoverELoose_v9, &b_HLT_Photon50_HoverELoose_v9);
+       fChain->SetBranchAddress("HLT_Photon60_HoverELoose_v9", &HLT_Photon60_HoverELoose_v9, &b_HLT_Photon60_HoverELoose_v9);
+   }
+
+
    //MET trigger branches
    if (is2016)
    {
