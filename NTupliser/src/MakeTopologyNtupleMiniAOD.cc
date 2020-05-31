@@ -3118,6 +3118,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
         mytree_->Branch("genParNumDaughters",
                         genParNumDaughters,
                         "genParNumDaughters[nGenPar]/I");
+        mytree_->Branch("genParStatus",genParStatus, "genParStatus[nGenPar]/I");
         mytree_->Branch(
             "genParCharge", genParCharge, "genParCharge[nGenPar]/I");
     }
