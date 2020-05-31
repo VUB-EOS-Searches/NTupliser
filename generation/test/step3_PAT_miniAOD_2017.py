@@ -3,7 +3,11 @@
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
 # with command line options: step1 --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads 8 --era Run2_2017,run2_miniAOD_94XFall17 --filein file:step2_2017.root --fileout file:miniAOD_2017.root
+
 import FWCore.ParameterSet.Config as cms
+
+##The line below always has to be included to make VarParsing work
+import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.StandardSequences.Eras import eras
 
@@ -22,13 +26,18 @@ process.load('Configuration.StandardSequences.PATMC_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
+options = VarParsing.VarParsing ('analysis')
+options.parseArguments()
+
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_1K.root'),
+#    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/RAW2DIGI_RECO_EI/step2_2017_500.root'),
+#    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSSTodddd_Vleptonic_M125_MS40_ctauS1000_13TeV/RAW2DIGI_RECO_EI/step2_2017_500.root'),
+    fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -55,7 +64,9 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
     dropMetaData = cms.untracked.string('ALL'),
     eventAutoFlushCompressedSize = cms.untracked.int32(-900),
     fastCloning = cms.untracked.bool(False),
-    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/PAT_miniAOD/miniAOD_2017_1K.root'),
+#    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/PAT_miniAOD/miniAOD_2017_500.root'),
+#    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSSTodddd_Vleptonic_M125_MS40_ctauS1000_13TeV/PAT_miniAOD/miniAOD_2017_500.root'),
+    fileName = cms.untracked.string (options.outputFile),
     outputCommands = process.MINIAODSIMEventContent.outputCommands,
     overrideBranchesSplitLevel = cms.untracked.VPSet(cms.untracked.PSet(
         branch = cms.untracked.string('patPackedCandidates_packedPFCandidates__*'),

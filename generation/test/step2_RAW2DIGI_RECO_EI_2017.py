@@ -3,7 +3,11 @@
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
 # with command line options: step2 --mc --eventcontent AODSIM runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v10 --step RAW2DIGI,RECO,EI --nThreads 8 --era Run2_2017 --fileout file:step2_2017.root --filein file:step1_2017.root
+
 import FWCore.ParameterSet.Config as cms
+
+##The line below always has to be included to make VarParsing work
+import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.StandardSequences.Eras import eras
 
@@ -23,13 +27,18 @@ process.load('CommonTools.ParticleFlow.EITopPAG_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
+options = VarParsing.VarParsing ('analysis')
+options.parseArguments()
+
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/DIGIPREMIX_S2_DATAMIX_L1_DIGI2RAW_HLT/step1_2017_1K.root'),
+#    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/DIGIPREMIX_S2_DATAMIX_L1_DIGI2RAW_HLT/step1_2017_500.root'),
+#    fileNames = cms.untracked.vstring('file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSSTodddd_Vleptonic_M125_MS40_ctauS1000_13TeV/DIGIPREMIX_S2_DATAMIX_L1_DIGI2RAW_HLT/step1_2017_500.root'),
+    fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -54,7 +63,9 @@ process.AODSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(31457280),
-    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS55_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_1K.root'),
+#    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/RAW2DIGI_RECO_EI/step2_2017_500.root'),
+#    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSSTodddd_Vleptonic_M125_MS40_ctauS1000_13TeV/RAW2DIGI_RECO_EI/step2_2017_500.root'),
+    fileName = cms.untracked.string (options.outputFile),
     outputCommands = process.AODSIMEventContent.outputCommands
 )
 

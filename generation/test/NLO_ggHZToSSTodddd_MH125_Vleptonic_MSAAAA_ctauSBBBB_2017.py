@@ -3,7 +3,11 @@
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
 # with command line options: Configuration/GenProduction/python/NLO_HToSSTobbbb_MH125_MS55_ctauS10_13TeV.py --fileout file:Higgs_GEN_SIM.root -s LHE,GEN,SIM --mc --eventcontent RAWSIM --geometry DB:Extended --era Run2_2017 --conditions 93X_mc2017_realistic_v3 --datatier GEN-SIM --no_exec -n 10 --python_filename NLO_ggHToSSTobbbb_MH125_MS55_ctauS10_TuneCP2_13TeV_pythia8_GENSIM.py --beamspot Realistic25ns13TeVEarly2017Collision
+
 import FWCore.ParameterSet.Config as cms
+
+##The line below always has to be included to make VarParsing work
+import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.StandardSequences.Eras import eras
 
@@ -24,6 +28,9 @@ process.load('GeneratorInterface.Core.genFilterSummary_cff')
 process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+
+options = VarParsing.VarParsing ('analysis')
+options.parseArguments()
 
 intEvts  =  cms.untracked.int32(10)
 uintEvts = cms.untracked.uint32(10)
@@ -59,7 +66,8 @@ SelectEvents = cms.untracked.PSet(
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('file:Higgs_GEN_SIM_2017.root'),
+#    fileName = cms.untracked.string('file:Higgs_GEN_SIM_2017.root'),
+    fileName = cms.untracked.string (options.outputFile),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
