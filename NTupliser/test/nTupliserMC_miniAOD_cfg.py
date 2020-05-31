@@ -4,6 +4,9 @@ process = cms.Process("customPAT")
 
 from PhysicsTools.PatAlgos.tools.coreTools import *
 
+##The line below always has to be included to make VarParsing work
+import FWCore.ParameterSet.VarParsing as VarParsing
+
 #Setting up various environmental stuff that makes all of this jazz actually work.
 
 ###############################
@@ -29,6 +32,10 @@ process.load("PhysicsTools.HepMCCandAlgos.genParticles_cfi")
 process.load('Configuration.StandardSequences.Services_cff')
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
+
+options = VarParsing.VarParsing ('analysis')
+options.parseArguments()
+
 process.MessageLogger.destinations = ['cerr']
 process.MessageLogger.statistics = []
 process.MessageLogger.fwkJobReports = []
@@ -155,17 +162,16 @@ process.makeTopologyNtupleMiniAOD.conversionsToken = cms.InputTag("reducedEgamma
 
 ## Source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring()
+    fileNames = cms.untracked.vstring(options.inputFiles)
 )
 
 ## Maximal Number of Events
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
-process.source.fileNames = [
-#	'file:/scratch/eepgadm/data/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/06176A4A-3942-E811-9191-008CFA165F5C.root',
-        'file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS1_ctauS10_13TeV/PAT_miniAOD/miniAOD_2017_10K.root',
-#        'file:MS_40/HToSTodddd_MH125_MS40_miniAOD_2017_100.root',
-       ]
+#process.source.fileNames = [
+#        'file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/PAT_miniAOD/miniAOD_2017_500.root'
+#        'file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSSTodddd_Vleptonic_M125_MS1_ctauS1000_13TeV/PAT_miniAOD/miniAOD_2017_500.root'
+#       ]
 
 from PhysicsTools.PatAlgos.patEventContent_cff import *
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
@@ -187,7 +193,10 @@ process.out.outputCommands += cms.untracked.vstring('keep *_flavorHistoryFilter_
 process.out.fileName = cms.untracked.string('Data_out.root')
 
 #NTuple output
-process.TFileService = cms.Service("TFileService", fileName = cms.string('MC.root') )
+process.TFileService = cms.Service("TFileService", fileName = cms.string (options.outputFile) )
+#process.TFileService = cms.Service("TFileService", fileName = cms.string('file:/vols/cms/adm10/nTuples_2017/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000/MC.root') )
+#process.TFileService = cms.Service("TFileService", fileName = cms.string('file:/vols/cms/adm10/nTuples_2017/HZJ/NLO_HZJ_HToSSTodddd_Vleptonic_M125_MS1_ctauS1000/MC.root') )
+
 process.options.wantSummary = False
 process.out.SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('p'))
 
