@@ -297,7 +297,7 @@ class AnalysisEvent
     Float_t tauPF2PATEta[NTAUSMAX];
 
     static constexpr size_t NPHOTONSMAX{30};
-    Int_t numPhotonPF2PAT;
+    Int_t numPhoPF2PAT;
     Float_t phoPF2PATE[NPHOTONSMAX];
     Float_t phoPF2PATSigmaE[NPHOTONSMAX];
     Float_t phoPF2PATET[NPHOTONSMAX];
@@ -1163,7 +1163,7 @@ class AnalysisEvent
     TBranch* b_tauPF2PATPt; //!
     TBranch* b_tauPF2PATPhi; //!
     TBranch* b_tauPF2PATEta; //!
-    TBranch* b_numPhotonPF2PAT; //!
+    TBranch* b_numPhoPF2PAT; //!
     TBranch* b_phoPF2PATE; //!
     TBranch* b_phoPF2PATSigmaE; //!
     TBranch* b_phoPF2PATET; //!
@@ -2096,7 +2096,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("tauPF2PATPhi", &tauPF2PATPhi, &b_tauPF2PATPhi);
    fChain->SetBranchAddress("tauPF2PATEta", &tauPF2PATEta, &b_tauPF2PATEta);
 
-   fChain->SetBranchAddress("numPhotonPF2PAT", &numPhotonPF2PAT, &b_numPhotonPF2PAT);
+   fChain->SetBranchAddress("numPhoPF2PAT", &numPhoPF2PAT, &b_numPhoPF2PAT);
    fChain->SetBranchAddress("phoPF2PATE", &phoPF2PATE, &b_phoPF2PATE);
    fChain->SetBranchAddress("phoPF2PATSigmaE", &phoPF2PATSigmaE, &b_phoPF2PATSigmaE);
    fChain->SetBranchAddress("phoPF2PATET", &phoPF2PATET, &b_phoPF2PATET);
