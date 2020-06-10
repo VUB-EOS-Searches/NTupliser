@@ -886,7 +886,7 @@ class AnalysisEvent
     Int_t Flag_eeBadScFilter;
 
     // Gen info
-    static constexpr size_t NGENPARMAX{40};
+    static constexpr size_t NGENPARMAX{1000};
     Int_t nGenPar;
     Float_t genParEta[NGENPARMAX];
     Float_t genParPhi[NGENPARMAX];

@@ -840,7 +840,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int generalTracksCharge[NTRACKSMAX]{};
 
     // gen particle vars
-    static constexpr size_t NGENPARMAX{50};
+    static constexpr size_t NGENPARMAX{1000};
     size_t nGenPar{};
     int genParStatus[NGENPARMAX]{}; // 1NGENPARMAX927 - ADM - Added as Pythia 8
                                     // uses different status codes - cannot just

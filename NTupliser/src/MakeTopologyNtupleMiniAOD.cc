@@ -105,6 +105,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <exception>
 #include <map>
 #include <string>
 #include <vector>
@@ -1705,9 +1706,9 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
 
         // if(TCand.status()==3) // Pythia 6 criteria - MC generators now
         // use Pythia 8 - will store status instead of cutting on it.
-        if (std::abs(TCand.pdgId()) <= 18 || std::abs(TCand.pdgId()) == 24
-            || std::abs(TCand.pdgId()) == 23)
-        {
+//        if (std::abs(TCand.pdgId()) <= 18 || std::abs(TCand.pdgId()) == 24
+//            || std::abs(TCand.pdgId()) == 23)
+//        {
             // only do this for particles with reasonable pT:
             if (nGenPar < NGENPARMAX)
             {
@@ -1725,11 +1726,8 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                         .numberOfMothers(); // 150318 - ADM - Added so one can
                                             // look for b's from gluon splitting
                                             // - need to know how many parents
-                genParMotherId[nGenPar] =
-                    TCand.mother()
-                        ->pdgId(); // 150318 - ADM - Added so one can
-                                   // look for b's from gluon splitting
-                                   // - need to know what parent was
+                if (TCand.numberOfMothers() > 0 ) genParMotherId[nGenPar] =  TCand.mother()->pdgId(); // 150318 - ADM - Added so one can look for b's from gluon splitting - need to know what parent was
+                else genParMotherId[nGenPar] = 0; // guards against seg fault if particle has no mother
                 genParNumDaughters[nGenPar] =
                     TCand.numberOfDaughters(); // 150401 - ADM - Added so one
                                                // can look for b's from gluon
@@ -1744,7 +1742,7 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                 genParCharge[nGenPar] = TCand.charge();
                 nGenPar++;
             }
-        }
+        //}
         //    }
         if (std::abs(TCand.pdgId()) == 5 || std::abs(TCand.pdgId()) == 4)
         {
