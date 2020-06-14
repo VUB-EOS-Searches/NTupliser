@@ -312,53 +312,70 @@ void MakeTopologyNtupleMiniAOD::fillSummaryVariables()
     ran_postloop_ = true;
     return;
 }
-void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent,
-                                              const edm::EventSetup& /*iSetup*/)
+
+void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+    if (ran_PV_)
+    {
+        return;
+    }
+    ran_PV_ = true;
+
     evtRun = iEvent.id().run();
     evtnum = iEvent.id().event();
-    evtlumiblock =
-        iEvent.luminosityBlock(); // or even: iEvent.luminosityBlock() might
-                                  // work, depending on the release)
+    evtlumiblock = iEvent.luminosityBlock(); // or even: iEvent.luminosityBlock() might work, depending on the release)
 
     // also add pv:
     edm::Handle<reco::VertexCollection> pvHandle;
     iEvent.getByToken(pvLabel_, pvHandle);
-
-    pvX = pvY = pvZ = pvRho = -999999;
-    numPv = pvDX = pvDY = pvDZ = 0;
-    pvIsFake = pvNdof = pvChi2 = -1;
 
     if (pvHandle.isValid())
     {
         std::vector<reco::Vertex> pv{*pvHandle};
 
         numPv = pv.size();
-        if (pv.size() > 0)
-        {
-            pvX = pv[0].x();
-            pvY = pv[0].y();
-            pvZ = pv[0].z();
-            pvDX = pv[0].xError();
-            pvDY = pv[0].yError();
-            pvDZ = pv[0].zError();
-            pvRho = pv[0].position().Rho();
-            pvNdof = pv[0].ndof();
-            pvIsFake = numeric_cast<int>(pv[0].isFake());
-            pvChi2 = pv[0].chi2();
-            pvNtracks = int(pv[0].tracksSize());
-            pvNtracksW05 = pv[0].nTracks(0.5);
-            math::XYZPoint point(pvX, pvY, pvZ);
+        if (pv.size() > 0) {
+            math::XYZPoint point(pv[0].x(), pv[0].y(), pv[0].z());
             vertexPoint_ = point;
+   	}
+    }
+}
+
+void MakeTopologyNtupleMiniAOD::fillPV(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
+    edm::Handle<reco::VertexCollection> pvHandle;
+    iEvent.getByToken(pvLabel_, pvHandle);
+
+    if (pvHandle.isValid())
+    {
+        std::vector<reco::Vertex> pv{*pvHandle};
+
+        numPVs = 0;
+
+        for (auto it{pv.begin()}; it != pv.end() && numPVs < numeric_cast<int>(NPVSMAX); it++) {
+            pvX[numPVs] = it->x();
+            pvY[numPVs] = it->y();
+            pvZ[numPVs] = it->z();
+            pvDX[numPVs] = it->xError();
+            pvDY[numPVs] = it->yError();
+            pvDZ[numPVs] = it->zError();
+            pvRho[numPVs] = it->position().Rho();
+            pvNdof[numPVs] = it->ndof();
+            pvIsFake[numPVs] = numeric_cast<int>(it->isFake());
+            pvChi2[numPVs] = it->chi2();
+            pvNtracks[numPVs] = int(it->tracksSize());
+            pvNtracksW05[numPVs] = it->nTracks(0.5);
+
+            numPVs ++;
         }
     }
 }
-void MakeTopologyNtupleMiniAOD::fillMissingET(
-    const edm::Event& iEvent,
-    const edm::EventSetup& /*iSetup*/,
-    edm::EDGetTokenT<pat::METCollection> metIn_,
-    const std::string& ID)
-{
+
+void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+}
+
+void MakeTopologyNtupleMiniAOD::fillMissingET(const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::METCollection> metIn_, const std::string& ID) {
+
     edm::Handle<pat::METCollection> metHandle;
     iEvent.getByToken(metIn_, metHandle);
 
@@ -420,11 +437,11 @@ void MakeTopologyNtupleMiniAOD::fillMissingET(
 void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
                                              const edm::EventSetup& iSetup)
 {
-    if (ran_PV_)
+    if (ran_BS_)
     {
         return;
     }
-    ran_PV_ = true;
+    ran_BS_ = true;
 
     reco::BeamSpot beamSpot;
 
@@ -487,8 +504,7 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
     photonEts.emplace_back(et);
   }
   
-  std::vector<size_t> etSortedIndex{
-    IndexSorter<std::vector<float>>(photonEts, true)()};
+  std::vector<size_t> etSortedIndex{IndexSorter<std::vector<float>>(photonEts, true)()};
 
   // Primary vertex
   edm::Handle<reco::VertexCollection> pvHandle;
@@ -496,9 +512,7 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
   
   numEle[ID] = 0;
   
-  for (size_t ipho{0}; ipho < etSortedIndex.size()
-	 && numPho[ID] < numeric_cast<int>(NPHOTONSMAX);
-       ++ipho) {
+  for (size_t ipho{0}; ipho < etSortedIndex.size() && numPho[ID] < numeric_cast<int>(NPHOTONSMAX); ++ipho) {
     size_t jpho{etSortedIndex[ipho]};
     const pat::Photon& pho{(*photonHandle)[jpho]};
     
@@ -670,7 +684,7 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
         pat::ElectronRef refel{electronOrgHandle,
                                numeric_cast<unsigned int>(jele)};
 
-        int photonConversionTag{-1};
+//        int photonConversionTag{-1};
 
         numEle[ID]++;
 
@@ -892,19 +906,11 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
                 ele, Conversions, beamSpotPoint_);
         electronSortedPhotonConversionDist[ID][numEle[ID] - 1] = ele.convDist();
         electronSortedPhotonConversionDcot[ID][numEle[ID] - 1] = ele.convDcot();
-        electronSortedPhotonConversionVeto[ID][numEle[ID] - 1] =
-            ele.passConversionVeto();
+        electronSortedPhotonConversionVeto[ID][numEle[ID] - 1] = ele.passConversionVeto();
 
         // and using our private code
-        if (photonConversionVeto(
-                ele,
-                electronSortedPhotonConversionDistCustom[ID][numEle[ID] - 1],
-                electronSortedPhotonConversionDcotCustom[ID][numEle[ID] - 1]))
-        {
-            photonConversionTag = 1;
-        }
-        electronSortedPhotonConversionTagCustom[ID][numEle[ID] - 1] =
-            photonConversionTag;
+//        if (photonConversionVeto(ele, electronSortedPhotonConversionDistCustom[ID][numEle[ID] - 1], electronSortedPhotonConversionDcotCustom[ID][numEle[ID] - 1]))  photonConversionTag = 1;
+//        electronSortedPhotonConversionTagCustom[ID][numEle[ID] - 1] = photonConversionTag;
 
         if (check_triggers_)
         {
@@ -958,12 +964,8 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::fillMuons(
-    const edm::Event& iEvent,
-    const edm::EventSetup& iSetup,
-    edm::EDGetTokenT<pat::MuonCollection> muIn_,
-    const std::string& ID)
-{
+void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::MuonCollection> muIn_, const std::string& ID) {
+
     // ran_muonloop_ = true;
     edm::Handle<pat::MuonCollection> muonHandle;
     iEvent.getByToken(muIn_, muonHandle);
@@ -997,15 +999,11 @@ void MakeTopologyNtupleMiniAOD::fillMuons(
       // zero-size vectors
         return;
     }
-    std::vector<size_t> etMuonSorted{
-        IndexSorter<std::vector<float>>(muonEts, true)()};
+    std::vector<size_t> etMuonSorted{IndexSorter<std::vector<float>>(muonEts, true)()};
 
     numMuo[ID] = 0;
     // muons:
-    for (size_t imuo{0}; imuo < etMuonSorted.size()
-                         && numMuo[ID] < numeric_cast<int>(NMUONSMAX);
-         ++imuo)
-    {
+    for (size_t imuo{0}; imuo < etMuonSorted.size() && numMuo[ID] < numeric_cast<int>(NMUONSMAX); ++imuo) {
         size_t jmu{etMuonSorted[imuo]};
         // std::cout << imuo << " " << jmu << std::endl;
         const pat::Muon& muo{muons[jmu]};
@@ -1460,7 +1458,7 @@ void MakeTopologyNtupleMiniAOD::fillBTagInfo(const pat::Jet& jet,
 }
 
 void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
-                                           const edm::EventSetup& /*iSetup*/)
+                                           const edm::EventSetup& iSetup)
 {
     if (!runMCInfo_)
     {
@@ -2030,7 +2028,7 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
 
 void MakeTopologyNtupleMiniAOD::fillJets(
     const edm::Event& iEvent,
-    const edm::EventSetup& /*iSetup*/,
+    const edm::EventSetup& iSetup,
     edm::EDGetTokenT<pat::JetCollection> jetIn_,
     const std::string& ID)
 {
@@ -2222,9 +2220,7 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
 
     numGeneralTracks = 0;
 
-    for (auto trit{lostTracks->begin()};
-         trit != lostTracks->end()
-         && numGeneralTracks < numeric_cast<int>(NTRACKSMAX);
+    for (auto trit{lostTracks->begin()}; trit != lostTracks->end() && numGeneralTracks < numeric_cast<int>(NTRACKSMAX);
          trit++)
     {
         generalTracksPt[numGeneralTracks] = trit->pt();
@@ -2254,7 +2250,6 @@ void MakeTopologyNtupleMiniAOD::fillIsolatedTracks(
     iEvent.getByToken(isolatedTrackToken_, isoTracks);
 
     numIsolatedTracks = 0;
-    std::cout << "isoTracks->size(): " << isoTracks->size() << std::endl;
 
     for (auto it{isoTracks->begin()}; it != isoTracks->end() && numIsolatedTracks < numeric_cast<int>(NISOTRACKSMAX); it++) {
         isoTracksPt[numIsolatedTracks] = it->pt();
@@ -2450,7 +2445,7 @@ void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID)
     electronSortedDeltaEtaSeedSC[ID].clear();
     electronSortedIsBarrel[ID].clear();
     electronSortedPhotonConversionTag[ID].clear();
-    electronSortedPhotonConversionTagCustom[ID].clear();
+//    electronSortedPhotonConversionTagCustom[ID].clear();
     electronSortedPhotonConversionDcot[ID].clear();
     electronSortedPhotonConversionDist[ID].clear();
     electronSortedPhotonConversionVeto[ID].clear();
@@ -2777,6 +2772,33 @@ void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
 }
 
 /////////////////////////////////////
+void MakeTopologyNtupleMiniAOD::clearPVarrays() {
+    // std::cout << "clearPVarrays CHECK" << std::endl;
+    numPVs = 0;
+
+    for (size_t i{0}; i < NPVSMAX; i++) {
+        pvX[numPVs] = -999999;
+        pvY[numPVs] = -999999;
+        pvZ[numPVs] = -999999;
+        pvDX[numPVs] = 0;
+        pvDY[numPVs] = 0;
+        pvDZ[numPVs] = 0;
+        pvRho[numPVs] = -999999;
+        pvNdof[numPVs] = 1;
+        pvIsFake[numPVs] = -1;
+        pvChi2[numPVs] = -1;
+        pvNtracks[numPVs] = 0;
+        pvNtracksW05[numPVs] = 0;
+    }   
+}
+
+/////////////////////////////////////
+
+void MakeTopologyNtupleMiniAOD::clearSVarrays() {
+}
+
+/////////////////////////////////////
+
 void MakeTopologyNtupleMiniAOD::clearGeneralTracksarrays()
 {
     // std::cout << "clearGeneralTracksarrays CHECK" << std::endl;
@@ -2831,9 +2853,11 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
     // reset the bookkeeping bools;
     // std::cout << "cleararrays CHECK" << std::endl;
     // std::cout << "before FALSE: " << ran_postloop_ << std::endl;
-    ran_jetloop_ = ran_eleloop_ = ran_muonloop_ = ran_PV_ = ran_tracks_ = ran_isotracks_ =
+    ran_jetloop_ = ran_eleloop_ = ran_muonloop_ = ran_PV_ = ran_BS_ = ran_tracks_ = ran_isotracks_ =
         ran_mcloop_ = ran_postloop_ = ran_photonTau_ = false;
     // std::cout << "psot FALSE: " << ran_postloop_ << std::endl;
+
+    clearPVarrays();
 
     for (size_t iTrig{0}; iTrig < triggerList_.size(); iTrig++)
     {
@@ -2953,6 +2977,11 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     cleararrays();
 
     fillEventInfo(iEvent, iSetup);
+
+    fillPV(iEvent,iSetup);
+    fillSV(iEvent,iSetup);
+//    fillV0Info(iEvent, iSetup);
+
     fillTriggerData(iEvent);
     fillBeamSpot(iEvent, iSetup);
 
@@ -2981,7 +3010,6 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
 
     fillGeneralTracks(iEvent, iSetup);
     fillIsolatedTracks(iEvent, iSetup);
-//    fillV0Info(iEvent, iSetup, kshortToken_, lambdaToken_, "PF");
 
     // fillElectrons(iEvent, iSetup, eleLabel_, "Calo");
     fillMCInfo(iEvent, iSetup);
@@ -3098,19 +3126,8 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     mytree_->Branch("beamSpotY", &beamSpotY, "beamSpotY/F");
     mytree_->Branch("beamSpotZ", &beamSpotZ, "beamSpotZ/F");
 
-    mytree_->Branch("numPv", &numPv, "numPv/I");
-    mytree_->Branch("pvX", &pvX, "pvX/F");
-    mytree_->Branch("pvY", &pvY, "pvY/F");
-    mytree_->Branch("pvZ", &pvZ, "pvZ/F");
-    mytree_->Branch("pvDX", &pvDX, "pvDX/F");
-    mytree_->Branch("pvDY", &pvDY, "pvDY/F");
-    mytree_->Branch("pvDZ", &pvDZ, "pvDZ/F");
-    mytree_->Branch("pvRho", &pvRho, "pvRho/F");
-    mytree_->Branch("pvIsFake", &pvIsFake, "pvIsFake/I");
-    mytree_->Branch("pvNdof", &pvNdof, "pvNdof/F");
-    mytree_->Branch("pvChi2", &pvChi2, "pvChi2/F");
-    mytree_->Branch("pvNtracks", &pvNtracks, "pvNtracks/I");
-    mytree_->Branch("pvNtracksW05", &pvNtracksW05, "pvNtracksW05/I");
+    bookPVbranches();
+    bookSVbranches();
 
     mytree_->Branch("mhtPt", &mhtPt, "mhtPt/F");
     mytree_->Branch("mhtPy", &mhtPy, "mhtPy/F");
@@ -3516,7 +3533,7 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID,
 
     electronSortedIsBarrel[ID] = tempVecI;
     electronSortedPhotonConversionTag[ID] = tempVecI;
-    electronSortedPhotonConversionTagCustom[ID] = tempVecI;
+//    electronSortedPhotonConversionTagCustom[ID] = tempVecI;
     electronSortedMissingInnerLayers[ID] = tempVecI;
 
     electronSortedE[ID] = tempVecF;
@@ -3908,10 +3925,7 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID,
         (prefix + "PhotonConversionVeto").c_str(),
         &electronSortedPhotonConversionVeto[ID][0],
         (prefix + "PhotonConversionVeto[numEle" + name + "]/I").c_str());
-    mytree_->Branch(
-        (prefix + "PhotonConversionTagCustom").c_str(),
-        &electronSortedPhotonConversionTagCustom[ID][0],
-        (prefix + "PhotonConversionTagCustom[numEle" + name + "]/I").c_str());
+//    mytree_->Branch((prefix + "PhotonConversionTagCustom").c_str(), &electronSortedPhotonConversionTagCustom[ID][0], (prefix + "PhotonConversionTagCustom[numEle" + name + "]/I").c_str());
     mytree_->Branch(
         (prefix + "PhotonConversionDistCustom").c_str(),
         &electronSortedPhotonConversionDistCustom[ID][0],
@@ -4895,8 +4909,7 @@ void MakeTopologyNtupleMiniAOD::bookBIDInfoBranches(const std::string& /*ID*/,
 void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
 {
     // std::cout << "bookGeneralTrackBranches CHECK" << std::endl;
-    mytree_->Branch(
-        "numGeneralTracks", &numGeneralTracks, "numGeneralTracks/I");
+    mytree_->Branch("numGeneralTracks", &numGeneralTracks, "numGeneralTracks/I");
     mytree_->Branch("generalTracksPt", &generalTracksPt, "generalTracksPt[numGeneralTracks]/F");
     mytree_->Branch("generalTracksEta", &generalTracksEta, "generalTracksEta[numGeneralTracks]/F");
     mytree_->Branch("generalTracksTheta", &generalTracksTheta, "generalTracksTheta[numGeneralTracks]/F");
@@ -4930,6 +4943,25 @@ void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
     mytree_->Branch("isoTracksLoose", &isoTracksLoose, "isoTracksLoose[numIsolatedTracks]/I");
     mytree_->Branch("isoTracksDeltaEta", &isoTracksDeltaEta, "isoTracksDeltaEta[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksDeltaPhi", &isoTracksDeltaPhi, "isoTracksDeltaPhi[numIsolatedTracks]/F");
+}
+
+void MakeTopologyNtupleMiniAOD::bookPVbranches(){
+    mytree_->Branch("numPv", &numPv, "numPv/I");
+    mytree_->Branch("pvX", &pvX, "pvX[numPv]/F");
+    mytree_->Branch("pvY", &pvY, "pvY[numPv]/F");
+    mytree_->Branch("pvZ", &pvZ, "pvZ[numPv]/F");
+    mytree_->Branch("pvDX", &pvDX, "pvDX[numPv]/F");
+    mytree_->Branch("pvDY", &pvDY, "pvDY[numPv]/F");
+    mytree_->Branch("pvDZ", &pvDZ, "pvDZ[numPv]/F");
+    mytree_->Branch("pvRho", &pvRho, "pvRho[numPv]/F");
+    mytree_->Branch("pvIsFake", &pvIsFake, "pvIsFake[numPv]/I");
+    mytree_->Branch("pvNdof", &pvNdof, "pvNdof[numPv]/F");
+    mytree_->Branch("pvChi2", &pvChi2, "pvChi2[numPv]/F");
+    mytree_->Branch("pvNtracks", &pvNtracks, "pvNtracks[numPv]/I");
+    mytree_->Branch("pvNtracksW05", &pvNtracksW05, "pvNtracksW05[numPv]/I");
+
+}
+void MakeTopologyNtupleMiniAOD::bookSVbranches(){
 }
 
 // ------------ method called once each job just before starting event loop
@@ -5107,8 +5139,7 @@ void MakeTopologyNtupleMiniAOD::fillTriggerData(const edm::Event& iEvent)
 // identification functions!
 /////////////
 
-bool MakeTopologyNtupleMiniAOD::photonConversionVeto(
-    const pat::Electron& electron, float& dist, float& Dcot)
+bool MakeTopologyNtupleMiniAOD::photonConversionVeto(const pat::Electron& electron, float& dist, float& Dcot)
 {
     // return true if object is good (so not a conversion)
     // std::cout << "photonConversionVeto CHECK" << std::endl;

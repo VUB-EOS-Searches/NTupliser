@@ -105,7 +105,7 @@ class AnalysisEvent
     Int_t elePF2PATPhotonConversionTag[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDist[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDcot[NELECTRONSMAX];
-    Int_t elePF2PATPhotonConversionVeto[NELECTRONSMAX];
+//    Int_t elePF2PATPhotonConversionVeto[NELECTRONSMAX];
     Int_t elePF2PATPhotonConversionTagCustom[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDistCustom[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDcotCustom[NELECTRONSMAX];
@@ -448,7 +448,6 @@ class AnalysisEvent
     Float_t isoTracksDeltaEta[NISOTRACKSMAX];
     Float_t isoTracksDeltaPhi[NISOTRACKSMAX];
 
-
     Int_t isElePlusJets;
     Float_t genPDFScale;
     Float_t genPDFx1;
@@ -459,21 +458,25 @@ class AnalysisEvent
     Int_t processId;
     Float_t processPtHat;
     Double_t processMCWeight;
+
     Float_t beamSpotX;
     Float_t beamSpotY;
     Float_t beamSpotZ;
-    Float_t pvX;
-    Float_t pvY;
-    Float_t pvZ;
-    Float_t pvDX;
-    Float_t pvDY;
-    Float_t pvDZ;
-    Float_t pvRho;
-    Int_t pvIsFake;
-    Float_t pvNdof;
-    Float_t pvChi2;
-    Float_t pvNtracks;
-    Float_t pvNtracksW05;
+
+    static constexpr size_t NPVSMAX{80};
+    Float_t pvX[NPVSMAX];
+    Float_t pvY[NPVSMAX];
+    Float_t pvZ[NPVSMAX];
+    Float_t pvDX[NPVSMAX];
+    Float_t pvDY[NPVSMAX];
+    Float_t pvDZ[NPVSMAX];
+    Float_t pvRho[NPVSMAX];
+    Int_t pvIsFake[NPVSMAX];
+    Float_t pvNdof[NPVSMAX];
+    Float_t pvChi2[NPVSMAX];
+    Float_t pvNtracks[NPVSMAX];
+    Float_t pvNtracksW05[NPVSMAX];
+
     Float_t mhtPt;
     Float_t mhtPy;
     Float_t mhtPx;
@@ -1069,7 +1072,7 @@ class AnalysisEvent
     TBranch* b_elePF2PATPhotonConversionTag; //!
     TBranch* b_elePF2PATPhotonConversionDist; //!
     TBranch* b_elePF2PATPhotonConversionDcot; //!
-    TBranch* b_elePF2PATPhotonConversionVeto; //!
+//    TBranch* b_elePF2PATPhotonConversionVeto; //!
     TBranch* b_elePF2PATPhotonConversionTagCustom; //!
     TBranch* b_elePF2PATPhotonConversionDistCustom; //!
     TBranch* b_elePF2PATPhotonConversionDcotCustom; //!
@@ -1375,28 +1378,28 @@ class AnalysisEvent
     TBranch* b_generalTracksPhi; //!
     TBranch* b_generalTracksCharge; //!
 
-    TBranch* b_numIsolatedTracks;
-    TBranch* b_isoTracksPt;
-    TBranch* b_isoTracksPx;
-    TBranch* b_isoTracksPy;
-    TBranch* b_isoTracksPz;
-    TBranch* b_isoTracksE;
-    TBranch* b_isoTracksEta;
-    TBranch* b_isoTracksTheta;
-    TBranch* b_isoTracksPhi;
-    TBranch* b_isoTracksCharge;
-    TBranch* b_isoTracksMatchedCaloJetEmEnergy;
-    TBranch* b_isoTracksMatchedCaloJetHadEnergy;
-    TBranch* b_isoTracksDz;
-    TBranch* b_isoTracksDxy;
-    TBranch* b_isoTracksDzError;
-    TBranch* b_isoTracksDxyError;
-    TBranch* b_isoTracksFromPV;
-    TBranch* b_isoTracksHighPurity;
-    TBranch* b_isoTracksTight;
-    TBranch* b_isoTracksLoose;
-    TBranch* b_isoTracksDeltaEta;
-    TBranch* b_isoTracksDeltaPhi;
+    TBranch* b_numIsolatedTracks; //!
+    TBranch* b_isoTracksPt; //!
+    TBranch* b_isoTracksPx; //!
+    TBranch* b_isoTracksPy; //!
+    TBranch* b_isoTracksPz; //!
+    TBranch* b_isoTracksE; //!
+    TBranch* b_isoTracksEta; //!
+    TBranch* b_isoTracksTheta; //!
+    TBranch* b_isoTracksPhi; //!
+    TBranch* b_isoTracksCharge; //!
+    TBranch* b_isoTracksMatchedCaloJetEmEnergy; //!
+    TBranch* b_isoTracksMatchedCaloJetHadEnergy; //!
+    TBranch* b_isoTracksDz; //!
+    TBranch* b_isoTracksDxy; //!
+    TBranch* b_isoTracksDzError; //!
+    TBranch* b_isoTracksDxyError; //!
+    TBranch* b_isoTracksFromPV; //!
+    TBranch* b_isoTracksHighPurity; //!
+    TBranch* b_isoTracksTight; //!
+    TBranch* b_isoTracksLoose; //!
+    TBranch* b_isoTracksDeltaEta; //!
+    TBranch* b_isoTracksDeltaPhi; //!
 
     TBranch* b_isElePlusJets; //!
     TBranch* b_genPDFScale; //!
@@ -2071,7 +2074,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("elePF2PATPhotonConversionTag", elePF2PATPhotonConversionTag, &b_elePF2PATPhotonConversionTag);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDist", elePF2PATPhotonConversionDist, &b_elePF2PATPhotonConversionDist);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDcot", elePF2PATPhotonConversionDcot, &b_elePF2PATPhotonConversionDcot);
-   fChain->SetBranchAddress("elePF2PATPhotonConversionVeto", elePF2PATPhotonConversionVeto, &b_elePF2PATPhotonConversionVeto);
+//   fChain->SetBranchAddress("elePF2PATPhotonConversionVeto", elePF2PATPhotonConversionVeto, &b_elePF2PATPhotonConversionVeto);
    fChain->SetBranchAddress("elePF2PATPhotonConversionTagCustom", elePF2PATPhotonConversionTagCustom, &b_elePF2PATPhotonConversionTagCustom);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDistCustom", elePF2PATPhotonConversionDistCustom, &b_elePF2PATPhotonConversionDistCustom);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDcotCustom", elePF2PATPhotonConversionDcotCustom, &b_elePF2PATPhotonConversionDcotCustom);
@@ -2435,6 +2438,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("beamSpotX", &beamSpotX, &b_beamSpotX);
    fChain->SetBranchAddress("beamSpotY", &beamSpotY, &b_beamSpotY);
    fChain->SetBranchAddress("beamSpotZ", &beamSpotZ, &b_beamSpotZ);
+
    fChain->SetBranchAddress("pvX", &pvX, &b_pvX);
    fChain->SetBranchAddress("pvY", &pvY, &b_pvY);
    fChain->SetBranchAddress("pvZ", &pvZ, &b_pvZ);
@@ -2447,6 +2451,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("pvChi2", &pvChi2, &b_pvChi2);
    fChain->SetBranchAddress("pvNtracks", &pvNtracks, &b_pvNtracks);
    fChain->SetBranchAddress("pvNtracksW05", &pvNtracksW05, &b_pvNtracksW05);
+
    fChain->SetBranchAddress("mhtPt", &mhtPt, &b_mhtPt);
    fChain->SetBranchAddress("mhtPy", &mhtPy, &b_mhtPy);
    fChain->SetBranchAddress("mhtPx", &mhtPx, &b_mhtPx);

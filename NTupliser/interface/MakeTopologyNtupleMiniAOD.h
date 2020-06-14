@@ -147,6 +147,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     bool ran_mcloop_{};
     bool ran_postloop_{};
     bool ran_PV_{};
+    bool ran_BS_{};
     bool ran_tracks_{};
     bool ran_isotracks_{};
     bool ran_photonTau_{};
@@ -204,13 +205,15 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
                        edm::EDGetTokenT<pat::METCollection>,
                        const std::string&);
     void fillEventInfo(const edm::Event&, const edm::EventSetup&);
+    void fillPV(const edm::Event&, const edm::EventSetup&);
+    void fillSV(const edm::Event&, const edm::EventSetup&);
     void fillMCInfo(const edm::Event&, const edm::EventSetup&);
     void fillTriggerData(const edm::Event&);
     void fillSummaryVariables(
         void); // should only be called after all other functions.
     void fillGeneralTracks(const edm::Event&, const edm::EventSetup&);
     void fillIsolatedTracks(const edm::Event&, const edm::EventSetup&);
-    void fillV0Info(const edm::Event&, const edm::EventSetup&, const std::string&);
+    void fillV0Info(const edm::Event&, const edm::EventSetup&);
     // ID functions
     bool photonConversionVeto(const pat::Electron&, float&, float&);
 
@@ -242,6 +245,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void bookMCBranches(void); // called by bookBranches, makes MC branches.
     void bookGeneralTracksBranches(void); // called by bookBranches, makes generalTracks branches.
     void bookIsolatedTracksBranches(void); // called by bookBranches, makes isolatedTracks branches.
+    void bookPVbranches(void); // called by bookBranches, makes PV branches.
+    void bookSVbranches(void); // called by bookBranches, makes SV branches.
 
     TTree* mytree_{};
 
@@ -286,6 +291,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, int> numPho;
     std::map<std::string, int> numMuo;
 
+    int numPVs{};
+    int numSVs{};
     math::XYZPoint beamSpotPoint_;
     math::XYZPoint vertexPoint_;
 
@@ -320,6 +327,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     void cleararrays(void); // used to set everything in the following arrays
                             // to zero or unphysical numbers
+    void clearPVarrays(void); // clearing PV info, used by cleararrays
+    void clearSVarrays(void); // clearing SV info, used by cleararrays
     void clearjetarrays(const std::string&); // clearing jet info, used by cleararrays]
     void clearTauArrays(const std::string&);
     void clearPhotonArrays(const std::string&);
@@ -339,19 +348,20 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float beamSpotY{};
     float beamSpotZ{};
 
+    static constexpr size_t NPVSMAX{80};
     int numPv{};
-    float pvX{};
-    float pvY{};
-    float pvZ{};
-    float pvDX{};
-    float pvDY{};
-    float pvDZ{};
-    float pvRho{};
-    int pvIsFake{};
-    float pvChi2{};
-    float pvNdof{};
-    int pvNtracks{};
-    int pvNtracksW05{};
+    float pvX[NPVSMAX]{};
+    float pvY[NPVSMAX]{};
+    float pvZ[NPVSMAX]{};
+    float pvDX[NPVSMAX]{};
+    float pvDY[NPVSMAX]{};
+    float pvDZ[NPVSMAX]{};
+    float pvRho[NPVSMAX]{};
+    int pvIsFake[NPVSMAX]{};
+    float pvChi2[NPVSMAX]{};
+    float pvNdof[NPVSMAX]{};
+    int pvNtracks[NPVSMAX]{};
+    int pvNtracksW05[NPVSMAX]{};
 
     std::map<std::string, int> nzcandidates;
     std::map<std::string, std::vector<float>>
