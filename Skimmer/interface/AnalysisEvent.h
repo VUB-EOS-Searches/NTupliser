@@ -355,6 +355,66 @@ class AnalysisEvent
     Int_t genPhoPF2PATIsConvertedPhoton[NPHOTONSMAX];
     Int_t genPhoPF2PATIsJet[NPHOTONSMAX];
 
+/*
+    static constexpr size_t NOOTPHOTONSMAX{30};
+    Int_t numPhoOOT_PF2PAT;
+    Float_t phoOOT_PF2PATE[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSigmaE[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATET[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPhi[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATEta[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATTheta[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPt[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPx[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPy[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPz[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATCalibE[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATCalibEt[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSCE[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSCRawE[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATESEnP1[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATESEnP2[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSCEta[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSCEtaWidth[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSCPhi[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSCPhiWidth[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSCBrem[NOOTPHOTONSMAX];
+    Int_t phoOOT_PF2PATHasPixelSeed[NOOTPHOTONSMAX];
+    Int_t phoOOT_PF2PATEleVeto[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATR9[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATHoverE[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATESEffSigmaRR[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSigmaIEtaIEtaFull5x5[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSigmaIEtaIPhiFull5x5[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATSigmaIPhiIPhiFull5x5[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATE2x2Full5x5[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATE5x5Full5x5[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATR9Full5x5[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPFChIso[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPFPhoIso [NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPFNeuIso[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATPFChWorstIso[NOOTPHOTONSMAX];
+    Float_t phoOOT_PF2PATMIPTotEnergy[NOOTPHOTONSMAX];
+    Int_t phoOOT_PF2PATCutIdLoose[NOOTPHOTONSMAX];
+    Int_t phoOOT_PF2PATCutIdMedium[NOOTPHOTONSMAX];
+    Int_t phoOOT_PF2PATCutIdTight[NOOTPHOTONSMAX];
+    Int_t phoOOT_PF2PATMvaIdWp80[NOOTPHOTONSMAX];
+    Int_t phoOOT_PF2PATMvaIdWp90[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATPt[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATET[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATEta[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATTheta[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATPhi[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATPx[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATPy[NOOTPHOTONSMAX];
+    Float_t genPhoOOT_PF2PATPz[NOOTPHOTONSMAX];
+    Int_t genPhoOOT_PF2PATCharge[NOOTPHOTONSMAX];
+    Int_t genPhoOOT_PF2PATPdgId[NOOTPHOTONSMAX];
+    Int_t genPhoOOT_PF2PATMotherId[NOOTPHOTONSMAX];
+    Int_t genPhoOOT_PF2PATIsPhoton[NOOTPHOTONSMAX];
+    Int_t genPhoOOT_PF2PATIsConvertedPhoton[NOOTPHOTONSMAX];
+    Int_t genPhoOOT_PF2PATIsJet[NOOTPHOTONSMAX];
+*/
     static constexpr size_t NTRACKSMAX{40};
     Int_t numGeneralTracks;
     Float_t generalTracksPt[NTRACKSMAX];
@@ -386,6 +446,8 @@ class AnalysisEvent
     Int_t pvIsFake;
     Float_t pvNdof;
     Float_t pvChi2;
+    Float_t pvNtracks;
+    Float_t pvNtracksW05;
     Float_t mhtPt;
     Float_t mhtPy;
     Float_t mhtPx;
@@ -1220,6 +1282,65 @@ class AnalysisEvent
     TBranch* b_genPhoPF2PATIsPhoton; //!
     TBranch* b_genPhoPF2PATIsConvertedPhoton; //!
     TBranch* b_genPhoPF2PATIsJet; //!
+/*
+    TBranch* b_numPhoOOT_PF2PAT; //!
+    TBranch* b_phoOOT_PF2PATE; //!
+    TBranch* b_phoOOT_PF2PATSigmaE; //!
+    TBranch* b_phoOOT_PF2PATET; //!
+    TBranch* b_phoOOT_PF2PATPhi; //!
+    TBranch* b_phoOOT_PF2PATEta; //!
+    TBranch* b_phoOOT_PF2PATTheta; //!
+    TBranch* b_phoOOT_PF2PATPt; //!
+    TBranch* b_phoOOT_PF2PATPx; //!
+    TBranch* b_phoOOT_PF2PATPy; //!
+    TBranch* b_phoOOT_PF2PATPz; //!
+    TBranch* b_phoOOT_PF2PATCalibE; //!
+    TBranch* b_phoOOT_PF2PATCalibEt; //!
+    TBranch* b_phoOOT_PF2PATSCE; //!
+    TBranch* b_phoOOT_PF2PATSCRawE; //!
+    TBranch* b_phoOOT_PF2PATESEnP1; //!
+    TBranch* b_phoOOT_PF2PATESEnP2; //!
+    TBranch* b_phoOOT_PF2PATSCEta; //!
+    TBranch* b_phoOOT_PF2PATSCEtaWidth; //!
+    TBranch* b_phoOOT_PF2PATSCPhi; //!
+    TBranch* b_phoOOT_PF2PATSCPhiWidth; //!
+    TBranch* b_phoOOT_PF2PATSCBrem; //!
+    TBranch* b_phoOOT_PF2PATHasPixelSeed; //!
+    TBranch* b_phoOOT_PF2PATEleVeto; //!
+    TBranch* b_phoOOT_PF2PATR9; //!
+    TBranch* b_phoOOT_PF2PATHoverE; //!
+    TBranch* b_phoOOT_PF2PATESEffSigmaRR; //!
+    TBranch* b_phoOOT_PF2PATSigmaIEtaIEtaFull5x5; //!
+    TBranch* b_phoOOT_PF2PATSigmaIEtaIPhiFull5x5; //!
+    TBranch* b_phoOOT_PF2PATSigmaIPhiIPhiFull5x5; //!
+    TBranch* b_phoOOT_PF2PATE2x2Full5x5; //!
+    TBranch* b_phoOOT_PF2PATE5x5Full5x5; //!
+    TBranch* b_phoOOT_PF2PATR9Full5x5; //!
+    TBranch* b_phoOOT_PF2PATPFChIso; //!
+    TBranch* b_phoOOT_PF2PATPFPhoIso ; //!
+    TBranch* b_phoOOT_PF2PATPFNeuIso; //!
+    TBranch* b_phoOOT_PF2PATPFChWorstIso; //!
+    TBranch* b_phoOOT_PF2PATMIPTotEnergy; //!
+    TBranch* b_phoOOT_PF2PATCutIdLoose; //!
+    TBranch* b_phoOOT_PF2PATCutIdMedium; //!
+    TBranch* b_phoOOT_PF2PATCutIdTight; //!
+    TBranch* b_phoOOT_PF2PATMvaIdWp80; //!
+    TBranch* b_phoOOT_PF2PATMvaIdWp90; //!
+    TBranch* b_genPhoOOT_PF2PATPt; //!
+    TBranch* b_genPhoOOT_PF2PATET; //!
+    TBranch* b_genPhoOOT_PF2PATEta; //!
+    TBranch* b_genPhoOOT_PF2PATTheta; //!
+    TBranch* b_genPhoOOT_PF2PATPhi; //!
+    TBranch* b_genPhoOOT_PF2PATPx; //!
+    TBranch* b_genPhoOOT_PF2PATPy; //!
+    TBranch* b_genPhoOOT_PF2PATPz; //!
+    TBranch* b_genPhoOOT_PF2PATCharge; //!
+    TBranch* b_genPhoOOT_PF2PATPdgId; //!
+    TBranch* b_genPhoOOT_PF2PATMotherId; //!
+    TBranch* b_genPhoOOT_PF2PATIsPhoton; //!
+    TBranch* b_genPhoOOT_PF2PATIsConvertedPhoton; //!
+    TBranch* b_genPhoOOT_PF2PATIsJet; //!
+*/
     TBranch* b_numGeneralTracks; //!
     TBranch* b_generalTracksPt; //!
     TBranch* b_generalTracksEta; //!
@@ -1250,6 +1371,8 @@ class AnalysisEvent
     TBranch* b_pvIsFake; //!
     TBranch* b_pvNdof; //!
     TBranch* b_pvChi2; //!
+    TBranch* b_pvNtracks; //!
+    TBranch* b_pvNtracksW05; //!
     TBranch* b_mhtPt; //!
     TBranch* b_mhtPy; //!
     TBranch* b_mhtPx; //!
@@ -2155,7 +2278,67 @@ AnalysisEvent::AnalysisEvent(bool isMC,
       fChain->SetBranchAddress("genPhoPF2PATIsConvertedPhoton", &genPhoPF2PATIsConvertedPhoton, &b_genPhoPF2PATIsConvertedPhoton);
       fChain->SetBranchAddress("genPhoPF2PATIsJet", &genPhoPF2PATIsJet, &b_genPhoPF2PATIsJet);
    }
-
+/*
+   fChain->SetBranchAddress("numPhoOOT_PF2PAT", &numPhoOOT_PF2PAT, &b_numPhoOOT_PF2PAT);
+   fChain->SetBranchAddress("phoOOT_PF2PATE", &phoOOT_PF2PATE, &b_phoOOT_PF2PATE);
+   fChain->SetBranchAddress("phoOOT_PF2PATSigmaE", &phoOOT_PF2PATSigmaE, &b_phoOOT_PF2PATSigmaE);
+   fChain->SetBranchAddress("phoOOT_PF2PATET", &phoOOT_PF2PATET, &b_phoOOT_PF2PATET);
+   fChain->SetBranchAddress("phoOOT_PF2PATPhi", &phoOOT_PF2PATPhi, &b_phoOOT_PF2PATPhi);
+   fChain->SetBranchAddress("phoOOT_PF2PATEta", &phoOOT_PF2PATEta, &b_phoOOT_PF2PATEta);
+   fChain->SetBranchAddress("phoOOT_PF2PATTheta", &phoOOT_PF2PATTheta, &b_phoOOT_PF2PATTheta);
+   fChain->SetBranchAddress("phoOOT_PF2PATPt", &phoOOT_PF2PATPt, &b_phoOOT_PF2PATPt);
+   fChain->SetBranchAddress("phoOOT_PF2PATPx", &phoOOT_PF2PATPx, &b_phoOOT_PF2PATPx);
+   fChain->SetBranchAddress("phoOOT_PF2PATPy", &phoOOT_PF2PATPy, &b_phoOOT_PF2PATPy);
+   fChain->SetBranchAddress("phoOOT_PF2PATPz", &phoOOT_PF2PATPz, &b_phoOOT_PF2PATPz);
+   fChain->SetBranchAddress("phoOOT_PF2PATCalibE", &phoOOT_PF2PATCalibE, &b_phoOOT_PF2PATCalibE);
+   fChain->SetBranchAddress("phoOOT_PF2PATCalibEt", &phoOOT_PF2PATCalibEt, &b_phoOOT_PF2PATCalibEt);
+   fChain->SetBranchAddress("phoOOT_PF2PATSCE", &phoOOT_PF2PATSCE, &b_phoOOT_PF2PATSCE);
+   fChain->SetBranchAddress("phoOOT_PF2PATSCRawE", &phoOOT_PF2PATSCRawE, &b_phoOOT_PF2PATSCRawE);
+   fChain->SetBranchAddress("phoOOT_PF2PATESEnP1", &phoOOT_PF2PATESEnP1, &b_phoOOT_PF2PATESEnP1);
+   fChain->SetBranchAddress("phoOOT_PF2PATESEnP2", &phoOOT_PF2PATESEnP2, &b_phoOOT_PF2PATESEnP1);
+   fChain->SetBranchAddress("phoOOT_PF2PATSCEta", &phoOOT_PF2PATSCEta, &b_phoOOT_PF2PATSCEta);
+   fChain->SetBranchAddress("phoOOT_PF2PATSCEtaWidth", &phoOOT_PF2PATSCEtaWidth, &b_phoOOT_PF2PATSCEtaWidth);
+   fChain->SetBranchAddress("phoOOT_PF2PATSCPhi", &phoOOT_PF2PATSCPhi, &b_phoOOT_PF2PATSCPhi);
+   fChain->SetBranchAddress("phoOOT_PF2PATSCPhiWidth", &phoOOT_PF2PATSCPhiWidth, &b_phoOOT_PF2PATSCPhiWidth);
+   fChain->SetBranchAddress("phoOOT_PF2PATSCBrem", &phoOOT_PF2PATSCBrem, &b_phoOOT_PF2PATSCBrem);
+   fChain->SetBranchAddress("phoOOT_PF2PATHasPixelSeed", &phoOOT_PF2PATHasPixelSeed, &b_phoOOT_PF2PATHasPixelSeed);
+   fChain->SetBranchAddress("phoOOT_PF2PATEleVeto", &phoOOT_PF2PATEleVeto, &b_phoOOT_PF2PATEleVeto);
+   fChain->SetBranchAddress("phoOOT_PF2PATR9", &phoOOT_PF2PATR9, &b_phoOOT_PF2PATR9);
+   fChain->SetBranchAddress("phoOOT_PF2PATHoverE", &phoOOT_PF2PATHoverE, &b_phoOOT_PF2PATHoverE);
+   fChain->SetBranchAddress("phoOOT_PF2PATESEffSigmaRR", &phoOOT_PF2PATESEffSigmaRR, &b_phoOOT_PF2PATESEffSigmaRR);
+   fChain->SetBranchAddress("phoOOT_PF2PATSigmaIEtaIEtaFull5x5", &phoOOT_PF2PATSigmaIEtaIEtaFull5x5, &b_phoOOT_PF2PATSigmaIEtaIEtaFull5x5);
+   fChain->SetBranchAddress("phoOOT_PF2PATSigmaIEtaIPhiFull5x5", &phoOOT_PF2PATSigmaIEtaIPhiFull5x5, &b_phoOOT_PF2PATSigmaIEtaIPhiFull5x5);
+   fChain->SetBranchAddress("phoOOT_PF2PATSigmaIPhiIPhiFull5x5", &phoOOT_PF2PATSigmaIPhiIPhiFull5x5, &b_phoOOT_PF2PATSigmaIPhiIPhiFull5x5);
+   fChain->SetBranchAddress("phoOOT_PF2PATE2x2Full5x5", &phoOOT_PF2PATE2x2Full5x5, &b_phoOOT_PF2PATE2x2Full5x5);
+   fChain->SetBranchAddress("phoOOT_PF2PATE5x5Full5x5", &phoOOT_PF2PATE5x5Full5x5, &b_phoOOT_PF2PATE5x5Full5x5);
+   fChain->SetBranchAddress("phoOOT_PF2PATR9Full5x5", &phoOOT_PF2PATR9Full5x5, &b_phoOOT_PF2PATR9Full5x5);
+   fChain->SetBranchAddress("phoOOT_PF2PATPFChIso", &phoOOT_PF2PATPFChIso, &b_phoOOT_PF2PATPFChIso);
+   fChain->SetBranchAddress("phoOOT_PF2PATPFPhoIso", &phoOOT_PF2PATPFPhoIso, &b_phoOOT_PF2PATPFPhoIso);
+   fChain->SetBranchAddress("phoOOT_PF2PATPFNeuIso", &phoOOT_PF2PATPFNeuIso, &b_phoOOT_PF2PATPFNeuIso);
+   fChain->SetBranchAddress("phoOOT_PF2PATPFChWorstIso", &phoOOT_PF2PATPFChWorstIso, &b_phoOOT_PF2PATPFChWorstIso);
+   fChain->SetBranchAddress("phoOOT_PF2PATMIPTotEnergy", &phoOOT_PF2PATMIPTotEnergy, &b_phoOOT_PF2PATMIPTotEnergy);
+   fChain->SetBranchAddress("phoOOT_PF2PATCutIdLoose", &phoOOT_PF2PATCutIdLoose, &b_phoOOT_PF2PATCutIdLoose);
+   fChain->SetBranchAddress("phoOOT_PF2PATCutIdMedium", &phoOOT_PF2PATCutIdMedium, &b_phoOOT_PF2PATCutIdMedium);
+   fChain->SetBranchAddress("phoOOT_PF2PATCutIdTight", &phoOOT_PF2PATCutIdTight, &b_phoOOT_PF2PATCutIdTight);
+   fChain->SetBranchAddress("phoOOT_PF2PATMvaIdWp80", &phoOOT_PF2PATMvaIdWp80, &b_phoOOT_PF2PATMvaIdWp80);
+   fChain->SetBranchAddress("phoOOT_PF2PATMvaIdWp90", &phoOOT_PF2PATMvaIdWp90, &b_phoOOT_PF2PATMvaIdWp90);
+   if (isMC) {
+      fChain->SetBranchAddress("genPhoOOT_PF2PATPt", &genPhoOOT_PF2PATPt, &b_genPhoOOT_PF2PATPt);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATET", &genPhoOOT_PF2PATET, &b_genPhoOOT_PF2PATET);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATEta", &genPhoOOT_PF2PATEta, &b_genPhoOOT_PF2PATEta);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATTheta", &genPhoOOT_PF2PATTheta, &b_genPhoOOT_PF2PATTheta);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATPhi", &genPhoOOT_PF2PATPhi, &b_genPhoOOT_PF2PATPhi);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATPx", &genPhoOOT_PF2PATPx, &b_genPhoOOT_PF2PATPx);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATPy", &genPhoOOT_PF2PATPy, &b_genPhoOOT_PF2PATPy);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATPz", &genPhoOOT_PF2PATPz, &b_genPhoOOT_PF2PATPz);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATCharge", &genPhoOOT_PF2PATCharge, &b_genPhoOOT_PF2PATCharge);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATPdgId", &genPhoOOT_PF2PATPdgId, &b_genPhoOOT_PF2PATPdgId);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATMotherId", &genPhoOOT_PF2PATMotherId, &b_genPhoOOT_PF2PATMotherId);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATIsPhoton", &genPhoOOT_PF2PATIsPhoton, &b_genPhoOOT_PF2PATIsPhoton);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATIsConvertedPhoton", &genPhoOOT_PF2PATIsConvertedPhoton, &b_genPhoOOT_PF2PATIsConvertedPhoton);
+      fChain->SetBranchAddress("genPhoOOT_PF2PATIsJet", &genPhoOOT_PF2PATIsJet, &b_genPhoOOT_PF2PATIsJet);
+   }
+*/
    fChain->SetBranchAddress("numGeneralTracks", &numGeneralTracks, &b_numGeneralTracks);
    fChain->SetBranchAddress("generalTracksPt", generalTracksPt, &b_generalTracksPt);
    fChain->SetBranchAddress("generalTracksEta", generalTracksEta, &b_generalTracksEta);
@@ -2189,6 +2372,8 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("pvIsFake", &pvIsFake, &b_pvIsFake);
    fChain->SetBranchAddress("pvNdof", &pvNdof, &b_pvNdof);
    fChain->SetBranchAddress("pvChi2", &pvChi2, &b_pvChi2);
+   fChain->SetBranchAddress("pvNtracks", &pvNtracks, &b_pvNtracks);
+   fChain->SetBranchAddress("pvNtracksW05", &pvNtracksW05, &b_pvNtracksW05);
    fChain->SetBranchAddress("mhtPt", &mhtPt, &b_mhtPt);
    fChain->SetBranchAddress("mhtPy", &mhtPy, &b_mhtPy);
    fChain->SetBranchAddress("mhtPx", &mhtPx, &b_mhtPx);

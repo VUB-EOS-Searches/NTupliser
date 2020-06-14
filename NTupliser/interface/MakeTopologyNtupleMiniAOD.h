@@ -349,6 +349,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int pvIsFake{};
     float pvChi2{};
     float pvNdof{};
+    int pvNtracks{};
+    int pvNtracksW05{};
 
     std::map<std::string, int> nzcandidates;
     std::map<std::string, std::vector<float>>

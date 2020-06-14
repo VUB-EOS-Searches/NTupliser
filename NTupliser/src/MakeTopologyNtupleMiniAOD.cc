@@ -343,6 +343,8 @@ void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent,
             pvNdof = pv[0].ndof();
             pvIsFake = numeric_cast<int>(pv[0].isFake());
             pvChi2 = pv[0].chi2();
+            pvNtracks = int(pv[0].tracksSize());
+            pvNtracksW05 = pv[0].nTracks(0.5);
             math::XYZPoint point(pvX, pvY, pvZ);
             vertexPoint_ = point;
         }
@@ -3030,6 +3032,8 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     mytree_->Branch("pvIsFake", &pvIsFake, "pvIsFake/I");
     mytree_->Branch("pvNdof", &pvNdof, "pvNdof/F");
     mytree_->Branch("pvChi2", &pvChi2, "pvChi2/F");
+    mytree_->Branch("pvNtracks", &pvNtracks, "pvNtracks/I");
+    mytree_->Branch("pvNtracksW05", &pvNtracksW05, "pvNtracksW05/I");
 
     mytree_->Branch("mhtPt", &mhtPt, "mhtPt/F");
     mytree_->Branch("mhtPy", &mhtPy, "mhtPy/F");
