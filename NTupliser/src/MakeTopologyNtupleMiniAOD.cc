@@ -452,8 +452,7 @@ void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
 //////////////////////////////////////////////////////////////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::PhotonCollection> phoIn_, const std::string& ID, edm::EDGetTokenT<pat::PhotonCollection> phoInOrg_) {
   // info for 'default conversion finder
-  edm::Handle<std::vector<pat::PackedCandidate>> lostTracks;
-  iEvent.getByToken(trackToken_, lostTracks);
+
   edm::ESHandle<MagneticField> magneticField;
   iSetup.get<IdealMagneticFieldRecord>().get(magneticField);
   
@@ -600,8 +599,6 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
     // ran_eleloop_ = true;
 
     // info for 'default conversion finder
-    edm::Handle<std::vector<pat::PackedCandidate>> lostTracks;
-    iEvent.getByToken(trackToken_, lostTracks);
     edm::ESHandle<MagneticField> magneticField;
     iSetup.get<IdealMagneticFieldRecord>().get(magneticField);
     // over-ride the magnetic field supplied from the configfile:

@@ -28,9 +28,9 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
                                            #metJPTTag      = cms.InputTag("patMETsTC"),
 
                                            primaryVertexToken = cms.InputTag("offlineSlimmedPrimaryVertices"),
+                                           #secondaryVertices  = cms.InputTag("slimmedSecondaryVertices"),
                                            kshortToken        = cms.InputTag("slimmedKshortVertices"),
                                            lambdaToken        = cms.InputTag("slimmedLambdaVertices"),
-                                           #secondaryVertices  = cms.InputTag("slimmedSecondaryVertices"),
 
                                            rhoToken           = cms.InputTag("fixedGridRhoFastjetAll"),
 					   effAreasConfigFile =cms.FileInPath("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt"),
