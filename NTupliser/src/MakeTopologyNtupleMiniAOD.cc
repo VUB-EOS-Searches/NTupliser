@@ -781,10 +781,8 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
         electronSortedBeamSpotCorrectedTrackD0[ID][numEle[ID] - 1] =
             -1. * (ele.gsfTrack()->dxy(beamSpotPoint_));
         electronSortedTrackDz[ID][numEle[ID] - 1] = ele.gsfTrack()->dz();
-        electronSortedTrackD0PV[ID][numEle[ID] - 1] =
-            ele.gsfTrack()->dxy(vertexPoint_);
-        electronSortedTrackDZPV[ID][numEle[ID] - 1] =
-            ele.gsfTrack()->dz(vertexPoint_);
+        electronSortedTrackD0PV[ID][numEle[ID] - 1] = ele.gsfTrack()->dxy(vertexPoint_);
+        electronSortedTrackDZPV[ID][numEle[ID] - 1] = ele.gsfTrack()->dz(vertexPoint_);
         electronSortedVtxZ[ID][numEle[ID] - 1] = ele.vertex().z();
 
         electronSortedIsGsf[ID][numEle[ID] - 1] = ele.gsfTrack().isNonnull();
@@ -1100,18 +1098,12 @@ void MakeTopologyNtupleMiniAOD::fillMuons(
             muonSortedVertZ[ID][numMuo[ID] - 1] = muo.vertex().Z();
 
             // Just some extra stuff.
-            muonSortedTkLysWithMeasurements[ID][numMuo[ID] - 1] =
-                muo.track()->hitPattern().trackerLayersWithMeasurement();
-            muonSortedGlbTkNormChi2[ID][numMuo[ID] - 1] =
-                muo.globalTrack()->normalizedChi2();
-            muonSortedDBPV[ID][numMuo[ID] - 1] =
-                muo.muonBestTrack()->dxy(vertexPoint_);
-            muonSortedDZPV[ID][numMuo[ID] - 1] =
-                muo.muonBestTrack()->dz(vertexPoint_);
-            muonSortedVldPixHits[ID][numMuo[ID] - 1] =
-                muo.innerTrack()->hitPattern().numberOfValidPixelHits();
-            muonSortedMatchedStations[ID][numMuo[ID] - 1] =
-                muo.numberOfMatchedStations();
+            muonSortedTkLysWithMeasurements[ID][numMuo[ID] - 1] = muo.track()->hitPattern().trackerLayersWithMeasurement();
+            muonSortedGlbTkNormChi2[ID][numMuo[ID] - 1] = muo.globalTrack()->normalizedChi2();
+            muonSortedDBPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dxy(vertexPoint_);
+            muonSortedDZPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dz(vertexPoint_);
+            muonSortedVldPixHits[ID][numMuo[ID] - 1] = muo.innerTrack()->hitPattern().numberOfValidPixelHits();
+            muonSortedMatchedStations[ID][numMuo[ID] - 1] = muo.numberOfMatchedStations();
         }
         //----------------------------------------------------------------------------
         // std::cout << "Gets to the filling bit which says track in it";
@@ -4905,51 +4897,39 @@ void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
     // std::cout << "bookGeneralTrackBranches CHECK" << std::endl;
     mytree_->Branch(
         "numGeneralTracks", &numGeneralTracks, "numGeneralTracks/I");
-    mytree_->Branch("generalTracksPt",
-                    generalTracksPt,
-                    "generalTracksPt[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksEta",
-                    generalTracksEta,
-                    "generalTracksEta[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksTheta",
-                    generalTracksTheta,
-                    "generalTracksTheta[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksBeamSpotCorrectedD0",
-                    generalTracksBeamSpotCorrectedD0,
-                    "generalTracksBeamSpotCorrectedD0[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksPhi",
-                    generalTracksPhi,
-                    "generalTracksPhi[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksCharge",
-                    generalTracksCharge,
-                    "generalTracksCharge[numGeneralTracks]/I");
+    mytree_->Branch("generalTracksPt", &generalTracksPt, "generalTracksPt[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksEta", &generalTracksEta, "generalTracksEta[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksTheta", &generalTracksTheta, "generalTracksTheta[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksBeamSpotCorrectedD0", &generalTracksBeamSpotCorrectedD0, "generalTracksBeamSpotCorrectedD0[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPhi", &generalTracksPhi, "generalTracksPhi[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksCharge", &generalTracksCharge, "generalTracksCharge[numGeneralTracks]/I");
 }
 
 void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
 {
     // std::cout << "bookIsolatedTrackBranches CHECK" << std::endl;
     mytree_->Branch("numIsolatedTracks", &numIsolatedTracks, "numIsolatedTracks/I");
-    mytree_->Branch("isoTracksPt", isoTracksPt, "isoTracksPt[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksPx", isoTracksPx, "isoTracksPx[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksPy", isoTracksPy, "isoTracksPy[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksPz", isoTracksPz, "isoTracksPz[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksE", isoTracksE, "isoTracksE[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksEta", isoTracksEta, "isoTracksEta[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksTheta", isoTracksTheta, "isoTracksTheta[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksPhi", isoTracksPhi, "isoTracksPhi[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksCharge", isoTracksCharge, "isoTracksCharge[numIsolatedTracks]/I");
-    mytree_->Branch("isoTracksMatchedCaloJetEmEnergy", isoTracksMatchedCaloJetEmEnergy, "isoTracksMatchedCaloJetEmEnergy[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksMatchedCaloJetHadEnergy", isoTracksMatchedCaloJetHadEnergy, "isoTracksMatchedCaloJetHadEnergy[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksDz", isoTracksDz, "isoTracksDz[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksDxy", isoTracksDxy, "isoTracksDxy[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksDzError", isoTracksDzError, "isoTracksDzError[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksDxyError", isoTracksDxyError, "isoTracksDxyError[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksFromPV", isoTracksFromPV, "isoTracksFromPV[numIsolatedTracks]/I");
-    mytree_->Branch("isoTracksHighPurity", isoTracksHighPurity, "isoTracksHighPurity[numIsolatedTracks]/I");
-    mytree_->Branch("isoTracksTight", isoTracksTight, "isoTracksTIght[numIsolatedTracks]/I");
-    mytree_->Branch("isoTracksLoose", isoTracksLoose, "isoTracksLoose[numIsolatedTracks]/I");
-    mytree_->Branch("isoTracksDeltaEta", isoTracksDeltaEta, "isoTracksDeltaEta[numIsolatedTracks]/F");
-    mytree_->Branch("isoTracksDeltaPhi", isoTracksDeltaPhi, "isoTracksDeltaPhi[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPt", &isoTracksPt, "isoTracksPt[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPx", &isoTracksPx, "isoTracksPx[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPy", &isoTracksPy, "isoTracksPy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPz", &isoTracksPz, "isoTracksPz[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksE", &isoTracksE, "isoTracksE[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksEta", &isoTracksEta, "isoTracksEta[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksTheta", &isoTracksTheta, "isoTracksTheta[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPhi", &isoTracksPhi, "isoTracksPhi[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksCharge", &isoTracksCharge, "isoTracksCharge[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksMatchedCaloJetEmEnergy", &isoTracksMatchedCaloJetEmEnergy, "isoTracksMatchedCaloJetEmEnergy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksMatchedCaloJetHadEnergy", &isoTracksMatchedCaloJetHadEnergy, "isoTracksMatchedCaloJetHadEnergy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDz", &isoTracksDz, "isoTracksDz[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDxy", &isoTracksDxy, "isoTracksDxy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDzError", &isoTracksDzError, "isoTracksDzError[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDxyError", &isoTracksDxyError, "isoTracksDxyError[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksFromPV", &isoTracksFromPV, "isoTracksFromPV[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksHighPurity", &isoTracksHighPurity, "isoTracksHighPurity[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksTight", &isoTracksTight, "isoTracksTIght[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksLoose", &isoTracksLoose, "isoTracksLoose[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksDeltaEta", &isoTracksDeltaEta, "isoTracksDeltaEta[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDeltaPhi", &isoTracksDeltaPhi, "isoTracksDeltaPhi[numIsolatedTracks]/F");
 }
 
 // ------------ method called once each job just before starting event loop
