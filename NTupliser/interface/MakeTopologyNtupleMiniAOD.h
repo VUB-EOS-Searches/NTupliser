@@ -52,6 +52,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     edm::EDGetTokenT<pat::ElectronCollection> eleLabel_;
     edm::EDGetTokenT<pat::PhotonCollection> phoLabel_;
+    edm::EDGetTokenT<pat::PhotonCollection> ootPhoLabel_;
     edm::InputTag muoLabel_;
     edm::InputTag jetLabel_;
     //  edm::InputTag genJetTag_; // Need to replace
@@ -60,6 +61,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     edm::InputTag metLabel_;
 
     edm::EDGetTokenT<pat::PhotonCollection> patPhotonsToken_;
+    edm::EDGetTokenT<pat::PhotonCollection> patOOTphotonsToken_;
     edm::EDGetTokenT<pat::ElectronCollection> patElectronsToken_;
     edm::InputTag tauPFTag_;
     edm::EDGetTokenT<pat::MuonCollection> patMuonsToken_;
@@ -81,6 +83,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     edm::EDGetTokenT<reco::GenParticleCollection> genParticlesToken_;
     edm::EDGetTokenT<reco::GenParticleCollection> genSimParticlesToken_;
     edm::EDGetTokenT<reco::VertexCollection> pvLabel_;
+    edm::EDGetTokenT<reco::VertexCompositeCandidateCollection> kshortToken_;
+    edm::EDGetTokenT<reco::VertexCompositeCandidateCollection> lambdaToken_;
     edm::EDGetTokenT<double> rhoToken_;
     EffectiveAreas effectiveAreaInfo_;
     edm::EDGetTokenT<std::vector<PileupSummaryInfo>> pileupToken_;
@@ -203,6 +207,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void fillSummaryVariables(
         void); // should only be called after all other functions.
     void fillGeneralTracks(const edm::Event&, const edm::EventSetup&);
+    void fillV0Info(const edm::Event&, const edm::EventSetup&, const std::string&);
     // ID functions
     bool photonConversionVeto(const pat::Electron&, float&, float&);
 

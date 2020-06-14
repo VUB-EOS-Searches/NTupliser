@@ -137,6 +137,8 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
           iConfig.getParameter<edm::InputTag>("electronTag"))}
     , phoLabel_{mayConsume<pat::PhotonCollection>(
           iConfig.getParameter<edm::InputTag>("photonTag"))}
+    , ootPhoLabel_{mayConsume<pat::PhotonCollection>(
+          iConfig.getParameter<edm::InputTag>("ootPhotonTag"))}
     , muoLabel_{iConfig.getParameter<edm::InputTag>("muonTag")}
     , jetLabel_{iConfig.getParameter<edm::InputTag>("jetLabel")}
     , genJetsToken_{consumes<reco::GenJetCollection>(
@@ -145,6 +147,8 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , metLabel_{iConfig.getParameter<edm::InputTag>("metTag")}
     , patPhotonsToken_{mayConsume<pat::PhotonCollection>(
           iConfig.getParameter<edm::InputTag>("photonPFToken"))}
+    , patOOTphotonsToken_{mayConsume<pat::PhotonCollection>(
+          iConfig.getParameter<edm::InputTag>("ootPhotonPFToken"))}
     , patElectronsToken_{mayConsume<pat::ElectronCollection>(
           iConfig.getParameter<edm::InputTag>("electronPFToken"))}
     , tauPFTag_{iConfig.getParameter<edm::InputTag>("tauPFTag")}
@@ -175,6 +179,10 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
           iConfig.getParameter<edm::InputTag>("genSimParticles"))}
     , pvLabel_{consumes<reco::VertexCollection>(
           iConfig.getParameter<edm::InputTag>("primaryVertexToken"))}
+    , kshortToken_{consumes<reco::VertexCompositeCandidateCollection>(
+          iConfig.getParameter<edm::InputTag>("kshortToken"))}
+    , lambdaToken_{consumes<reco::VertexCompositeCandidateCollection>(
+          iConfig.getParameter<edm::InputTag>("lambdaToken"))}
     , rhoToken_{consumes<double>(
           iConfig.getParameter<edm::InputTag>("rhoToken"))}
     , effectiveAreaInfo_{(iConfig.getParameter<edm::FileInPath>(
@@ -434,6 +442,10 @@ void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
     math::XYZPoint point(beamSpotX, beamSpotY, beamSpotZ);
     beamSpotPoint_ = point;
 }
+
+//void MakeTopologyNtupleMiniAOD::fillV0Info(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+//
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::PhotonCollection> phoIn_, const std::string& ID, edm::EDGetTokenT<pat::PhotonCollection> phoInOrg_) {
@@ -2878,6 +2890,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     fillMuons(iEvent, iSetup, patMuonsToken_, "PF");
     fillElectrons(iEvent, iSetup, patElectronsToken_, "PF", eleLabel_);
     fillPhotons(iEvent, iSetup, patPhotonsToken_, "PF", phoLabel_);
+//    fillPhotons(iEvent, iSetup, patOOTphotonsToken_, "OOT", ootPhoLabel_);
 
     // fillJets(iEvent, iSetup, jetLabel_, "Calo");
     // Putting MET info before jets so it can be used for jet smearing.
@@ -2890,6 +2903,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     //
     // std::cout << "done with jets" << std::endl;
     fillGeneralTracks(iEvent, iSetup);
+//    fillV0Info(iEvent, iSetup, kshortToken_, lambdaToken_, "PF");
 
     // fillElectrons(iEvent, iSetup, eleLabel_, "Calo");
     fillMCInfo(iEvent, iSetup);
@@ -2984,6 +2998,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     bookMETBranches("PF", "PF2PAT");
     bookTauBranches("PF", "PF2PAT");
     bookPhotonBranches("PF", "PF2PAT");
+//    bookPhotonBranches("OOT", "OOT_PF2PAT");
 
     // bookJetBranches("AK5PF", "AK5PF");
     // bookPFJetBranches("AK5PF", "AK5PF");
