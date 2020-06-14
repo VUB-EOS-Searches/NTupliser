@@ -35,6 +35,7 @@
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "DataFormats/PatCandidates/interface/IsolatedTrack.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -131,6 +132,8 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
           iConfig.getParameter<edm::InputTag>("beamSpotToken"))}
     , trackToken_{consumes<std::vector<pat::PackedCandidate>>(
           iConfig.getParameter<edm::InputTag>("trackToken"))}
+    , isolatedTrackToken_{consumes<std::vector<pat::IsolatedTrack>>(
+          iConfig.getParameter<edm::InputTag>("isolatedTrackToken"))}
     , conversionsToken_{consumes<std::vector<reco::Conversion>>(
           iConfig.getParameter<edm::InputTag>("conversionsToken"))}
     , eleLabel_{mayConsume<pat::ElectronCollection>(
@@ -415,7 +418,7 @@ void MakeTopologyNtupleMiniAOD::fillMissingET(
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
-                                             const edm::EventSetup& /*iSetup*/)
+                                             const edm::EventSetup& iSetup)
 {
     if (ran_PV_)
     {
@@ -456,9 +459,10 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
   edm::ESHandle<MagneticField> magneticField;
   iSetup.get<IdealMagneticFieldRecord>().get(magneticField);
   
-  fillBeamSpot(iEvent, iSetup);
-  fillGeneralTracks(iEvent, iSetup);
-  
+//  fillBeamSpot(iEvent, iSetup);
+//  fillGeneralTracks(iEvent, iSetup);
+//  fillIsolatedTracks(iEvent, iSetup);
+
   edm::Handle<pat::PhotonCollection> photonHandle;
   iEvent.getByToken(phoIn_, photonHandle);
   const pat::PhotonCollection& photons{*photonHandle};
@@ -606,9 +610,10 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
     //    if(magneticField->inTesla(GlobalPoint(0.,0.,0.)).z()>0) //Accept 0?
     //    realMagfield=magneticField->inTesla(GlobalPoint(0.,0.,0.)).z();
     //  needs beam spot
-    fillBeamSpot(iEvent, iSetup);
+    //fillBeamSpot(iEvent, iSetup);
     // and tracks for photon conversion checks:
-    fillGeneralTracks(iEvent, iSetup);
+    //fillGeneralTracks(iEvent, iSetup);
+    //fillIsolatedTracks(iEvent, iSetup);
 
     // note that the fillJets() method needs electrons, due to the fact that we
     // do our own 'cross' cleaning
@@ -966,8 +971,9 @@ void MakeTopologyNtupleMiniAOD::fillMuons(
     iEvent.getByToken(muIn_, muonHandle);
     const pat::MuonCollection& muons = *muonHandle;
 
-    fillBeamSpot(iEvent, iSetup);
-    fillGeneralTracks(iEvent, iSetup);
+    //fillBeamSpot(iEvent, iSetup);
+    //fillGeneralTracks(iEvent, iSetup);
+    //fillIsolatedTracks(iEvent, iSetup);
 
     //   !!!
     // IMPORTANT: DO NOT CUT ON THE OBJECTS BEFORE THEY ARE SORTED, cuts should
@@ -2208,8 +2214,10 @@ void MakeTopologyNtupleMiniAOD::fillJets(
     fixedGridRhoFastjetAll[ID] = *(rhoHand_.product());
 }
 
+/////////////////////////////////////
+
 void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
-    const edm::Event& iEvent, const edm::EventSetup& /*iSetup*/)
+    const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
     if (ran_tracks_)
     {
@@ -2236,6 +2244,50 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
         generalTracksCharge[numGeneralTracks] = trit->charge();
 
         numGeneralTracks++;
+    }
+}
+
+/////////////////////////////////////
+
+void MakeTopologyNtupleMiniAOD::fillIsolatedTracks(
+    const edm::Event& iEvent, const edm::EventSetup& iSetup)
+{
+    if (ran_isotracks_)
+    {
+        return;
+    }
+    ran_isotracks_ = true;
+
+    edm::Handle<std::vector<pat::IsolatedTrack>> isoTracks;
+    iEvent.getByToken(isolatedTrackToken_, isoTracks);
+
+    numIsolatedTracks = 0;
+    std::cout << "isoTracks->size(): " << isoTracks->size() << std::endl;
+
+    for (auto it{isoTracks->begin()}; it != isoTracks->end() && numIsolatedTracks < numeric_cast<int>(NISOTRACKSMAX); it++) {
+        isoTracksPt[numIsolatedTracks] = it->pt();
+        isoTracksPx[numIsolatedTracks] = it->p4().px();
+        isoTracksPy[numIsolatedTracks] = it->p4().py();
+        isoTracksPz[numIsolatedTracks] = it->p4().pz();
+        isoTracksE[numIsolatedTracks] = it->p4().E();
+        isoTracksEta[numIsolatedTracks] = it->eta();
+        isoTracksTheta[numIsolatedTracks] = it->theta();
+        isoTracksPhi[numIsolatedTracks] = it->phi();
+        isoTracksCharge[numIsolatedTracks] = it->charge();
+        isoTracksMatchedCaloJetEmEnergy[numIsolatedTracks] = it->matchedCaloJetEmEnergy();
+        isoTracksMatchedCaloJetHadEnergy[numIsolatedTracks] = it->matchedCaloJetHadEnergy();
+        isoTracksDz[numIsolatedTracks] = it->dz();
+        isoTracksDxy[numIsolatedTracks] = it->dxy();
+        isoTracksDzError[numIsolatedTracks] = it->dzError();
+        isoTracksDxyError[numIsolatedTracks] = it->dxyError();
+        isoTracksFromPV[numIsolatedTracks] = it->fromPV();
+        isoTracksHighPurity[numIsolatedTracks] = it->isHighPurityTrack();
+        isoTracksTight[numIsolatedTracks] = it->isTightTrack();
+        isoTracksLoose[numIsolatedTracks] = it->isLooseTrack();
+        isoTracksDeltaEta[numIsolatedTracks] = it->deltaEta();
+        isoTracksDeltaPhi[numIsolatedTracks] = it->deltaPhi();
+
+        numIsolatedTracks++;
     }
 }
 
@@ -2750,12 +2802,44 @@ void MakeTopologyNtupleMiniAOD::clearGeneralTracksarrays()
 }
 
 /////////////////////////////////////
+void MakeTopologyNtupleMiniAOD::clearIsolatedTracksarrays()
+{
+    // std::cout << "clearIsolatedTracksarrays CHECK" << std::endl;
+    numIsolatedTracks = 0;
+
+    for (size_t i{0}; i < NTRACKSMAX; i++)
+    {
+        isoTracksPt[i] = -1.;
+        isoTracksPx[i] = -1.;
+        isoTracksPy[i] = -1.;
+        isoTracksPz[i] = -1.;
+        isoTracksE[i] = -1.;
+        isoTracksEta[i] = 9999.;
+        isoTracksTheta[i] = 9999.;
+        isoTracksPhi[i] = 9999.;
+        isoTracksCharge[i] = 0.;
+        isoTracksMatchedCaloJetEmEnergy[i] = -1.;
+        isoTracksMatchedCaloJetHadEnergy[i] = -1.;
+        isoTracksDz[i] = 9999.;
+        isoTracksDxy[i] = 9999.;
+        isoTracksDzError[i] = 9999.;
+        isoTracksDxyError[i] = 9999.;
+        isoTracksFromPV[i] = -1;
+        isoTracksHighPurity[i] = -1;
+        isoTracksTight[i] = -1;
+        isoTracksLoose[i] = -1;
+        isoTracksDeltaEta[i] = 9999.;
+        isoTracksDeltaPhi[i] = 9999.;
+    }
+}
+
+/////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::cleararrays()
 {
     // reset the bookkeeping bools;
     // std::cout << "cleararrays CHECK" << std::endl;
     // std::cout << "before FALSE: " << ran_postloop_ << std::endl;
-    ran_jetloop_ = ran_eleloop_ = ran_muonloop_ = ran_PV_ = ran_tracks_ =
+    ran_jetloop_ = ran_eleloop_ = ran_muonloop_ = ran_PV_ = ran_tracks_ = ran_isotracks_ =
         ran_mcloop_ = ran_postloop_ = ran_photonTau_ = false;
     // std::cout << "psot FALSE: " << ran_postloop_ << std::endl;
 
@@ -2798,6 +2882,7 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
 
     clearMCarrays();
     clearGeneralTracksarrays();
+    clearIsolatedTracksarrays();
 
     mhtSignif = -1;
     mhtPx = -9999.;
@@ -2901,7 +2986,9 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     // fillJets(iEvent, iSetup, jetJPTTag_, "JPT");
     //
     // std::cout << "done with jets" << std::endl;
+
     fillGeneralTracks(iEvent, iSetup);
+    fillIsolatedTracks(iEvent, iSetup);
 //    fillV0Info(iEvent, iSetup, kshortToken_, lambdaToken_, "PF");
 
     // fillElectrons(iEvent, iSetup, eleLabel_, "Calo");
@@ -3005,6 +3092,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     // bookMETBranches("JPT", "TC");
 
     bookGeneralTracksBranches();
+    bookIsolatedTracksBranches();
     if (runMCInfo_)
     {
         bookMCBranches();
@@ -4835,6 +4923,33 @@ void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
     mytree_->Branch("generalTracksCharge",
                     generalTracksCharge,
                     "generalTracksCharge[numGeneralTracks]/I");
+}
+
+void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
+{
+    // std::cout << "bookIsolatedTrackBranches CHECK" << std::endl;
+    mytree_->Branch("numIsolatedTracks", &numIsolatedTracks, "numIsolatedTracks/I");
+    mytree_->Branch("isoTracksPt", isoTracksPt, "isoTracksPt[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPx", isoTracksPx, "isoTracksPx[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPy", isoTracksPy, "isoTracksPy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPz", isoTracksPz, "isoTracksPz[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksE", isoTracksE, "isoTracksE[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksEta", isoTracksEta, "isoTracksEta[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksTheta", isoTracksTheta, "isoTracksTheta[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksPhi", isoTracksPhi, "isoTracksPhi[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksCharge", isoTracksCharge, "isoTracksCharge[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksMatchedCaloJetEmEnergy", isoTracksMatchedCaloJetEmEnergy, "isoTracksMatchedCaloJetEmEnergy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksMatchedCaloJetHadEnergy", isoTracksMatchedCaloJetHadEnergy, "isoTracksMatchedCaloJetHadEnergy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDz", isoTracksDz, "isoTracksDz[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDxy", isoTracksDxy, "isoTracksDxy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDzError", isoTracksDzError, "isoTracksDzError[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDxyError", isoTracksDxyError, "isoTracksDxyError[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksFromPV", isoTracksFromPV, "isoTracksFromPV[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksHighPurity", isoTracksHighPurity, "isoTracksHighPurity[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksTight", isoTracksTight, "isoTracksTIght[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksLoose", isoTracksLoose, "isoTracksLoose[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksDeltaEta", isoTracksDeltaEta, "isoTracksDeltaEta[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksDeltaPhi", isoTracksDeltaPhi, "isoTracksDeltaPhi[numIsolatedTracks]/F");
 }
 
 // ------------ method called once each job just before starting event loop

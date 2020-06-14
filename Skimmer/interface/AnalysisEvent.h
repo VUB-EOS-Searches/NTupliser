@@ -423,6 +423,32 @@ class AnalysisEvent
     Float_t generalTracksBeamSpotCorrectedD0[NTRACKSMAX];
     Float_t generalTracksPhi[NTRACKSMAX];
     Int_t generalTracksCharge[NTRACKSMAX];
+
+    static constexpr size_t NISOTRACKSMAX{40};
+    Int_t numIsolatedTracks;
+    Float_t isoTracksPt[NISOTRACKSMAX];
+    Float_t isoTracksPx[NISOTRACKSMAX];
+    Float_t isoTracksPy[NISOTRACKSMAX];
+    Float_t isoTracksPz[NISOTRACKSMAX];
+    Float_t isoTracksE[NISOTRACKSMAX];
+    Float_t isoTracksEta[NISOTRACKSMAX];
+    Float_t isoTracksTheta[NISOTRACKSMAX];
+    Float_t isoTracksPhi[NISOTRACKSMAX];
+    Int_t isoTracksCharge[NISOTRACKSMAX];
+    Float_t isoTracksMatchedCaloJetEmEnergy[NISOTRACKSMAX];
+    Float_t isoTracksMatchedCaloJetHadEnergy[NISOTRACKSMAX];
+    Float_t isoTracksDz[NISOTRACKSMAX];
+    Float_t isoTracksDxy[NISOTRACKSMAX];
+    Float_t isoTracksDzError[NISOTRACKSMAX];
+    Float_t isoTracksDxyError[NISOTRACKSMAX];
+    Int_t isoTracksFromPV[NISOTRACKSMAX];
+    Int_t isoTracksHighPurity[NISOTRACKSMAX];
+    Int_t isoTracksTight[NISOTRACKSMAX];
+    Int_t isoTracksLoose[NISOTRACKSMAX];
+    Float_t isoTracksDeltaEta[NISOTRACKSMAX];
+    Float_t isoTracksDeltaPhi[NISOTRACKSMAX];
+
+
     Int_t isElePlusJets;
     Float_t genPDFScale;
     Float_t genPDFx1;
@@ -1348,6 +1374,30 @@ class AnalysisEvent
     TBranch* b_generalTracksBeamSpotCorrectedD0; //!
     TBranch* b_generalTracksPhi; //!
     TBranch* b_generalTracksCharge; //!
+
+    TBranch* b_numIsolatedTracks;
+    TBranch* b_isoTracksPt;
+    TBranch* b_isoTracksPx;
+    TBranch* b_isoTracksPy;
+    TBranch* b_isoTracksPz;
+    TBranch* b_isoTracksE;
+    TBranch* b_isoTracksEta;
+    TBranch* b_isoTracksTheta;
+    TBranch* b_isoTracksPhi;
+    TBranch* b_isoTracksCharge;
+    TBranch* b_isoTracksMatchedCaloJetEmEnergy;
+    TBranch* b_isoTracksMatchedCaloJetHadEnergy;
+    TBranch* b_isoTracksDz;
+    TBranch* b_isoTracksDxy;
+    TBranch* b_isoTracksDzError;
+    TBranch* b_isoTracksDxyError;
+    TBranch* b_isoTracksFromPV;
+    TBranch* b_isoTracksHighPurity;
+    TBranch* b_isoTracksTight;
+    TBranch* b_isoTracksLoose;
+    TBranch* b_isoTracksDeltaEta;
+    TBranch* b_isoTracksDeltaPhi;
+
     TBranch* b_isElePlusJets; //!
     TBranch* b_genPDFScale; //!
     TBranch* b_genPDFx1; //!
@@ -2346,6 +2396,29 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("generalTracksBeamSpotCorrectedD0", generalTracksBeamSpotCorrectedD0, &b_generalTracksBeamSpotCorrectedD0);
    fChain->SetBranchAddress("generalTracksPhi", generalTracksPhi, &b_generalTracksPhi);
    fChain->SetBranchAddress("generalTracksCharge", generalTracksCharge, &b_generalTracksCharge);
+   fChain->SetBranchAddress("numIsolatedTracks", &numIsolatedTracks, &b_numIsolatedTracks);
+   fChain->SetBranchAddress("isoTracksPt", &isoTracksPt, &b_isoTracksPt);
+   fChain->SetBranchAddress("isoTracksPx", &isoTracksPx, &b_isoTracksPx);
+   fChain->SetBranchAddress("isoTracksPy", &isoTracksPy, &b_isoTracksPy);
+   fChain->SetBranchAddress("isoTracksPz", &isoTracksPz, &b_isoTracksPz);
+   fChain->SetBranchAddress("isoTracksE", &isoTracksE, &b_isoTracksE);
+   fChain->SetBranchAddress("isoTracksEta", &isoTracksEta, &b_isoTracksEta);
+   fChain->SetBranchAddress("isoTracksTheta", &isoTracksTheta, &b_isoTracksTheta);
+   fChain->SetBranchAddress("isoTracksPhi", &isoTracksPhi, &b_isoTracksPhi);
+   fChain->SetBranchAddress("isoTracksCharge", &isoTracksCharge, &b_isoTracksCharge);
+   fChain->SetBranchAddress("isoTracksMatchedCaloJetEmEnergy", &isoTracksMatchedCaloJetEmEnergy, &b_isoTracksMatchedCaloJetEmEnergy);
+   fChain->SetBranchAddress("isoTracksMatchedCaloJetHadEnergy", &isoTracksMatchedCaloJetHadEnergy, &b_isoTracksMatchedCaloJetHadEnergy);
+   fChain->SetBranchAddress("isoTracksDz", &isoTracksDz, &b_isoTracksDz);
+   fChain->SetBranchAddress("isoTracksDxy", &isoTracksDxy, &b_isoTracksDxy);
+   fChain->SetBranchAddress("isoTracksDzError", &isoTracksDzError, &b_isoTracksDzError);
+   fChain->SetBranchAddress("isoTracksDxyError", &isoTracksDxyError, &b_isoTracksDxyError);
+   fChain->SetBranchAddress("isoTracksFromPV", &isoTracksFromPV, &b_isoTracksFromPV);
+   fChain->SetBranchAddress("isoTracksHighPurity", &isoTracksHighPurity, &b_isoTracksHighPurity);
+   fChain->SetBranchAddress("isoTracksTight", &isoTracksTight, &b_isoTracksTight);
+   fChain->SetBranchAddress("isoTracksLoose", &isoTracksLoose, &b_isoTracksLoose);
+   fChain->SetBranchAddress("isoTracksDeltaEta", &isoTracksDeltaEta, &b_isoTracksDeltaEta);
+   fChain->SetBranchAddress("isoTracksDeltaPhi", &isoTracksDeltaPhi, &b_isoTracksDeltaPhi);
+
    if (isMC)
    {
        fChain->SetBranchAddress("isElePlusJets", &isElePlusJets, &b_isElePlusJets);

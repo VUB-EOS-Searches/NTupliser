@@ -48,6 +48,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
     edm::EDGetTokenT<std::vector<pat::PackedCandidate>> trackToken_;
+    edm::EDGetTokenT<std::vector<pat::IsolatedTrack>> isolatedTrackToken_;
     edm::EDGetTokenT<reco::ConversionCollection> conversionsToken_;
 
     edm::EDGetTokenT<pat::ElectronCollection> eleLabel_;
@@ -147,6 +148,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     bool ran_postloop_{};
     bool ran_PV_{};
     bool ran_tracks_{};
+    bool ran_isotracks_{};
     bool ran_photonTau_{};
     bool check_triggers_;
     std::string muoIDquality_;
@@ -207,6 +209,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void fillSummaryVariables(
         void); // should only be called after all other functions.
     void fillGeneralTracks(const edm::Event&, const edm::EventSetup&);
+    void fillIsolatedTracks(const edm::Event&, const edm::EventSetup&);
     void fillV0Info(const edm::Event&, const edm::EventSetup&, const std::string&);
     // ID functions
     bool photonConversionVeto(const pat::Electron&, float&, float&);
@@ -237,8 +240,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
                              const std::string& name); // called by bookBranches
                                                        // , makes MET branches
     void bookMCBranches(void); // called by bookBranches, makes MC branches.
-    void bookGeneralTracksBranches(
-        void); // called by bookBranches, makes generalTracks branches.
+    void bookGeneralTracksBranches(void); // called by bookBranches, makes generalTracks branches.
+    void bookIsolatedTracksBranches(void); // called by bookBranches, makes isolatedTracks branches.
 
     TTree* mytree_{};
 
@@ -277,6 +280,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     double topPtReweight{};
 
     int numGeneralTracks{};
+    int numIsolatedTracks{};
     std::map<std::string, int> numJet;
     std::map<std::string, int> numEle;
     std::map<std::string, int> numPho;
@@ -316,18 +320,15 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     void cleararrays(void); // used to set everything in the following arrays
                             // to zero or unphysical numbers
-    void clearjetarrays(
-        const std::string&); // clearing jet info, used by cleararrays]
+    void clearjetarrays(const std::string&); // clearing jet info, used by cleararrays]
     void clearTauArrays(const std::string&);
     void clearPhotonArrays(const std::string&);
-    void clearelectronarrays(
-        const std::string&); // clearing electron info, used by cleararrays
-    void clearmuonarrays(
-        const std::string&); // clearing muon info, used by cleararrays
+    void clearelectronarrays(const std::string&); // clearing electron info, used by cleararrays
+    void clearmuonarrays(const std::string&); // clearing muon info, used by cleararrays
     void clearMetArrays(const std::string&); // clearing met info
     void clearMCarrays(void); // clearing MC info
-    void clearGeneralTracksarrays(
-        void); // clearing generalTracks info, used by cleararrays
+    void clearGeneralTracksarrays(void); // clearing generalTracks info, used by cleararrays
+    void clearIsolatedTracksarrays(void); // clearing isolatedTracks info, used by cleararrays
 
     std::vector<float> electronEts; // just used for sorting
     std::vector<float> photonEts; // just used for sorting
@@ -845,6 +846,30 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float generalTracksPhi[NTRACKSMAX]{};
     float generalTracksBeamSpotCorrectedD0[NTRACKSMAX]{};
     int generalTracksCharge[NTRACKSMAX]{};
+
+    // isoTracks that are drawn from packedPFCands, lostTracks and generalTracks
+    static constexpr size_t NISOTRACKSMAX{40};
+    float isoTracksPt[NISOTRACKSMAX]{};
+    float isoTracksPx[NISOTRACKSMAX]{};
+    float isoTracksPy[NISOTRACKSMAX]{};
+    float isoTracksPz[NISOTRACKSMAX]{};
+    float isoTracksE[NISOTRACKSMAX]{};
+    float isoTracksEta[NISOTRACKSMAX]{};
+    float isoTracksTheta[NISOTRACKSMAX]{};
+    float isoTracksPhi[NISOTRACKSMAX]{};
+    int isoTracksCharge[NISOTRACKSMAX]{};
+    float isoTracksMatchedCaloJetEmEnergy[NISOTRACKSMAX]{};
+    float isoTracksMatchedCaloJetHadEnergy[NISOTRACKSMAX]{};
+    float isoTracksDz[NISOTRACKSMAX]{};
+    float isoTracksDxy[NISOTRACKSMAX]{};
+    float isoTracksDzError[NISOTRACKSMAX]{};
+    float isoTracksDxyError[NISOTRACKSMAX]{};
+    int isoTracksFromPV[NISOTRACKSMAX]{};
+    int isoTracksHighPurity[NISOTRACKSMAX]{};
+    int isoTracksTight[NISOTRACKSMAX]{};
+    int isoTracksLoose[NISOTRACKSMAX]{};
+    float isoTracksDeltaEta[NISOTRACKSMAX]{};
+    float isoTracksDeltaPhi[NISOTRACKSMAX]{};
 
     // gen particle vars
     static constexpr size_t NGENPARMAX{1000};
