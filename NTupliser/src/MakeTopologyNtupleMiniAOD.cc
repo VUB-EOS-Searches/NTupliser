@@ -396,6 +396,7 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
     if (svHandle.isValid())
     {
         std::vector<reco::VertexCompositePtrCandidate> sv{*svHandle};
+        std::cout << "sv.size(): " << sv.size() << std::endl;
 
         numSVs = 0;
         for (auto it{sv.begin()}; it != sv.end() && numSVs < numeric_cast<int>(NSVSMAX); it++) {
@@ -427,11 +428,6 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
             svDistXY[numSVs] = distXY.value();
             svDistXYSig[numSVs] = distXY.significance();
             svDistXYError[numSVs] = distXY.error();
-
-//            GlobalVector dir = GlobalPoint(Basic3DVector<float>(sec_vertex->position())) - GlobalPoint(Basic3DVector<float>(vertexPrimary_->position()));
-//            LorentzVector p4 = LorentzVector( sec_vertex->p4() );
-//            float acos((dir.x()*p4.x()+dir.y()*p4.y()+dir.z()*p4.z())/dir.mag()/p4.P());
-//
 
             reco::Candidate::Vector p = it->momentum();
             reco::Candidate::Vector d(it->vx() - vertexPrimary_->x(), it->vy() - vertexPrimary_->y(), it->vz() - vertexPrimary_->z());
@@ -2888,7 +2884,7 @@ void MakeTopologyNtupleMiniAOD::clearSVarrays() {
         svDistXY[numSVs] = -999999;
         svDistXYSig[numSVs] = -999999;
         svDistXYError[numSVs] = 0;
-        svAnglePV[numSVs] = 9999;
+        svAnglePV[numSVs] = -999999;
         svIsLambda[numSVs] = -1;
         svIsKshort[numSVs] = -1;
     }

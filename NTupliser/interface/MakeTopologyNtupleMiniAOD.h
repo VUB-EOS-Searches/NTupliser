@@ -358,7 +358,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int pvNtracks[NPVSMAX]{};
     int pvNtracksW05[NPVSMAX]{};
 
-    static constexpr size_t NSVSMAX{80};
+    static constexpr size_t NSVSMAX{20};
     int numSVs{};
     float svPt[NSVSMAX]{};
     float svPx[NSVSMAX]{};
