@@ -397,6 +397,9 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
     {
         std::vector<reco::VertexCompositePtrCandidate> sv{*svHandle};
 
+        std::vector<reco::VertexCompositePtrCandidate> kshort{*kshortHandle};
+        std::vector<reco::VertexCompositePtrCandidate> lambda{*lambdaHandle};
+
         numSVs = 0;
         for (auto it{sv.begin()}; it != sv.end() && numSVs < numeric_cast<int>(NSVSMAX); it++) {
 
@@ -434,7 +437,28 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
 
             svIsLambda[numSVs] = 0;
             svIsKshort[numSVs] = 0;
+/*
+            if (kshortHandle.isValid()) {
+                for (auto kIt{kshort.begin()}; kIt != kshort.end(); kIt++) {
+                    
+                }
+                for (auto kIt{kshort.begin()}; kIt != kshort.end(); kIt++) {
+                  if ( kIt == it ) { 
+                      svIsKshort[numSVs] = 1;
+                      break;
+                  }
+                }
+            }
 
+            if (lambdaHandle.isValid()) {
+                for (auto lIt{lambda.begin()}; lIt != lambda.end(); lIt++) {
+                  if ( lIt == it ) { 
+                      svIsLambda[numSVs] = 1;
+                      break;
+                  }
+                }
+            }
+*/
             numSVs++;
         }
     }
