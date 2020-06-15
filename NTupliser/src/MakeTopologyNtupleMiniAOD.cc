@@ -396,7 +396,6 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
     if (svHandle.isValid())
     {
         std::vector<reco::VertexCompositePtrCandidate> sv{*svHandle};
-        std::cout << "sv.size(): " << sv.size() << std::endl;
 
         numSVs = 0;
         for (auto it{sv.begin()}; it != sv.end() && numSVs < numeric_cast<int>(NSVSMAX); it++) {
@@ -415,7 +414,7 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
             svZ[numSVs] = it->vz();
             svVertexChi2[numSVs] = it->vertexChi2();
             svVertexNdof[numSVs] = it->vertexNdof();
-            svNtracks[numSVs] = it->numberOfDaughters();
+            svNtracks[numSVs] = int(it->numberOfDaughters());
 
             reco::Vertex * sec_vertex = new reco::Vertex(it->vertex(),it->vertexCovariance(),it->vertexChi2(),it->vertexNdof(), 0);
             VertexDistance3D vdist3D, vdistXY;

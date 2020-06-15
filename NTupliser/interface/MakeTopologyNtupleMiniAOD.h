@@ -374,7 +374,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float svZ[NSVSMAX]{};
     float svVertexChi2[NSVSMAX]{};
     float svVertexNdof[NSVSMAX]{};
-    float svNtracks[NSVSMAX]{};
+    int svNtracks[NSVSMAX]{};
     float svDist3D[NSVSMAX]{};
     float svDist3DSig[NSVSMAX]{};
     float svDist3DError[NSVSMAX]{};
