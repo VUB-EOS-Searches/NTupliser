@@ -50,6 +50,7 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 
 					   pdfInfoFixingToken = cms.InputTag("pdfInfoFixing"),
 					   generatorToken = cms.InputTag("generator"),
+                                           genGrandparentFlagId = cms.int32(9000006), #9000006
                                            minLeptons = cms.int32(0),
                                            
                                            bTagList = cms.vstring(

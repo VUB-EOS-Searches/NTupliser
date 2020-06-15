@@ -130,92 +130,57 @@ typedef math::XYZTLorentzVectorF LorentzVector;
 
 MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     const edm::ParameterSet& iConfig)
-    : beamSpotToken_{consumes<reco::BeamSpot>(
-          iConfig.getParameter<edm::InputTag>("beamSpotToken"))}
-    , trackToken_{consumes<std::vector<pat::PackedCandidate>>(
-          iConfig.getParameter<edm::InputTag>("trackToken"))}
-    , isolatedTrackToken_{consumes<std::vector<pat::IsolatedTrack>>(
-          iConfig.getParameter<edm::InputTag>("isolatedTrackToken"))}
-    , conversionsToken_{consumes<std::vector<reco::Conversion>>(
-          iConfig.getParameter<edm::InputTag>("conversionsToken"))}
-    , eleLabel_{mayConsume<pat::ElectronCollection>(
-          iConfig.getParameter<edm::InputTag>("electronTag"))}
-    , phoLabel_{mayConsume<pat::PhotonCollection>(
-          iConfig.getParameter<edm::InputTag>("photonTag"))}
-    , ootPhoLabel_{mayConsume<pat::PhotonCollection>(
-          iConfig.getParameter<edm::InputTag>("ootPhotonTag"))}
+    : beamSpotToken_{consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpotToken"))}
+    , trackToken_{consumes<std::vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("trackToken"))}
+    , isolatedTrackToken_{consumes<std::vector<pat::IsolatedTrack>>(iConfig.getParameter<edm::InputTag>("isolatedTrackToken"))}
+    , conversionsToken_{consumes<std::vector<reco::Conversion>>(iConfig.getParameter<edm::InputTag>("conversionsToken"))}
+    , eleLabel_{mayConsume<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronTag"))}
+    , phoLabel_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photonTag"))}
+    , ootPhoLabel_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("ootPhotonTag"))}
     , muoLabel_{iConfig.getParameter<edm::InputTag>("muonTag")}
     , jetLabel_{iConfig.getParameter<edm::InputTag>("jetLabel")}
-    , genJetsToken_{consumes<reco::GenJetCollection>(
-          iConfig.getParameter<edm::InputTag>("genJetToken"))}
+    , genJetsToken_{consumes<reco::GenJetCollection>(iConfig.getParameter<edm::InputTag>("genJetToken"))}
     , tauLabel_{iConfig.getParameter<edm::InputTag>("tauTag")}
     , metLabel_{iConfig.getParameter<edm::InputTag>("metTag")}
-    , patPhotonsToken_{mayConsume<pat::PhotonCollection>(
-          iConfig.getParameter<edm::InputTag>("photonPFToken"))}
-    , patOOTphotonsToken_{mayConsume<pat::PhotonCollection>(
-          iConfig.getParameter<edm::InputTag>("ootPhotonPFToken"))}
-    , patElectronsToken_{mayConsume<pat::ElectronCollection>(
-          iConfig.getParameter<edm::InputTag>("electronPFToken"))}
+    , patPhotonsToken_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photonPFToken"))}
+    , patOOTphotonsToken_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("ootPhotonPFToken"))}
+    , patElectronsToken_{mayConsume<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronPFToken"))}
     , tauPFTag_{iConfig.getParameter<edm::InputTag>("tauPFTag")}
-    , patMuonsToken_{mayConsume<pat::MuonCollection>(
-          iConfig.getParameter<edm::InputTag>("muonPFToken"))}
-    , patJetsToken_{consumes<pat::JetCollection>(
-          iConfig.getParameter<edm::InputTag>("jetPFToken"))}
+    , patMuonsToken_{mayConsume<pat::MuonCollection>(iConfig.getParameter<edm::InputTag>("muonPFToken"))}
+    , patJetsToken_{consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("jetPFToken"))}
     , jetPFRecoTag_{iConfig.getParameter<edm::InputTag>("jetPFRecoTag")}
-    , patMetToken_{mayConsume<pat::METCollection>(
-          iConfig.getParameter<edm::InputTag>("metPFToken"))}
+    , patMetToken_{mayConsume<pat::METCollection>(iConfig.getParameter<edm::InputTag>("metPFToken"))}
     // , jetJPTTag_(iConfig.getParameter<edm::InputTag>("jetJPTTag"))
     // , metJPTTag_(iConfig.getParameter<edm::InputTag>("metJPTTag"))
-    , trigToken_{consumes<edm::TriggerResults>(
-          iConfig.getParameter<edm::InputTag>("triggerToken"))}
-    , metFilterToken_{consumes<edm::TriggerResults>(
-          iConfig.getParameter<edm::InputTag>("metFilterToken"))}
-    , fakeTrigLabelList_{iConfig.getParameter<std::vector<std::string>>(
-          "fakeTriggerList")}
+    , trigToken_{consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerToken"))}
+    , metFilterToken_{consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("metFilterToken"))}
+    , fakeTrigLabelList_{iConfig.getParameter<std::vector<std::string>>("fakeTriggerList")}
     , bTagList_{iConfig.getParameter<std::vector<std::string>>("bTagList")}
-    , triggerList_{iConfig.getParameter<std::vector<std::string>>(
-          "triggerList")}
-    , metFilterList_{iConfig.getParameter<std::vector<std::string>>(
-          "metFilterList")}
+    , triggerList_{iConfig.getParameter<std::vector<std::string>>("triggerList")}
+    , metFilterList_{iConfig.getParameter<std::vector<std::string>>("metFilterList")}
     , l1TrigLabel_{iConfig.getParameter<edm::InputTag>("l1TriggerTag")}
-    , genParticlesToken_{consumes<reco::GenParticleCollection>(
-          iConfig.getParameter<edm::InputTag>("genParticles"))}
-    , genSimParticlesToken_{consumes<reco::GenParticleCollection>(
-          iConfig.getParameter<edm::InputTag>("genSimParticles"))}
-    , pvLabel_{consumes<reco::VertexCollection>(
-          iConfig.getParameter<edm::InputTag>("primaryVertexToken"))}
-    , svLabel_{consumes<reco::VertexCompositePtrCandidateCollection>(
-          iConfig.getParameter<edm::InputTag>("secondaryVertexToken"))}
-    , kshortToken_{consumes<reco::VertexCompositePtrCandidateCollection>(
-          iConfig.getParameter<edm::InputTag>("kshortToken"))}
-    , lambdaToken_{consumes<reco::VertexCompositePtrCandidateCollection>(
-          iConfig.getParameter<edm::InputTag>("lambdaToken"))}
-    , rhoToken_{consumes<double>(
-          iConfig.getParameter<edm::InputTag>("rhoToken"))}
-    , effectiveAreaInfo_{(iConfig.getParameter<edm::FileInPath>(
-                              "effAreasConfigFile"))
-                             .fullPath()}
-    , pileupToken_{mayConsume<std::vector<PileupSummaryInfo>>(
-          iConfig.getParameter<edm::InputTag>("pileupToken"))}
+    , genParticlesToken_{consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"))}
+    , genSimParticlesToken_{consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genSimParticles"))}
+    , pvLabel_{consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("primaryVertexToken"))}
+    , svLabel_{consumes<reco::VertexCompositePtrCandidateCollection>(iConfig.getParameter<edm::InputTag>("secondaryVertexToken"))}
+    , kshortToken_{consumes<reco::VertexCompositePtrCandidateCollection>(iConfig.getParameter<edm::InputTag>("kshortToken"))}
+    , lambdaToken_{consumes<reco::VertexCompositePtrCandidateCollection>(iConfig.getParameter<edm::InputTag>("lambdaToken"))}
+    , rhoToken_{consumes<double>(iConfig.getParameter<edm::InputTag>("rhoToken"))}
+    , effectiveAreaInfo_{(iConfig.getParameter<edm::FileInPath>("effAreasConfigFile")).fullPath()}
+    , pileupToken_{mayConsume<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupToken"))}
     , is2016rereco_{iConfig.getParameter<bool>("is2016rereco")}
     , isttbar_{iConfig.getParameter<bool>("isttBar")}
     , ttGenEvent_{iConfig.getParameter<edm::InputTag>("ttGenEvent")}
-    , externalLHEToken_{consumes<LHEEventProduct>(
-          iConfig.getParameter<edm::InputTag>("externalLHEToken"))}
+    , externalLHEToken_{consumes<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("externalLHEToken"))}
     , pdfIdStart_{iConfig.getParameter<int>("pdfIdStart")}
     , pdfIdEnd_{iConfig.getParameter<int>("pdfIdEnd")}
     , alphaIdStart_{iConfig.getParameter<int>("alphaIdStart")}
     , alphaIdEnd_{iConfig.getParameter<int>("alphaIdEnd")}
-    , pdfInfoToken_{mayConsume<GenEventInfoProduct>(
-          iConfig.getParameter<edm::InputTag>("pdfInfoFixingToken"))}
-    , generatorToken_{mayConsume<GenEventInfoProduct>(
-          iConfig.getParameter<edm::InputTag>("generatorToken"))}
-    , btaggingparamnames_{iConfig.getParameter<std::vector<std::string>>(
-          "btagParameterizationList")}
-    , btaggingparaminputtypes_{iConfig.getParameter<std::vector<std::string>>(
-          "btagParameterizationMode")}
-    // , eleIDsToNtuple_(
-    //       iConfig.getParameter<std::vector<std::string>>("eleIDsToNtuple"))
+    , pdfInfoToken_{mayConsume<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("pdfInfoFixingToken"))}
+    , generatorToken_{mayConsume<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("generatorToken"))}
+    , btaggingparamnames_{iConfig.getParameter<std::vector<std::string>>("btagParameterizationList")}
+    , btaggingparaminputtypes_{iConfig.getParameter<std::vector<std::string>>("btagParameterizationMode")}
+    // , eleIDsToNtuple_(iConfig.getParameter<std::vector<std::string>>("eleIDsToNtuple"))
     , runMCInfo_{iConfig.getParameter<bool>("runMCInfo")}
     , runPUReWeight_{iConfig.getParameter<bool>("runPUReWeight")}
     , doCuts_{iConfig.getParameter<bool>("doCuts")}
@@ -225,6 +190,7 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , useResidualJEC_{iConfig.getParameter<bool>("useResidualJEC")}
     , ignore_emIDtight_{iConfig.getParameter<bool>("ignoreElectronID")}
     , minLeptons_{iConfig.getParameter<int>("minLeptons")}
+    , genGrandparentFlagId_{iConfig.getParameter<int>("genGrandparentFlagId")}
     , elePtCut_{iConfig.getParameter<double>("minElePt")}
     , eleEtaCut_{iConfig.getParameter<double>("maxEleEta")}
     , eleIsoCut_{iConfig.getParameter<double>("eleRelIso")}
@@ -233,8 +199,7 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , muoIsoCut_{iConfig.getParameter<double>("muoRelIso")}
     , metCut_{iConfig.getParameter<double>("metCut")} // met cut
     , check_triggers_{iConfig.getParameter<bool>("checkTriggers")}
-    , dREleGeneralTrackMatch_{iConfig.getParameter<double>(
-          "dREleGeneralTrackMatchForPhotonRej")}
+    , dREleGeneralTrackMatch_{iConfig.getParameter<double>("dREleGeneralTrackMatchForPhotonRej")}
     , magneticField_{iConfig.getParameter<double>("magneticFieldForPhotonRej")}
     , correctFactor_{iConfig.getParameter<double>("correctFactorForPhotonRej")}
     , maxDist_{iConfig.getParameter<double>("maxDistForPhotonRej")}
@@ -1761,35 +1726,27 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
         iEvent.getByToken(genParticlesToken_, genParticles);
     }
     // fillJets(iEvent, iSetup); // needed to do additional MC truth matching.
-    nGenPar = 0;
 
-    if (isttbar_)
-    {
+    if (isttbar_){
         double topPt{0.};
         double tBarPt{0.};
-        for (size_t k{0}; k < genParticles->size(); k++)
-        {
+        for (size_t k{0}; k < genParticles->size(); k++) {
             const reco::Candidate& TCand{(*genParticles)[k]};
-            if (TCand.pdgId() == 6)
-            {
-                topPt = TCand.pt();
-            }
-            if (TCand.pdgId() == -6)
-            {
-                tBarPt = TCand.pt();
-            }
+            if (TCand.pdgId() == 6)  topPt = TCand.pt();
+            if (TCand.pdgId() == -6) tBarPt = TCand.pt();
         }
         // std::cout << topPt << " " << tBarPt << " "
         //           << sqrt(exp(0.0615 - 0.0005 * topPt)
         //                   * exp(0.0615 - 0.0005 * tBarPt))
         //           << std::endl;
-        topPtReweight =
-            sqrt(exp(0.0615 - 0.0005 * topPt) * exp(0.0615 - 0.0005 * tBarPt));
+        topPtReweight = sqrt(exp(0.0615 - 0.0005 * topPt) * exp(0.0615 - 0.0005 * tBarPt));
         histocontainer_["topPtWeightSum"]->Fill(0., topPtReweight);
     }
 
-    for (size_t k{0}; k < genParticles->size(); k++)
-    {
+    const int grandparentId {std::abs(genGrandparentFlagId_)};
+
+    nGenPar = 0;
+    for (size_t k{0}; k < genParticles->size(); k++) {
         const reco::Candidate& TCand{(*genParticles)[k]};
         // std::cout << "Status: " << TCand.status() << std::endl;
         // std::cout << "pdgId: " << TCand.pdgId() << std::endl;
@@ -1800,12 +1757,9 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
 
         // if(TCand.status()==3) // Pythia 6 criteria - MC generators now
         // use Pythia 8 - will store status instead of cutting on it.
-//        if (std::abs(TCand.pdgId()) <= 18 || std::abs(TCand.pdgId()) == 24
-//            || std::abs(TCand.pdgId()) == 23)
-//        {
+//        if (std::abs(TCand.pdgId()) <= 18 || std::abs(TCand.pdgId()) == 24 || std::abs(TCand.pdgId()) == 23) {
             // only do this for particles with reasonable pT:
-            if (nGenPar < NGENPARMAX)
-            {
+            if (nGenPar < NGENPARMAX) {
                 // if(TCand.pt()>5. && nGenPar<NGENPARMAX)
                 // these are sufficient to fill a lorentz vector, to save space
                 // no duplicated information...
@@ -1824,14 +1778,31 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                 if (TCand.numberOfDaughters() > 0) genParDaughterId1[nGenPar] = TCand.daughter(0)->pdgId();
                 if (TCand.numberOfDaughters() > 1) genParDaughterId2[nGenPar] = TCand.daughter(1)->pdgId();
 
+                // Is genParticle descended from grandparent id?
+                genParGrandparentFlag[nGenPar] = 0; // Ddefault is flase
+                if (grandparentId != 0) {
+                    size_t maxLoop = size_t(ceil (log2(NGENPARMAX)) );
+                    reco::Candidate& tempCand {TCand};
+                    for ( size_t l = 0; l != maxLoop; l++ ) {
+                        int candId = tempCand.pdgId();
+                        if ( candId != grandparentId && tempCand.numberOfMothers() == 0 ) break; // if not id we are looking for and no parents, break for loop
+                        else if ( candId == grandparentId ) { // if id we are looking for, then flag set true and break for loop
+                            genParGrandparentFlag[nGenPar] = 1;
+                            break;
+                        }
+                        else if ( candId != grandparentId && tempCand.numberOfMothers() != 0 ) { // else if not id we are looking for and has a mother ... go up the tree
+                            tempCand = tempCand.mother();
+                        }
+                    }
+                }
+
                 genParStatus[nGenPar] = TCand.status(); 
                 genParCharge[nGenPar] = TCand.charge();
                 nGenPar++;
             }
         //}
         //    }
-        if (std::abs(TCand.pdgId()) == 5 || std::abs(TCand.pdgId()) == 4)
-        {
+        //if (std::abs(TCand.pdgId()) == 5 || std::abs(TCand.pdgId()) == 4)  {
             // for (int ijet = 0; ijet < numJet; ijet++)
             // {
             //     float deltaR = reco::deltaR(jetSortedEta[ijet],
@@ -1851,39 +1822,23 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
             //         genJetSortedClosestC[ijet] = deltaR;
             //     }
             // }
-        }
-        if (TCand.status() == 3
-            && std::abs(TCand.pdgId())
-                   == 6) // find t or tbar among the genParticles
-        {
-            if (nT >= NTOPMCINFOSMAX)
-            {
-                continue;
-            }
+        //}
+        if (TCand.status() == 3 && std::abs(TCand.pdgId()) == 6) { // find t or tbar among the genParticles
+            if (nT >= NTOPMCINFOSMAX)  continue;
 
-            if (TCand.numberOfDaughters() >= 2)
-            { // check t or tbar has at least 2 daughters
+            if (TCand.numberOfDaughters() >= 2) { // check t or tbar has at least 2 daughters
                 // std::cout << "The t or tbar candidate has: "
                 //           << TCand.numberOfDaughters() << " daughters"
                 //           << std::endl;
 
-                for (size_t i_Tdaughter{0};
-                     i_Tdaughter < TCand.numberOfDaughters();
-                     i_Tdaughter++) // loop over t or tbar daughters
-                {
-                    const reco::Candidate& TDaughter{
-                        *TCand.daughter(i_Tdaughter)};
+                for (size_t i_Tdaughter{0}; i_Tdaughter < TCand.numberOfDaughters(); i_Tdaughter++) { // loop over t or tbar daughters
+                    const reco::Candidate& TDaughter{*TCand.daughter(i_Tdaughter)};
 
-                    if (TDaughter.status() == 3
-                        && std::abs(TDaughter.pdgId()) == 5) // find b
-                    {
+                    if (TDaughter.status() == 3 && std::abs(TDaughter.pdgId()) == 5) { // find b
                         // std::cout << "we found b" << std::endl;
                         found_b = true;
 
-                        if (nb >= NTOPMCINFOSMAX)
-                        {
-                            continue;
-                        }
+                        if (nb >= NTOPMCINFOSMAX)continue;
 
                         // bMCTruthE[nb] = TDaughter.energy();
                         bMCTruthEt[nb] = TDaughter.et();
@@ -1894,49 +1849,25 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                         nb++;
                     }
                     W_leptonic = W_hadronic = 0;
-                    if (TDaughter.status() == 3
-                        && std::abs(TDaughter.pdgId()) == 24) // find W
-                    {
-                        if (TDaughter.numberOfDaughters() >= 2)
-                        { // check W has at least 2 daughters
-
-                            for (size_t i_Wdaughter{0};
-                                 i_Wdaughter < TDaughter.numberOfDaughters();
-                                 i_Wdaughter++)
-                            {
-                                const reco::Candidate& WDaughter{
-                                    *TDaughter.daughter(i_Wdaughter)};
-                                if (WDaughter.status() == 3
-                                    && std::abs(WDaughter.pdgId()) <= 6
-                                    && std::abs(WDaughter.pdgId())
-                                           > 0) // W decays in hadronic mode
-                                {
-                                    if (std::abs(WDaughter.pdgId())
-                                        > std::abs(W_hadronic))
-                                    {
-                                        W_hadronic = WDaughter.pdgId();
-                                    }
+                    if (TDaughter.status() == 3 && std::abs(TDaughter.pdgId()) == 24) { // find W
+                        if (TDaughter.numberOfDaughters() >= 2) { // check W has at least 2 daughters
+                            for (size_t i_Wdaughter{0}; i_Wdaughter < TDaughter.numberOfDaughters(); i_Wdaughter++) {
+                                const reco::Candidate& WDaughter{*TDaughter.daughter(i_Wdaughter)};
+                                if (WDaughter.status() == 3 && std::abs(WDaughter.pdgId()) <= 6 && std::abs(WDaughter.pdgId()) > 0) { // W decays in hadronic mode
+                                    if (std::abs(WDaughter.pdgId()) > std::abs(W_hadronic)) W_hadronic = WDaughter.pdgId();
                                 }
-                                if (WDaughter.status() == 3
-                                    && std::abs(WDaughter.pdgId()) > 10
-                                    && std::abs(WDaughter.pdgId()) < 17
-                                    && std::abs(WDaughter.pdgId()) % 2
-                                           == 1) // W decays in leptonic mode,
+                                if (WDaughter.status() == 3 && std::abs(WDaughter.pdgId()) > 10 && std::abs(WDaughter.pdgId()) < 17 && std::abs(WDaughter.pdgId()) % 2 == 1) {
+                                                 // W decays in leptonic mode,
                                                  // ele=11, mu=13, tau=15,
                                                  // nuele=12, numu=14, nutau=16
-                                {
                                     W_leptonic = WDaughter.pdgId();
                                 }
                             }
                         }
                     }
 
-                    if (W_hadronic != 0)
-                    {
-                        if (nWhadronic >= NTOPMCINFOSMAX)
-                        {
-                            continue;
-                        }
+                    if (W_hadronic != 0) {
+                        if (nWhadronic >= NTOPMCINFOSMAX) continue;
                         W_hadronicMCTruthE[nWhadronic] = TDaughter.energy();
                         // std::cout << "The W hadronic decay energy is: "
                         //           << TDaughter.energy() << std::endl;
@@ -1949,12 +1880,8 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                         nWhadronic++;
                     }
 
-                    else if (W_leptonic != 0)
-                    {
-                        if (nWleptonic >= NTOPMCINFOSMAX)
-                        {
-                            continue;
-                        }
+                    else if (W_leptonic != 0) {
+                        if (nWleptonic >= NTOPMCINFOSMAX) continue;
 
                         W_leptonicMCTruthE[nWleptonic] = TDaughter.energy();
                         // std::cout << "The W leptonic decay energy is: "
@@ -1968,14 +1895,8 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                         nWleptonic++;
                     }
 
-                    if (found_b
-                        && W_hadronic != 0) // now we can keep the top in
-                                            // hadronic decay 4-vector
-                    {
-                        if (nThadronic >= NTOPMCINFOSMAX)
-                        {
-                            continue;
-                        }
+                    if (found_b && W_hadronic != 0) { // now we can keep the top in hadronic decay 4-vector
+                        if (nThadronic >= NTOPMCINFOSMAX) continue;
 
                         T_hadronicMCTruthE[nThadronic] = TCand.energy();
                         // std::cout
@@ -1991,14 +1912,8 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                         // std::cout << "test1: " << nThadronic << std::endl;
                     }
 
-                    if (found_b
-                        && W_leptonic != 0) // now we can keep the top in
-                                            // leptonic decay 4-vector
-                    {
-                        if (nTleptonic >= NTOPMCINFOSMAX)
-                        {
-                            continue;
-                        }
+                    if (found_b && W_leptonic != 0) { // now we can keep the top in leptonic decay 4-vector
+                        if (nTleptonic >= NTOPMCINFOSMAX) continue;
 
                         T_leptonicMCTruthE[nTleptonic] = TCand.energy();
                         // std::cout << "The initial top (leptonic decay) energy
@@ -2020,17 +1935,13 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
     }
     // now check if electron+jets:
     isElePlusJets = 0;
-    if (nWleptonic == 1 && std::abs(W_leptonicMCTruthPID[0]) == 11)
-    {
-        isElePlusJets = 1;
-    }
+    if (nWleptonic == 1 && std::abs(W_leptonicMCTruthPID[0]) == 11) isElePlusJets = 1;
 
     // PDF info for reweighting!
     // See AN2009/048 for full recipe and description!
     const gen::PdfInfo* pdfInfo{genEventInfo->pdf()};
 
-    if (pdfInfo != nullptr)
-    {
+    if (pdfInfo != nullptr) {
         genPDFScale = pdfInfo->scalePDF;
         genPDFx1 = pdfInfo->x.first;
         genPDFx2 = pdfInfo->x.second;
@@ -2038,35 +1949,23 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
         genPDFf2 = pdfInfo->id.second;
     }
 
-    if (runPDFUncertainties_)
-    {
+    if (runPDFUncertainties_) {
         // CTEQ 6.6 General
         float best_fit{1.0};
         // loop over all (error) pdfs
         // subpdf is the index in the pdf set, 0 = best fit, 1-40 = error pdfs
         // up and down.
         // for (int subpdf = 0; subpdf < LHADPDF::numberPDF(0); subpdf++)
-        for (int subpdf{0}; subpdf < 44; subpdf++)
-        {
+        for (int subpdf{0}; subpdf < 44; subpdf++) {
             LHAPDF::usePDFMember(0, subpdf);
-            if (subpdf == 0)
-            {
-                best_fit = LHAPDF::xfx(pdfInfo->x.first,
-                                       pdfInfo->scalePDF,
-                                       pdfInfo->id.first)
-                           * LHAPDF::xfx(pdfInfo->x.second,
-                                         pdfInfo->scalePDF,
-                                         pdfInfo->id.second);
+            if (subpdf == 0) {
+                best_fit = LHAPDF::xfx(pdfInfo->x.first, pdfInfo->scalePDF, pdfInfo->id.first)
+                           * LHAPDF::xfx(pdfInfo->x.second, pdfInfo->scalePDF, pdfInfo->id.second);
                 genCTEQ66_Weight[subpdf] = best_fit;
             }
-            else
-            {
-                genCTEQ66_Weight[subpdf] =
-                    (LHAPDF::xfx(
-                         pdfInfo->x.first, pdfInfo->scalePDF, pdfInfo->id.first)
-                     * LHAPDF::xfx(pdfInfo->x.second,
-                                   pdfInfo->scalePDF,
-                                   pdfInfo->id.second)
+            else {
+                genCTEQ66_Weight[subpdf] = (LHAPDF::xfx(pdfInfo->x.first, pdfInfo->scalePDF, pdfInfo->id.first)
+                     * LHAPDF::xfx(pdfInfo->x.second, pdfInfo->scalePDF, pdfInfo->id.second)
                      / best_fit);
             }
         }
@@ -2076,27 +1975,16 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
         // subpdf is the index in the pdf set, 0 = best fit, 1-40 = error pdfs
         // up and down.
         // for (int subpdf = 0; subpdf < LHADPDF::numberPDF(0); subpdf++)
-        for (int subpdf{0}; subpdf < 31; subpdf++)
-        {
+        for (int subpdf{0}; subpdf < 31; subpdf++) {
             LHAPDF::usePDFMember(1, subpdf);
-            if (subpdf == 0)
-            {
-                best_fit = LHAPDF::xfx(pdfInfo->x.first,
-                                       pdfInfo->scalePDF,
-                                       pdfInfo->id.first)
-                           * LHAPDF::xfx(pdfInfo->x.second,
-                                         pdfInfo->scalePDF,
-                                         pdfInfo->id.second);
+            if (subpdf == 0) {
+                best_fit = LHAPDF::xfx(pdfInfo->x.first, pdfInfo->scalePDF, pdfInfo->id.first)
+                           * LHAPDF::xfx(pdfInfo->x.second, pdfInfo->scalePDF, pdfInfo->id.second);
                 genMRST2006nnlo_Weight[subpdf] = best_fit;
             }
-            else
-            {
-                genMRST2006nnlo_Weight[subpdf] =
-                    (LHAPDF::xfx(
-                         pdfInfo->x.first, pdfInfo->scalePDF, pdfInfo->id.first)
-                     * LHAPDF::xfx(pdfInfo->x.second,
-                                   pdfInfo->scalePDF,
-                                   pdfInfo->id.second)
+            else {
+                genMRST2006nnlo_Weight[subpdf] = (LHAPDF::xfx(pdfInfo->x.first, pdfInfo->scalePDF, pdfInfo->id.first)
+                     * LHAPDF::xfx(pdfInfo->x.second, pdfInfo->scalePDF, pdfInfo->id.second)
                      / best_fit);
             }
         }
@@ -3336,6 +3224,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
         mytree_->Branch("genParNumDaughters", genParNumDaughters, "genParNumDaughters[nGenPar]/I");
         mytree_->Branch("genParDaughterId1", genParDaughterId1, "genParDaughterId1[nGenPar]/I");
         mytree_->Branch("genParDaughterId2", genParDaughterId2, "genParDaughterId2[nGenPar]/I");
+        mytree_->Branch("genParGrandparentFlag",genParGrandparentFlag, "genParGrandparentFlag[nGenPar]/I");
         mytree_->Branch("genParStatus",genParStatus, "genParStatus[nGenPar]/I");
         mytree_->Branch("genParCharge", genParCharge, "genParCharge[nGenPar]/I");
     }
