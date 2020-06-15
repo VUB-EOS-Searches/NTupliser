@@ -1814,25 +1814,17 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                 genParE[nGenPar] = TCand.energy();
                 genParPt[nGenPar] = TCand.pt();
                 genParId[nGenPar] = TCand.pdgId();
-                // ADM Edit 150318
-                genParNumMothers[nGenPar] =
-                    TCand
-                        .numberOfMothers(); // 150318 - ADM - Added so one can
-                                            // look for b's from gluon splitting
-                                            // - need to know how many parents
-                if (TCand.numberOfMothers() > 0 ) genParMotherId[nGenPar] =  TCand.mother()->pdgId(); // 150318 - ADM - Added so one can look for b's from gluon splitting - need to know what parent was
+
+                genParNumMothers[nGenPar] = TCand.numberOfMothers(); 
+                if (TCand.numberOfMothers() > 0 ) genParMotherId[nGenPar] =  TCand.mother()->pdgId(); 
                 else genParMotherId[nGenPar] = 0; // guards against seg fault if particle has no mother
-                genParNumDaughters[nGenPar] =
-                    TCand.numberOfDaughters(); // 150401 - ADM - Added so one
-                                               // can look for b's from gluon
-                                               // splitting - need to know how
-                                               // many daughters
-                // End ADM Edit 150318
-                // ADM Edit 150927
-                genParStatus[nGenPar] =
-                    TCand.status(); // 150927 - ADM - Added so that generator
-                                    // level status is now saved.
-                // End ADM Edit 150927
+                genParNumDaughters[nGenPar] = TCand.numberOfDaughters(); 
+                genParDaughterId1[nGenPar] = 0;
+                genParDaughterId2[nGenPar] = 0;
+                if (TCand.numberOfDaughters() > 0) genParDaughterId1[nGenPar] = TCand.daughter(0)->pdgId();
+                if (TCand.numberOfDaughters() > 1) genParDaughterId2[nGenPar] = TCand.daughter(1)->pdgId();
+
+                genParStatus[nGenPar] = TCand.status(); 
                 genParCharge[nGenPar] = TCand.charge();
                 nGenPar++;
             }
@@ -3339,17 +3331,13 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
         mytree_->Branch("genParE", genParE, "genParE[nGenPar]/F");
         mytree_->Branch("genParPt", genParPt, "genParPt[nGenPar]/F");
         mytree_->Branch("genParId", genParId, "genParId[nGenPar]/I");
-        mytree_->Branch("genParNumMothers",
-                        genParNumMothers,
-                        "genParNumMothers[nGenPar]/I");
-        mytree_->Branch(
-            "genParMotherId", genParMotherId, "genParMotherId[nGenPar]/I");
-        mytree_->Branch("genParNumDaughters",
-                        genParNumDaughters,
-                        "genParNumDaughters[nGenPar]/I");
+        mytree_->Branch("genParNumMothers", genParNumMothers, "genParNumMothers[nGenPar]/I");
+        mytree_->Branch("genParMotherId", genParMotherId, "genParMotherId[nGenPar]/I");
+        mytree_->Branch("genParNumDaughters", genParNumDaughters, "genParNumDaughters[nGenPar]/I");
+        mytree_->Branch("genParDaughterId1", genParDaughterId1, "genParDaughterId1[nGenPar]/I");
+        mytree_->Branch("genParDaughterId2", genParDaughterId2, "genParDaughterId2[nGenPar]/I");
         mytree_->Branch("genParStatus",genParStatus, "genParStatus[nGenPar]/I");
-        mytree_->Branch(
-            "genParCharge", genParCharge, "genParCharge[nGenPar]/I");
+        mytree_->Branch("genParCharge", genParCharge, "genParCharge[nGenPar]/I");
     }
 
     mytree_->Branch("eventRun", &evtRun, "eventRun/I");

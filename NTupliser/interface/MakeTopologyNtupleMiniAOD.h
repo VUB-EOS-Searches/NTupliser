@@ -907,30 +907,17 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     // gen particle vars
     static constexpr size_t NGENPARMAX{1000};
     size_t nGenPar{};
-    int genParStatus[NGENPARMAX]{}; // 1NGENPARMAX927 - ADM - Added as Pythia 8
-                                    // uses different status codes - cannot just
-                                    // select events which are used in the
-                                    // matrix element calculation!
+    int genParStatus[NGENPARMAX]{}; 
     float genParEta[NGENPARMAX]{};
     float genParPhi[NGENPARMAX]{};
     float genParE[NGENPARMAX]{};
     float genParPt[NGENPARMAX]{};
     int genParId[NGENPARMAX]{};
-    int genParNumMothers[NGENPARMAX]{}; // 1NGENPARMAX318 - ADM - Added so one
-                                        // can look for b's from gluon splitting
-                                        // - need to know how many parents
-    int genParMotherId[NGENPARMAX]{}; // 1NGENPARMAX318 - ADM - Added son one
-                                      // can look for b's from gluon splitting -
-                                      // need to know what parent was
-    int genParNumDaughters[NGENPARMAX]{}; // 1NGENPARMAX318 - ADM - Added so one
-                                          // can look for b's from gluon
-                                          // splitting - need to know how many
-                                          // decay product(s)
-    int genParDaughterId[NGENPARMAX]
-                        [NGENPARMAX]{}; // 1NGENPARMAX318 - ADM - Added so one
-                                        // can look for b's from gluon splitting
-                                        // - need to know what decay product(s)
-                                        // are
+    int genParNumMothers[NGENPARMAX]{}; 
+    int genParMotherId[NGENPARMAX]{}; 
+    int genParNumDaughters[NGENPARMAX]{};
+    int genParDaughterId1[NGENPARMAX]{};
+    int genParDaughterId2[NGENPARMAX]{};
     int genParCharge[NGENPARMAX]{};
     // PDF info
     float genPDFScale{};
