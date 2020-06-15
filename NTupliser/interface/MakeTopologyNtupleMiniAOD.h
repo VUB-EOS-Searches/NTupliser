@@ -2,11 +2,6 @@
 //
 // Package:    MakeTopologyNtuple
 // Class:      MakeTopologyNtuple
-// %
-/**\class MakeTopologyNtuple MakeTopologyNtuple.cc
-FreyaAnalysis/MakeTopologyNtuple/src/MakeTopologyNtuplecc Description: <one line
-class summary> Implementation: <Notes on implementation>
-*/
 //
 // Original Author:  Freya Blekman
 // Modified by: Duncan Leggat, Alexander Morton
@@ -20,9 +15,9 @@ class summary> Implementation: <Notes on implementation>
 
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
-#include "TTree.h"
 
 class EffectiveAreas;
+class TTree;
 
 class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 {
@@ -216,6 +211,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void fillIsolatedTracks(const edm::Event&, const edm::EventSetup&);
     // ID functions
     bool photonConversionVeto(const pat::Electron&, float&, float&);
+    // Helper functions
 
     void bookBranches(void); // does all the branching.
     void bookJetBranches(const std::string& ID,
@@ -293,6 +289,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     math::XYZPoint beamSpotPoint_;
     math::XYZPoint vertexPoint_;
+    reco::Vertex* vertexPrimary_;
 
     unsigned int flavorHistory{};
 

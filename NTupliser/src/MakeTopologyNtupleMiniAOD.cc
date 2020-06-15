@@ -89,6 +89,7 @@
 #include "DataFormats/METReco/interface/SigInputObj.h"
 #include "DataFormats/TrackReco/interface/HitPattern.h"
 #include "Math/GenVector/PxPyPzM4D.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
 #include "NTupliser/NTupliser/interface/MakeTopologyNtupleMiniAOD.h"
 #include "RecoLocalCalo/EcalRecAlgos/interface/EcalSeverityLevelAlgo.h"
 #include "RecoMET/METAlgorithms/interface/significanceAlgo.h"
@@ -120,12 +121,12 @@
 #include "DataFormats/RecoCandidate/interface/IsoDepositVetos.h"
 #include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
 
-// Pile-up reweighting
 #include "Math/LorentzVector.h"
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 
 // using namespace reweight;
 using boost::numeric_cast;
+typedef math::XYZTLorentzVectorF LorentzVector;
 
 MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     const edm::ParameterSet& iConfig)
@@ -337,8 +338,14 @@ void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent, const ed
         std::vector<reco::Vertex> pv{*pvHandle};
 
         if (pv.size() > 0) {
-            math::XYZPoint point(pv[0].x(), pv[0].y(), pv[0].z());
-            vertexPoint_ = point;
+            for (auto it {pv.begin()}; it != pv.end() && numPVs < numeric_cast<int>(NPVSMAX); it++) {
+                if (it->isValid() && it->chi2() != 0 && it->ndof() != 0 ) {
+                    math::XYZPoint point(it->x(), it->y(), it->z());
+                    vertexPoint_ = point;
+                    vertexPrimary_ = &*it;
+                    break;
+                }
+            }
    	}
     }
 }
@@ -375,8 +382,16 @@ void MakeTopologyNtupleMiniAOD::fillPV(const edm::Event& iEvent, const edm::Even
 
 void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-    edm::Handle<reco::VertexCompositePtrCandidate> svHandle;
+    edm::Handle<reco::VertexCompositePtrCandidateCollection> svHandle;
     iEvent.getByToken(svLabel_, svHandle);
+
+    edm::Handle<reco::VertexCompositePtrCandidateCollection> kshortHandle;
+    iEvent.getByToken(kshortToken_, kshortHandle);    
+
+    edm::Handle<reco::VertexCompositePtrCandidateCollection> lambdaHandle;
+    iEvent.getByToken(lambdaToken_, lambdaHandle);    
+
+    if (!ran_PV_) fillEventInfo(iEvent, iSetup); // Make sure we have PV info otherwise this cannot be done!
 
     if (svHandle.isValid())
     {
@@ -384,6 +399,7 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
 
         numSVs = 0;
         for (auto it{sv.begin()}; it != sv.end() && numSVs < numeric_cast<int>(NSVSMAX); it++) {
+
             svPt[numSVs] = it->pt();
             svPx[numSVs] = it->px();
             svPy[numSVs] = it->py();
@@ -393,19 +409,34 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
             svEta[numSVs] = it->eta();
             svTheta[numSVs] = it->theta();
             svPhi[numSVs] = it->phi();
-            svX[numSVs] = it->position().x();
-            svY[numSVs] = it->position().y();
-            svZ[numSVs] = it->position().z();
+            svX[numSVs] = it->vx();
+            svY[numSVs] = it->vy();
+            svZ[numSVs] = it->vz();
             svVertexChi2[numSVs] = it->vertexChi2();
             svVertexNdof[numSVs] = it->vertexNdof();
             svNtracks[numSVs] = it->numberOfDaughters();
-            svDist3D[numSVs] = 0;//it->
-            svDist3DSig[numSVs] = 0;//it->
-            svDist3DError[numSVs] = 0;//it->
-            svDistXY[numSVs] = 0;// it->
-            svDistXYSig[numSVs] = 0;//it->
-            svDistXYError[numSVs] = 0;//it->
-            svAnglePV[numSVs] = 0;//it->
+
+            reco::Vertex * sec_vertex = new reco::Vertex(it->vertex(),it->vertexCovariance(),it->vertexChi2(),it->vertexNdof(), 0);
+            VertexDistance3D vdist3D, vdistXY;
+            Measurement1D dist3D = vdist3D.distance(*sec_vertex,*vertexPrimary_);
+            Measurement1D distXY = vdistXY.distance(*sec_vertex,*vertexPrimary_);
+
+            svDist3D[numSVs] = dist3D.value();
+            svDist3DSig[numSVs] = dist3D.significance();
+            svDist3DError[numSVs] = dist3D.error();
+            svDistXY[numSVs] = distXY.value();
+            svDistXYSig[numSVs] = distXY.significance();
+            svDistXYError[numSVs] = distXY.error();
+
+//            GlobalVector dir = GlobalPoint(Basic3DVector<float>(sec_vertex->position())) - GlobalPoint(Basic3DVector<float>(vertexPrimary_->position()));
+//            LorentzVector p4 = LorentzVector( sec_vertex->p4() );
+//            float acos((dir.x()*p4.x()+dir.y()*p4.y()+dir.z()*p4.z())/dir.mag()/p4.P());
+//
+
+            reco::Candidate::Vector p = it->momentum();
+            reco::Candidate::Vector d(it->vx() - vertexPrimary_->x(), it->vy() - vertexPrimary_->y(), it->vz() - vertexPrimary_->z());
+            svAnglePV[numSVs] = p.Unit().Dot(d.Unit());
+
             svIsLambda[numSVs] = 0;
             svIsKshort[numSVs] = 0;
 
@@ -2836,30 +2867,30 @@ void MakeTopologyNtupleMiniAOD::clearSVarrays() {
     numSVs = 0;
 
     for (size_t i{0}; i < NSVSMAX; i++) {
-        svPt[numPVs] = -1.;
-        svPx[numPVs] = -999999;
-        svPy[numPVs] = -999999;
-        svPz[numPVs] = -999999;
-        svMass[numPVs] = 0;
-        svE[numPVs] = -999999;
-        svEta[numPVs] = 9999;
-        svTheta[numPVs] = 9999;
-        svPhi[numPVs] = 9999;
-        svX[numPVs] = -999999;
-        svY[numPVs] = -999999;
-        svZ[numPVs] = -999999;
-        svVertexChi2[numPVs] = -1.;
-        svVertexNdof[numPVs] = 1.;
-        svNtracks[numPVs] = 0;
-        svDist3D[numPVs] = -999999;
-        svDist3DSig[numPVs] = -999999;
-        svDist3DError[numPVs] = 0;
-        svDistXY[numPVs] = -999999;
-        svDistXYSig[numPVs] = -999999;
-        svDistXYError[numPVs] = 0;
-        svAnglePV[numPVs] = 9999;
-        svIsLambda[numPVs] = -1;
-        svIsKshort[numPVs] = -1;
+        svPt[numSVs] = -1.;
+        svPx[numSVs] = -999999;
+        svPy[numSVs] = -999999;
+        svPz[numSVs] = -999999;
+        svMass[numSVs] = 0;
+        svE[numSVs] = -999999;
+        svEta[numSVs] = 9999;
+        svTheta[numSVs] = 9999;
+        svPhi[numSVs] = 9999;
+        svX[numSVs] = -999999;
+        svY[numSVs] = -999999;
+        svZ[numSVs] = -999999;
+        svVertexChi2[numSVs] = -1.;
+        svVertexNdof[numSVs] = 1.;
+        svNtracks[numSVs] = 0;
+        svDist3D[numSVs] = -999999;
+        svDist3DSig[numSVs] = -999999;
+        svDist3DError[numSVs] = 0;
+        svDistXY[numSVs] = -999999;
+        svDistXYSig[numSVs] = -999999;
+        svDistXYError[numSVs] = 0;
+        svAnglePV[numSVs] = 9999;
+        svIsLambda[numSVs] = -1;
+        svIsKshort[numSVs] = -1;
     }
 }
 
@@ -2995,6 +3026,8 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
     beamSpotX = beamSpotY = beamSpotZ = 0;
     math::XYZPoint point(beamSpotX, beamSpotY, beamSpotZ);
     beamSpotPoint_ = point;
+    vertexPoint_ = point;
+    vertexPrimary_ = 0;
 
     evtRun = 0;
     evtnum = 0;
@@ -5038,9 +5071,9 @@ void MakeTopologyNtupleMiniAOD::bookSVbranches(){
     mytree_->Branch("svEta", &svEta, "svEta[numSVs]/F");
     mytree_->Branch("svTheta", &svTheta, "svTheta[numSVs]/F");
     mytree_->Branch("svPhi", &svPhi, "svPhi[numSVs]/F");
-    mytree_->Branch("svX", &svX, "svX[numSVs][numSVs]/F");
-    mytree_->Branch("svY", &svY, "svY[numSVs][numSVs]/F");
-    mytree_->Branch("svZ", &svZ, "svZ[numSVs][numSVs]/F");
+    mytree_->Branch("svX", &svX, "svX[numSVs]/F");
+    mytree_->Branch("svY", &svY, "svY[numSVs]/F");
+    mytree_->Branch("svZ", &svZ, "svZ[numSVs]/F");
     mytree_->Branch("svVertexChi2", &svVertexChi2, "svVertexChi2[numSVs]/F");
     mytree_->Branch("svVertexNdof", &svVertexNdof, "svVertexNdof[numSVs]/F");
     mytree_->Branch("svNtracks", &svNtracks, "svNtracks[numSVs]/I");
