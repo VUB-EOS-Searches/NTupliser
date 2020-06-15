@@ -464,6 +464,7 @@ class AnalysisEvent
     Float_t beamSpotZ;
 
     static constexpr size_t NPVSMAX{80};
+    Int_t numPVs;
     Float_t pvX[NPVSMAX];
     Float_t pvY[NPVSMAX];
     Float_t pvZ[NPVSMAX];
@@ -1414,6 +1415,7 @@ class AnalysisEvent
     TBranch* b_beamSpotX; //!
     TBranch* b_beamSpotY; //!
     TBranch* b_beamSpotZ; //!
+    TBranch* b_numPVs; //!
     TBranch* b_pvX; //!
     TBranch* b_pvY; //!
     TBranch* b_pvZ; //!
@@ -2439,6 +2441,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("beamSpotY", &beamSpotY, &b_beamSpotY);
    fChain->SetBranchAddress("beamSpotZ", &beamSpotZ, &b_beamSpotZ);
 
+   fChain->SetBranchAddress("numPVs", &numPVs, &b_numPVs);
    fChain->SetBranchAddress("pvX", &pvX, &b_pvX);
    fChain->SetBranchAddress("pvY", &pvY, &b_pvY);
    fChain->SetBranchAddress("pvZ", &pvZ, &b_pvZ);

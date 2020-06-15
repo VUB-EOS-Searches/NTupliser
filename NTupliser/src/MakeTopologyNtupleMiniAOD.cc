@@ -1,4 +1,4 @@
-// -*- C++ -*-
+	// -*- C++ -*-
 //
 // Package:    MakeTopologyNtuple
 // Class:      MakeTopologyNtuple
@@ -37,6 +37,7 @@
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/PatCandidates/interface/IsolatedTrack.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/Candidate/interface/VertexCompositePtrCandidate.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/ESHandle.h"
@@ -182,9 +183,11 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
           iConfig.getParameter<edm::InputTag>("genSimParticles"))}
     , pvLabel_{consumes<reco::VertexCollection>(
           iConfig.getParameter<edm::InputTag>("primaryVertexToken"))}
-    , kshortToken_{consumes<reco::VertexCompositeCandidateCollection>(
+    , svLabel_{consumes<reco::VertexCompositePtrCandidateCollection>(
+          iConfig.getParameter<edm::InputTag>("secondaryVertexToken"))}
+    , kshortToken_{consumes<reco::VertexCompositePtrCandidateCollection>(
           iConfig.getParameter<edm::InputTag>("kshortToken"))}
-    , lambdaToken_{consumes<reco::VertexCompositeCandidateCollection>(
+    , lambdaToken_{consumes<reco::VertexCompositePtrCandidateCollection>(
           iConfig.getParameter<edm::InputTag>("lambdaToken"))}
     , rhoToken_{consumes<double>(
           iConfig.getParameter<edm::InputTag>("rhoToken"))}
@@ -333,7 +336,6 @@ void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent, const ed
     {
         std::vector<reco::Vertex> pv{*pvHandle};
 
-        numPv = pv.size();
         if (pv.size() > 0) {
             math::XYZPoint point(pv[0].x(), pv[0].y(), pv[0].z());
             vertexPoint_ = point;
@@ -366,12 +368,50 @@ void MakeTopologyNtupleMiniAOD::fillPV(const edm::Event& iEvent, const edm::Even
             pvNtracks[numPVs] = int(it->tracksSize());
             pvNtracksW05[numPVs] = it->nTracks(0.5);
 
-            numPVs ++;
+            numPVs++;
         }
     }
 }
 
 void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
+    edm::Handle<reco::VertexCompositePtrCandidate> svHandle;
+    iEvent.getByToken(svLabel_, svHandle);
+
+    if (svHandle.isValid())
+    {
+        std::vector<reco::VertexCompositePtrCandidate> sv{*svHandle};
+
+        numSVs = 0;
+        for (auto it{sv.begin()}; it != sv.end() && numSVs < numeric_cast<int>(NSVSMAX); it++) {
+            svPt[numSVs] = it->pt();
+            svPx[numSVs] = it->px();
+            svPy[numSVs] = it->py();
+            svPz[numSVs] = it->pz();
+            svMass[numSVs] = it->mass();
+            svE[numSVs] = it->energy();
+            svEta[numSVs] = it->eta();
+            svTheta[numSVs] = it->theta();
+            svPhi[numSVs] = it->phi();
+            svX[numSVs] = it->position().x();
+            svY[numSVs] = it->position().y();
+            svZ[numSVs] = it->position().z();
+            svVertexChi2[numSVs] = it->vertexChi2();
+            svVertexNdof[numSVs] = it->vertexNdof();
+            svNtracks[numSVs] = it->numberOfDaughters();
+            svDist3D[numSVs] = 0;//it->
+            svDist3DSig[numSVs] = 0;//it->
+            svDist3DError[numSVs] = 0;//it->
+            svDistXY[numSVs] = 0;// it->
+            svDistXYSig[numSVs] = 0;//it->
+            svDistXYError[numSVs] = 0;//it->
+            svAnglePV[numSVs] = 0;//it->
+            svIsLambda[numSVs] = 0;
+            svIsKshort[numSVs] = 0;
+
+            numSVs++;
+        }
+    }
 }
 
 void MakeTopologyNtupleMiniAOD::fillMissingET(const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::METCollection> metIn_, const std::string& ID) {
@@ -465,9 +505,6 @@ void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
     beamSpotPoint_ = point;
 }
 
-//void MakeTopologyNtupleMiniAOD::fillV0Info(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
-//
-//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::PhotonCollection> phoIn_, const std::string& ID, edm::EDGetTokenT<pat::PhotonCollection> phoInOrg_) {
@@ -2795,6 +2832,35 @@ void MakeTopologyNtupleMiniAOD::clearPVarrays() {
 /////////////////////////////////////
 
 void MakeTopologyNtupleMiniAOD::clearSVarrays() {
+    // std::cout << "clearSVarrays CHECK" << std::endl;
+    numSVs = 0;
+
+    for (size_t i{0}; i < NSVSMAX; i++) {
+        svPt[numPVs] = -1.;
+        svPx[numPVs] = -999999;
+        svPy[numPVs] = -999999;
+        svPz[numPVs] = -999999;
+        svMass[numPVs] = 0;
+        svE[numPVs] = -999999;
+        svEta[numPVs] = 9999;
+        svTheta[numPVs] = 9999;
+        svPhi[numPVs] = 9999;
+        svX[numPVs] = -999999;
+        svY[numPVs] = -999999;
+        svZ[numPVs] = -999999;
+        svVertexChi2[numPVs] = -1.;
+        svVertexNdof[numPVs] = 1.;
+        svNtracks[numPVs] = 0;
+        svDist3D[numPVs] = -999999;
+        svDist3DSig[numPVs] = -999999;
+        svDist3DError[numPVs] = 0;
+        svDistXY[numPVs] = -999999;
+        svDistXYSig[numPVs] = -999999;
+        svDistXYError[numPVs] = 0;
+        svAnglePV[numPVs] = 9999;
+        svIsLambda[numPVs] = -1;
+        svIsKshort[numPVs] = -1;
+    }
 }
 
 /////////////////////////////////////
@@ -2858,6 +2924,7 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
     // std::cout << "psot FALSE: " << ran_postloop_ << std::endl;
 
     clearPVarrays();
+    clearSVarrays();
 
     for (size_t iTrig{0}; iTrig < triggerList_.size(); iTrig++)
     {
@@ -2980,7 +3047,6 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
 
     fillPV(iEvent,iSetup);
     fillSV(iEvent,iSetup);
-//    fillV0Info(iEvent, iSetup);
 
     fillTriggerData(iEvent);
     fillBeamSpot(iEvent, iSetup);
@@ -4946,22 +5012,47 @@ void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
 }
 
 void MakeTopologyNtupleMiniAOD::bookPVbranches(){
-    mytree_->Branch("numPv", &numPv, "numPv/I");
-    mytree_->Branch("pvX", &pvX, "pvX[numPv]/F");
-    mytree_->Branch("pvY", &pvY, "pvY[numPv]/F");
-    mytree_->Branch("pvZ", &pvZ, "pvZ[numPv]/F");
-    mytree_->Branch("pvDX", &pvDX, "pvDX[numPv]/F");
-    mytree_->Branch("pvDY", &pvDY, "pvDY[numPv]/F");
-    mytree_->Branch("pvDZ", &pvDZ, "pvDZ[numPv]/F");
-    mytree_->Branch("pvRho", &pvRho, "pvRho[numPv]/F");
-    mytree_->Branch("pvIsFake", &pvIsFake, "pvIsFake[numPv]/I");
-    mytree_->Branch("pvNdof", &pvNdof, "pvNdof[numPv]/F");
-    mytree_->Branch("pvChi2", &pvChi2, "pvChi2[numPv]/F");
-    mytree_->Branch("pvNtracks", &pvNtracks, "pvNtracks[numPv]/I");
-    mytree_->Branch("pvNtracksW05", &pvNtracksW05, "pvNtracksW05[numPv]/I");
+    mytree_->Branch("numPVs", &numPVs, "numPVs/I");
+    mytree_->Branch("pvX", &pvX, "pvX[numPVs]/F");
+    mytree_->Branch("pvY", &pvY, "pvY[numPVs]/F");
+    mytree_->Branch("pvZ", &pvZ, "pvZ[numPVs]/F");
+    mytree_->Branch("pvDX", &pvDX, "pvDX[numPVs]/F");
+    mytree_->Branch("pvDY", &pvDY, "pvDY[numPVs]/F");
+    mytree_->Branch("pvDZ", &pvDZ, "pvDZ[numPVs]/F");
+    mytree_->Branch("pvRho", &pvRho, "pvRho[numPVs]/F");
+    mytree_->Branch("pvIsFake", &pvIsFake, "pvIsFake[numPVs]/I");
+    mytree_->Branch("pvNdof", &pvNdof, "pvNdof[numPVs]/F");
+    mytree_->Branch("pvChi2", &pvChi2, "pvChi2[numPVs]/F");
+    mytree_->Branch("pvNtracks", &pvNtracks, "pvNtracks[numPVs]/I");
+    mytree_->Branch("pvNtracksW05", &pvNtracksW05, "pvNtracksW05[numPVs]/I");
 
 }
 void MakeTopologyNtupleMiniAOD::bookSVbranches(){
+    mytree_->Branch("numSVs", &numSVs, "numSVs/I");
+    mytree_->Branch("svPt", &svPt, "svPt[numSVs]/F");
+    mytree_->Branch("svPx", &svPx, "svPx[numSVs]/F");
+    mytree_->Branch("svPy", &svPy, "svPy[numSVs]/F");
+    mytree_->Branch("svPz", &svPz, "svPz[numSVs]/F");
+    mytree_->Branch("svMass", &svMass, "svMass[numSVs]/F");
+    mytree_->Branch("svE", &svE, "svE[numSVs]/F");
+    mytree_->Branch("svEta", &svEta, "svEta[numSVs]/F");
+    mytree_->Branch("svTheta", &svTheta, "svTheta[numSVs]/F");
+    mytree_->Branch("svPhi", &svPhi, "svPhi[numSVs]/F");
+    mytree_->Branch("svX", &svX, "svX[numSVs][numSVs]/F");
+    mytree_->Branch("svY", &svY, "svY[numSVs][numSVs]/F");
+    mytree_->Branch("svZ", &svZ, "svZ[numSVs][numSVs]/F");
+    mytree_->Branch("svVertexChi2", &svVertexChi2, "svVertexChi2[numSVs]/F");
+    mytree_->Branch("svVertexNdof", &svVertexNdof, "svVertexNdof[numSVs]/F");
+    mytree_->Branch("svNtracks", &svNtracks, "svNtracks[numSVs]/I");
+    mytree_->Branch("svDist3D", &svDist3D, "svDist3D[numSVs]/F");
+    mytree_->Branch("svDist3DSig", &svDist3DSig, "svDist3DSig[numSVs]/F");
+    mytree_->Branch("svDist3DError", &svDist3DError, "svDist3DError[numSVs]/F");
+    mytree_->Branch("svDistXY", &svDistXY, "svDistXY[numSVs]/F");
+    mytree_->Branch("svDistXYSig", &svDistXYSig, "svDistXYSig[numSVs]/F");
+    mytree_->Branch("svDistXYError", &svDistXYError, "svDistXYError[numSVs]/F");
+    mytree_->Branch("svAnglePV", &svAnglePV, "svAnglePV[numSVs]/F");
+    mytree_->Branch("svIsLambda", &svIsLambda, "svIsLambda[numSVs]/I");
+    mytree_->Branch("svIsKshort", &svIsKshort, "svIsKshort[numSVs]/I");
 }
 
 // ------------ method called once each job just before starting event loop

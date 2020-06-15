@@ -84,8 +84,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     edm::EDGetTokenT<reco::GenParticleCollection> genParticlesToken_;
     edm::EDGetTokenT<reco::GenParticleCollection> genSimParticlesToken_;
     edm::EDGetTokenT<reco::VertexCollection> pvLabel_;
-    edm::EDGetTokenT<reco::VertexCompositeCandidateCollection> kshortToken_;
-    edm::EDGetTokenT<reco::VertexCompositeCandidateCollection> lambdaToken_;
+    edm::EDGetTokenT<reco::VertexCompositePtrCandidateCollection> svLabel_;
+    edm::EDGetTokenT<reco::VertexCompositePtrCandidateCollection> kshortToken_;
+    edm::EDGetTokenT<reco::VertexCompositePtrCandidateCollection> lambdaToken_;
     edm::EDGetTokenT<double> rhoToken_;
     EffectiveAreas effectiveAreaInfo_;
     edm::EDGetTokenT<std::vector<PileupSummaryInfo>> pileupToken_;
@@ -213,7 +214,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
         void); // should only be called after all other functions.
     void fillGeneralTracks(const edm::Event&, const edm::EventSetup&);
     void fillIsolatedTracks(const edm::Event&, const edm::EventSetup&);
-    void fillV0Info(const edm::Event&, const edm::EventSetup&);
     // ID functions
     bool photonConversionVeto(const pat::Electron&, float&, float&);
 
@@ -291,8 +291,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, int> numPho;
     std::map<std::string, int> numMuo;
 
-    int numPVs{};
-    int numSVs{};
     math::XYZPoint beamSpotPoint_;
     math::XYZPoint vertexPoint_;
 
@@ -349,7 +347,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float beamSpotZ{};
 
     static constexpr size_t NPVSMAX{80};
-    int numPv{};
+    int numPVs{};
     float pvX[NPVSMAX]{};
     float pvY[NPVSMAX]{};
     float pvZ[NPVSMAX]{};
@@ -358,10 +356,38 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float pvDZ[NPVSMAX]{};
     float pvRho[NPVSMAX]{};
     int pvIsFake[NPVSMAX]{};
-    float pvChi2[NPVSMAX]{};
+    float pvChi2[NPVSMAX]{};	
     float pvNdof[NPVSMAX]{};
     int pvNtracks[NPVSMAX]{};
     int pvNtracksW05[NPVSMAX]{};
+
+    static constexpr size_t NSVSMAX{80};
+    int numSVs{};
+    float svPt[NSVSMAX]{};
+    float svPx[NSVSMAX]{};
+    float svPy[NSVSMAX]{};
+    float svPz[NSVSMAX]{};
+    float svMass[NSVSMAX]{};
+    float svE[NSVSMAX]{};
+    float svEta[NSVSMAX]{};
+    float svTheta[NSVSMAX]{};
+    float svPhi[NSVSMAX]{};
+    float svX[NSVSMAX]{};
+    float svY[NSVSMAX]{};
+    float svZ[NSVSMAX]{};
+    float svVertexChi2[NSVSMAX]{};
+    float svVertexNdof[NSVSMAX]{};
+    float svNtracks[NSVSMAX]{};
+    float svDist3D[NSVSMAX]{};
+    float svDist3DSig[NSVSMAX]{};
+    float svDist3DError[NSVSMAX]{};
+    float svDistXY[NSVSMAX]{};
+    float svDistXYSig[NSVSMAX]{};
+    float svDistXYError[NSVSMAX]{};
+    float svAnglePV[NSVSMAX]{};
+    int svIsLambda[NSVSMAX]{};
+    int svIsKshort[NSVSMAX]{};
+    
 
     std::map<std::string, int> nzcandidates;
     std::map<std::string, std::vector<float>>
