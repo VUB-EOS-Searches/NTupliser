@@ -128,7 +128,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     bool ignore_emIDtight_{}; // possibility to completely ignore EM id
 
     int minLeptons_{};
-    int genGrandparentFlagId_{};
     double elePtCut_{};
     double eleEtaCut_{};
     double eleIsoCut_{};
@@ -916,10 +915,10 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int genParId[NGENPARMAX]{};
     int genParNumMothers[NGENPARMAX]{}; 
     int genParMotherId[NGENPARMAX]{}; 
+    int genParMotherIndex[NGENPARMAX]{}; 
     int genParNumDaughters[NGENPARMAX]{};
     int genParDaughterId1[NGENPARMAX]{};
     int genParDaughterId2[NGENPARMAX]{};
-    int genParGrandparentFlag[NGENPARMAX]{};
     int genParCharge[NGENPARMAX]{};
     // PDF info
     float genPDFScale{};

@@ -190,7 +190,6 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , useResidualJEC_{iConfig.getParameter<bool>("useResidualJEC")}
     , ignore_emIDtight_{iConfig.getParameter<bool>("ignoreElectronID")}
     , minLeptons_{iConfig.getParameter<int>("minLeptons")}
-    , genGrandparentFlagId_{iConfig.getParameter<int>("genGrandparentFlagId")}
     , elePtCut_{iConfig.getParameter<double>("minElePt")}
     , eleEtaCut_{iConfig.getParameter<double>("maxEleEta")}
     , eleIsoCut_{iConfig.getParameter<double>("eleRelIso")}
@@ -1721,10 +1720,12 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
     processId_ = genEventInfo->signalProcessID();
     edm::Handle<reco::GenParticleCollection> genParticles;
     iEvent.getByToken(genSimParticlesToken_, genParticles);
+
     if (!genParticles.isValid())
     {
         iEvent.getByToken(genParticlesToken_, genParticles);
     }
+
     // fillJets(iEvent, iSetup); // needed to do additional MC truth matching.
 
     if (isttbar_){
@@ -1743,79 +1744,68 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
         histocontainer_["topPtWeightSum"]->Fill(0., topPtReweight);
     }
 
-    const int grandparentId {std::abs(genGrandparentFlagId_)};
-
     nGenPar = 0;
-    for (size_t k{0}; k < genParticles->size(); k++) {
-        const reco::Candidate& TCand{(*genParticles)[k]};
-        // std::cout << "Status: " << TCand.status() << std::endl;
-        // std::cout << "pdgId: " << TCand.pdgId() << std::endl;
-        // std::cout << "pT: " << TCand.pt() << std::endl;
-        // std::cout << "#Mothers: " << TCand.numberOfMothers() << std::endl;
-        // std::cout << "#Daughters: " << TCand.numberOfDaughters() <<
+
+    for (reco::GenParticleCollection::const_iterator it = genParticles->begin(); it != genParticles->end(); ++it) {
+
+        // std::cout << "Status: " << it->status() << std::endl;
+         // std::cout << "pdgId: " << it->pdgId() << std::endl;
+        // std::cout << "pT: " << it->pt() << std::endl;
+        // std::cout << "#Mothers: " << it->numberOfMothers() << std::endl;
+        // std::cout << "#Daughters: " << it->numberOfDaughters() <<
         // std::endl;
 
-        // if(TCand.status()==3) // Pythia 6 criteria - MC generators now
+        // if(it->isMostlyLikePythia6Status3()) // Pythia 6 criteria - MC generators now
         // use Pythia 8 - will store status instead of cutting on it.
-//        if (std::abs(TCand.pdgId()) <= 18 || std::abs(TCand.pdgId()) == 24 || std::abs(TCand.pdgId()) == 23) {
+//        if (std::abs(it->pdgId()) <= 18 || std::abs(it->pdgId()) == 24 || std::abs(it->pdgId()) == 23) {
             // only do this for particles with reasonable pT:
             if (nGenPar < NGENPARMAX) {
-                // if(TCand.pt()>5. && nGenPar<NGENPARMAX)
+                // if(it->pt()>5. && nGenPar<NGENPARMAX)
                 // these are sufficient to fill a lorentz vector, to save space
                 // no duplicated information...
-                genParEta[nGenPar] = TCand.eta();
-                genParPhi[nGenPar] = TCand.phi();
-                genParE[nGenPar] = TCand.energy();
-                genParPt[nGenPar] = TCand.pt();
-                genParId[nGenPar] = TCand.pdgId();
+                genParEta[nGenPar] = it->eta();
+                genParPhi[nGenPar] = it->phi();
+                genParE[nGenPar] = it->energy();
+                genParPt[nGenPar] = it->pt();
+                genParId[nGenPar] = it->pdgId();
 
-                genParNumMothers[nGenPar] = TCand.numberOfMothers(); 
-                if (TCand.numberOfMothers() > 0 ) genParMotherId[nGenPar] =  TCand.mother()->pdgId(); 
+                genParNumMothers[nGenPar] = it->numberOfMothers(); 
+                if (it->numberOfMothers() > 0 ) genParMotherId[nGenPar] =  it->mother()->pdgId(); 
                 else genParMotherId[nGenPar] = 0; // guards against seg fault if particle has no mother
-                genParNumDaughters[nGenPar] = TCand.numberOfDaughters(); 
-                genParDaughterId1[nGenPar] = 0;
-                genParDaughterId2[nGenPar] = 0;
-                if (TCand.numberOfDaughters() > 0) genParDaughterId1[nGenPar] = TCand.daughter(0)->pdgId();
-                if (TCand.numberOfDaughters() > 1) genParDaughterId2[nGenPar] = TCand.daughter(1)->pdgId();
-
-                // Is genParticle descended from grandparent id?
-                genParGrandparentFlag[nGenPar] = 0; // Ddefault is flase
-                if (grandparentId != 0) {
-                    size_t maxLoop = size_t(ceil (log2(NGENPARMAX)) );
-                    reco::Candidate& tempCand {TCand};
-                    for ( size_t l = 0; l != maxLoop; l++ ) {
-                        int candId = tempCand.pdgId();
-                        if ( candId != grandparentId && tempCand.numberOfMothers() == 0 ) break; // if not id we are looking for and no parents, break for loop
-                        else if ( candId == grandparentId ) { // if id we are looking for, then flag set true and break for loop
-                            genParGrandparentFlag[nGenPar] = 1;
-                            break;
-                        }
-                        else if ( candId != grandparentId && tempCand.numberOfMothers() != 0 ) { // else if not id we are looking for and has a mother ... go up the tree
-                            tempCand = tempCand.mother();
-                        }
+                int idx = -1;
+                for (reco::GenParticleCollection::const_iterator mit = genParticles->begin(); mit != genParticles->end(); ++mit) {
+                    if(it->mother() == &(*mit)) {
+                        idx = std::distance(genParticles->begin(), mit);
+                        break;
                     }
                 }
+                genParMotherIndex[nGenPar] = idx;
+                genParNumDaughters[nGenPar] = it->numberOfDaughters(); 
+                genParDaughterId1[nGenPar] = 0;
+                genParDaughterId2[nGenPar] = 0;
+                if (it->numberOfDaughters() > 0) genParDaughterId1[nGenPar] = it->daughter(0)->pdgId();
+                if (it->numberOfDaughters() > 1) genParDaughterId2[nGenPar] = it->daughter(1)->pdgId();
 
-                genParStatus[nGenPar] = TCand.status(); 
-                genParCharge[nGenPar] = TCand.charge();
+                genParStatus[nGenPar] = it->status(); 
+                genParCharge[nGenPar] = it->charge();
                 nGenPar++;
             }
         //}
         //    }
-        //if (std::abs(TCand.pdgId()) == 5 || std::abs(TCand.pdgId()) == 4)  {
+        //if (std::abs(it->pdgId()) == 5 || std::abs(it->pdgId()) == 4)  {
             // for (int ijet = 0; ijet < numJet; ijet++)
             // {
             //     float deltaR = reco::deltaR(jetSortedEta[ijet],
             //                                 jetSortedPhi[ijet],
-            //                                 TCand.eta(),
-            //                                 TCand.phi());
-            //     if (std::abs(TCand.pdgId()) == 5
+            //                                 it->eta(),
+            //                                 it->phi());
+            //     if (std::abs(it->pdgId()) == 5
             //         && (deltaR < genJetSortedClosestB[ijet]
             //             || genJetSortedClosestB[ijet] < 0))
             //     {
             //         genJetSortedClosestB[ijet] = deltaR;
             //     }
-            //     else if (std::abs(TCand.pdgId()) == 4
+            //     else if (std::abs(it->pdgId()) == 4
             //              && (deltaR < genJetSortedClosestC[ijet]
             //                  || genJetSortedClosestC[ijet] < 0))
             //     {
@@ -1823,16 +1813,16 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
             //     }
             // }
         //}
-        if (TCand.status() == 3 && std::abs(TCand.pdgId()) == 6) { // find t or tbar among the genParticles
+        if (it->status() == 3 && std::abs(it->pdgId()) == 6) { // find t or tbar among the genParticles
             if (nT >= NTOPMCINFOSMAX)  continue;
 
-            if (TCand.numberOfDaughters() >= 2) { // check t or tbar has at least 2 daughters
+            if (it->numberOfDaughters() >= 2) { // check t or tbar has at least 2 daughters
                 // std::cout << "The t or tbar candidate has: "
-                //           << TCand.numberOfDaughters() << " daughters"
+                //           << it->numberOfDaughters() << " daughters"
                 //           << std::endl;
 
-                for (size_t i_Tdaughter{0}; i_Tdaughter < TCand.numberOfDaughters(); i_Tdaughter++) { // loop over t or tbar daughters
-                    const reco::Candidate& TDaughter{*TCand.daughter(i_Tdaughter)};
+                for (size_t i_Tdaughter{0}; i_Tdaughter < it->numberOfDaughters(); i_Tdaughter++) { // loop over t or tbar daughters
+                    const reco::Candidate& TDaughter{*it->daughter(i_Tdaughter)};
 
                     if (TDaughter.status() == 3 && std::abs(TDaughter.pdgId()) == 5) { // find b
                         // std::cout << "we found b" << std::endl;
@@ -1898,15 +1888,15 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                     if (found_b && W_hadronic != 0) { // now we can keep the top in hadronic decay 4-vector
                         if (nThadronic >= NTOPMCINFOSMAX) continue;
 
-                        T_hadronicMCTruthE[nThadronic] = TCand.energy();
+                        T_hadronicMCTruthE[nThadronic] = it->energy();
                         // std::cout
                         //     << "The initial top (hadronic decay) energy is"
                         //        "then: "
-                        //     << TCand.energy() << std::endl;
-                        T_hadronicMCTruthEt[nThadronic] = TCand.et();
-                        T_hadronicMCTruthPx[nThadronic] = TCand.px();
-                        T_hadronicMCTruthPy[nThadronic] = TCand.py();
-                        T_hadronicMCTruthPz[nThadronic] = TCand.pz();
+                        //     << it->energy() << std::endl;
+                        T_hadronicMCTruthEt[nThadronic] = it->et();
+                        T_hadronicMCTruthPx[nThadronic] = it->px();
+                        T_hadronicMCTruthPy[nThadronic] = it->py();
+                        T_hadronicMCTruthPz[nThadronic] = it->pz();
                         T_hadronicMotherIndex[nThadronic] = nT;
                         nThadronic++;
                         // std::cout << "test1: " << nThadronic << std::endl;
@@ -1915,15 +1905,15 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                     if (found_b && W_leptonic != 0) { // now we can keep the top in leptonic decay 4-vector
                         if (nTleptonic >= NTOPMCINFOSMAX) continue;
 
-                        T_leptonicMCTruthE[nTleptonic] = TCand.energy();
+                        T_leptonicMCTruthE[nTleptonic] = it->energy();
                         // std::cout << "The initial top (leptonic decay) energy
                         // "
                         //              "is then: "
-                        //           << TCand.energy() << std::endl;
-                        T_leptonicMCTruthEt[nTleptonic] = TCand.et();
-                        T_leptonicMCTruthPx[nTleptonic] = TCand.px();
-                        T_leptonicMCTruthPy[nTleptonic] = TCand.py();
-                        T_leptonicMCTruthPz[nTleptonic] = TCand.pz();
+                        //           << it->energy() << std::endl;
+                        T_leptonicMCTruthEt[nTleptonic] = it->et();
+                        T_leptonicMCTruthPx[nTleptonic] = it->px();
+                        T_leptonicMCTruthPy[nTleptonic] = it->py();
+                        T_leptonicMCTruthPz[nTleptonic] = it->pz();
                         T_leptonicMotherIndex[nTleptonic] = nT;
                         nTleptonic++;
                         // std::cout << "test2: " << nTleptonic << std::endl;
@@ -3221,10 +3211,10 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
         mytree_->Branch("genParId", genParId, "genParId[nGenPar]/I");
         mytree_->Branch("genParNumMothers", genParNumMothers, "genParNumMothers[nGenPar]/I");
         mytree_->Branch("genParMotherId", genParMotherId, "genParMotherId[nGenPar]/I");
+        mytree_->Branch("genParMotherIndex", genParMotherIndex, "genParMotherIndex[nGenPar]/I");
         mytree_->Branch("genParNumDaughters", genParNumDaughters, "genParNumDaughters[nGenPar]/I");
         mytree_->Branch("genParDaughterId1", genParDaughterId1, "genParDaughterId1[nGenPar]/I");
         mytree_->Branch("genParDaughterId2", genParDaughterId2, "genParDaughterId2[nGenPar]/I");
-        mytree_->Branch("genParGrandparentFlag",genParGrandparentFlag, "genParGrandparentFlag[nGenPar]/I");
         mytree_->Branch("genParStatus",genParStatus, "genParStatus[nGenPar]/I");
         mytree_->Branch("genParCharge", genParCharge, "genParCharge[nGenPar]/I");
     }
