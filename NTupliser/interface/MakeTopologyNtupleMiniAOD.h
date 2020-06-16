@@ -486,26 +486,19 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> electronSortedDeltaEtaSeedSC;
     std::map<std::string, std::vector<int>> electronSortedIsBarrel;
     std::map<std::string, std::vector<int>> electronSortedPhotonConversionTag;
-    std::map<std::string, std::vector<int>>
-        electronSortedPhotonConversionTagCustom;
-    std::map<std::string, std::vector<float>>
-        electronSortedPhotonConversionDcot;
-    std::map<std::string, std::vector<float>>
-        electronSortedPhotonConversionDist;
+    std::map<std::string, std::vector<int>> electronSortedPhotonConversionTagCustom;
+    std::map<std::string, std::vector<float>> electronSortedPhotonConversionDcot;
+    std::map<std::string, std::vector<float>> electronSortedPhotonConversionDist;
     std::map<std::string, std::vector<int>> electronSortedPhotonConversionVeto;
-    std::map<std::string, std::vector<float>>
-        electronSortedPhotonConversionDcotCustom;
-    std::map<std::string, std::vector<float>>
-        electronSortedPhotonConversionDistCustom;
+    std::map<std::string, std::vector<float>> electronSortedPhotonConversionDcotCustom;
+    std::map<std::string, std::vector<float>> electronSortedPhotonConversionDistCustom;
 
     std::map<std::string, std::vector<float>> electronSortedImpactTransDist;
     std::map<std::string, std::vector<float>> electronSortedImpactTransError;
-    std::map<std::string, std::vector<float>>
-        electronSortedImpactTransSignificance;
+    std::map<std::string, std::vector<float>> electronSortedImpactTransSignificance;
     std::map<std::string, std::vector<float>> electronSortedImpact3DDist;
     std::map<std::string, std::vector<float>> electronSortedImpact3DError;
-    std::map<std::string, std::vector<float>>
-        electronSortedImpact3DSignificance;
+    std::map<std::string, std::vector<float>> electronSortedImpact3DSignificance;
 
     //  std::map< std::string, std::vector<float> > electronSortedIDResults_;
 

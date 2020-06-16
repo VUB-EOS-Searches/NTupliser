@@ -105,8 +105,8 @@ class AnalysisEvent
     Int_t elePF2PATPhotonConversionTag[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDist[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDcot[NELECTRONSMAX];
-//    Int_t elePF2PATPhotonConversionVeto[NELECTRONSMAX];
-    Int_t elePF2PATPhotonConversionTagCustom[NELECTRONSMAX];
+    Int_t elePF2PATPhotonConversionVeto[NELECTRONSMAX];
+//    Int_t elePF2PATPhotonConversionTagCustom[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDistCustom[NELECTRONSMAX];
     Float_t elePF2PATPhotonConversionDcotCustom[NELECTRONSMAX];
     Float_t elePF2PATTriggerMatch[NELECTRONSMAX];
@@ -1103,8 +1103,8 @@ class AnalysisEvent
     TBranch* b_elePF2PATPhotonConversionTag; //!
     TBranch* b_elePF2PATPhotonConversionDist; //!
     TBranch* b_elePF2PATPhotonConversionDcot; //!
-//    TBranch* b_elePF2PATPhotonConversionVeto; //!
-    TBranch* b_elePF2PATPhotonConversionTagCustom; //!
+    TBranch* b_elePF2PATPhotonConversionVeto; //!
+//    TBranch* b_elePF2PATPhotonConversionTagCustom; //!
     TBranch* b_elePF2PATPhotonConversionDistCustom; //!
     TBranch* b_elePF2PATPhotonConversionDcotCustom; //!
     TBranch* b_elePF2PATTriggerMatch; //!
@@ -2135,8 +2135,8 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("elePF2PATPhotonConversionTag", elePF2PATPhotonConversionTag, &b_elePF2PATPhotonConversionTag);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDist", elePF2PATPhotonConversionDist, &b_elePF2PATPhotonConversionDist);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDcot", elePF2PATPhotonConversionDcot, &b_elePF2PATPhotonConversionDcot);
-//   fChain->SetBranchAddress("elePF2PATPhotonConversionVeto", elePF2PATPhotonConversionVeto, &b_elePF2PATPhotonConversionVeto);
-   fChain->SetBranchAddress("elePF2PATPhotonConversionTagCustom", elePF2PATPhotonConversionTagCustom, &b_elePF2PATPhotonConversionTagCustom);
+   fChain->SetBranchAddress("elePF2PATPhotonConversionVeto", elePF2PATPhotonConversionVeto, &b_elePF2PATPhotonConversionVeto);
+//   fChain->SetBranchAddress("elePF2PATPhotonConversionTagCustom", elePF2PATPhotonConversionTagCustom, &b_elePF2PATPhotonConversionTagCustom);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDistCustom", elePF2PATPhotonConversionDistCustom, &b_elePF2PATPhotonConversionDistCustom);
    fChain->SetBranchAddress("elePF2PATPhotonConversionDcotCustom", elePF2PATPhotonConversionDcotCustom, &b_elePF2PATPhotonConversionDcotCustom);
    fChain->SetBranchAddress("elePF2PATTriggerMatch", elePF2PATTriggerMatch, &b_elePF2PATTriggerMatch);
