@@ -1,3 +1,4 @@
+#qsub -q hep.q -l h_rt=3600 -pe hep.pe 8 batch_test.sh
 #!/bin/bash
 fail_exit() { echo "$@" 1>&2; exit 1; }
 
