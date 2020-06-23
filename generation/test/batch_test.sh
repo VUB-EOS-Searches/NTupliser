@@ -1,4 +1,4 @@
-#qsub -q hep.q -l h_rt=3600 -pe hep.pe 8 batch_test.sh
+#qsub -q hep.q -l h_rt=35640 -pe hep.pe 8 batch_test.sh
 #!/bin/bash
 fail_exit() { echo "$@" 1>&2; exit 1; }
 
@@ -12,7 +12,8 @@ eval `scramv1 runtime -sh`
 
 export LD_LIBRARY_PATH=`pwd`/lib/:`pwd`/lib64/:${LD_LIBRARY_PATH}
 
-cmsRun NLO_HZJ_HToSTodddd_MH125_Vleptonic_2017.py
+cmsRun NLO_HZJ_HToSTodddd_MH125_Vleptonic_2017.py outputFile=file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSS_Vleptonic_M125_MS1_ctauS1_13TeV/GEN-SIM/HZJ_MS1_ctauS1.root
+cmsRun NLO_ggHZToSSTodddd_MH125_Vleptonic_MSAAAA_ctauSBBBB_2017.py outputFile=file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSS_Vleptonic_M125_MS1_ctauS1_13TeV/GEN-SIM/ggHZ_MS1_ctauS1.root
 
 echo "\nEnd of job on " `date` "\n"
 
