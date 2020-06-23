@@ -32,8 +32,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 options = VarParsing.VarParsing ('analysis')
 options.parseArguments()
 
-intEvts  =  cms.untracked.int32(500)
-uintEvts = cms.untracked.uint32(500)
+intEvts  =  cms.untracked.int32(10)
+uintEvts = cms.untracked.uint32(10)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
@@ -95,7 +95,11 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
 #            '9000006:all = sk   skbar    0        0          0       2.0  0.0197327e-11/tau0  1.0  75.0 tau0', 
 ##
             '9000006:all = sk   skbar    0        0          0       2.0  1.9732e-16  1.0  75.0 1000',
-            '9000006:oneChannel = 1  1.0 101  3 -3', 
+            '9000006:oneChannel = 1  1.0 101  1 -1', 
+            '9000006:addChannel = 1  1.0 101  2 -2', 
+            '9000006:addChannel = 1  1.0 101  3 -3', 
+            '9000006:addChannel = 1  1.0 101  4 -4', 
+            '9000006:addChannel = 1  1.0 101  5 -5', 
             '9000006:mayDecay = on', 
             '9000006:isResonance = on', 
             '25:m0 = 125.0', 
@@ -103,7 +107,11 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
             '25:addChannel = 1 0.000000001 101 9000006 -9000006',
             '25:onIfMatch = 9000006 -9000006', 
             '9000006:onMode = off', 
-            '9000006:onIfAny = 3'),
+            '9000006:onIfAny = 1',
+            '9000006:onIfAny = 2',
+            '9000006:onIfAny = 3',
+            '9000006:onIfAny = 4',
+            '9000006:onIfAny = 5'),
         pythia8CP2Settings = cms.vstring('Tune:pp 14', 
             'Tune:ee 7', 
             'MultipartonInteractions:ecmPow=0.1391', 
