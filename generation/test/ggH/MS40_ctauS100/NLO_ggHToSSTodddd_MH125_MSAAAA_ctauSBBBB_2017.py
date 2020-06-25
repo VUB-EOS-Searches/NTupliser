@@ -59,7 +59,7 @@ SelectEvents = cms.untracked.PSet(
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('file:Higgs_GEN_SIM_2017.root'),
+    fileName = cms.untracked.string(options.outputFile),
 #    fileName = cms.untracked.string('file:/vols/cms/adm10/MC/NLO_HToSSTodddd_MH125_MS1_ctauS10_13TeV/GEN-SIM/Higgs_GEN_SIM_2017_10K.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
@@ -163,8 +163,8 @@ process.endjob_step = cms.EndPath(process.endOfProcess)
 process.RAWSIMoutput_step = cms.EndPath(process.RAWSIMoutput)
 
 #Setup FWK for multithreaded
-#process.options.numberOfThreads=cms.untracked.uint32(8)
-#process.options.numberOfStreams=cms.untracked.uint32(8)
+process.options.numberOfThreads=cms.untracked.uint32(8)
+process.options.numberOfStreams=cms.untracked.uint32(8)
 
 # Schedule definition
 process.schedule = cms.Schedule(process.lhe_step,process.generation_step,process.genfiltersummary_step,process.simulation_step,process.endjob_step,process.RAWSIMoutput_step)
