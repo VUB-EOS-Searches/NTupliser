@@ -35,8 +35,26 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("EmptySource")
 
-process.options = cms.untracked.PSet(
+process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
+    externalLHEProducer = cms.PSet(
+       initialSeed = cms.untracked.uint32(1),
+       engineName = cms.untracked.string('HepJamesRandom')
+    ),
+    generator = cms.PSet(
+       initialSeed = cms.untracked.uint32(2),
+       engineName = cms.untracked.string('HepJamesRandom')
+    ),
+    VtxSmeared = cms.PSet(
+       initialSeed = cms.untracked.uint32(3),
+       engineName = cms.untracked.string('HepJamesRandom')
+    ),
+    g4SimHits = cms.PSet(
+       initialSeed = cms.untracked.uint32(4),
+       engineName = cms.untracked.string('HepJamesRandom')
+    )
+)
 
+process.options = cms.untracked.PSet(
 )
 
 # Production Info
