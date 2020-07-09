@@ -848,6 +848,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
         jetSortedBIDParams_; // stores the parameter (db) output
     std::map<std::string, float> bidParamsDiscCut_;
 
+    std::map<std::string, std::vector<float>> genJetSortedE;
     std::map<std::string, std::vector<float>> genJetSortedEt;
     std::map<std::string, std::vector<float>> genJetSortedPt;
     std::map<std::string, std::vector<float>> genJetSortedEta;

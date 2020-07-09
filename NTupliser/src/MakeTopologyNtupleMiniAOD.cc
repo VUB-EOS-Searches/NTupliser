@@ -1439,32 +1439,16 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
             int scalarPid = 9000006;
 
             if ( std::abs(constituent->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-
             else if ( constituent->mother()->numberOfMothers() != 0 ) {
                 if ( std::abs(constituent->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
        	        else if ( constituent->mother()->mother()->numberOfMothers() != 0 ) {
-                    if ( std::abs(constituent->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;            
+                    if ( std::abs(constituent->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
                     else if ( constituent->mother()->mother()->mother()->numberOfMothers() != 0 ) {
                         if (std::abs(constituent->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
                         else if ( constituent->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
                             if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
                             else if ( constituent->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
                                 if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                                    if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                    else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                                        if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                        else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                                            if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                            else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                                                if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                                else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                                                    if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
@@ -1479,6 +1463,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
             genJetSortedScalarAncestor[ID][jetindex] = 0;
         }
 
+        genJetSortedE[ID][jetindex] = jet.energy();
         genJetSortedEt[ID][jetindex] = jet.et();
         genJetSortedPt[ID][jetindex] = jet.pt();
         genJetSortedEta[ID][jetindex] = jet.eta();
@@ -1491,6 +1476,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
     }
     else
     {
+        genJetSortedE[ID][jetindex] = -999.;
         genJetSortedEt[ID][jetindex] = -999.;
         genJetSortedPt[ID][jetindex] = -999.;
         genJetSortedEta[ID][jetindex] = -999.;
@@ -1513,6 +1499,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(int /*empty*/,
                                               const std::string& ID,
                                               bool /*runMC*/)
 {
+    genJetSortedE[ID][jetindex] = -999.;
     genJetSortedEt[ID][jetindex] = -999.;
     genJetSortedPt[ID][jetindex] = -999.;
     genJetSortedEta[ID][jetindex] = -999.;
@@ -2754,6 +2741,7 @@ void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
     jetSortedNeutralEmEnergyFractionCorr[ID].clear();
     jetSortedMuonFractionCorr[ID].clear();
 
+    genJetSortedE[ID].clear();
     genJetSortedEt[ID].clear();
     genJetSortedPt[ID].clear();
     genJetSortedEta[ID].clear();
@@ -4726,6 +4714,7 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
         bTagRes[bTagList_[iBtag]][ID] = tempVecF;
     }
 
+    genJetSortedE[ID] = tempVecF;
     genJetSortedEt[ID] = tempVecF;
     genJetSortedPt[ID] = tempVecF;
     genJetSortedEta[ID] = tempVecF;
@@ -4871,9 +4860,8 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     prefix = "genJet" + name;
     if (runMCInfo_)
     {
-        mytree_->Branch((prefix + "ET").c_str(),
-                        &genJetSortedEt[ID][0],
-                        (prefix + "ET[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "E").c_str(),  &genJetSortedE[ID][0],  (prefix + "E[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "ET").c_str(), &genJetSortedEt[ID][0], (prefix + "ET[numJet" + name + "]/F").c_str());
         mytree_->Branch((prefix + "PT").c_str(),
                         &genJetSortedPt[ID][0],
                         (prefix + "PT[numJet" + name + "]/F").c_str());
