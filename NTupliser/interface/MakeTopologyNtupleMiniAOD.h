@@ -857,6 +857,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> genJetSortedPx;
     std::map<std::string, std::vector<float>> genJetSortedPy;
     std::map<std::string, std::vector<float>> genJetSortedPz;
+    std::map<std::string, std::vector<float>> genJetSortedMass;
     std::map<std::string, std::vector<int>> genJetSortedID;
     std::map<std::string, std::vector<int>> jetSortedPID;
     std::map<std::string, std::vector<int>> genJetSortedPID;

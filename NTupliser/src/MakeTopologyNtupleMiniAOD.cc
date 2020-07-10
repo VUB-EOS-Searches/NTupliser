@@ -1472,6 +1472,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
         genJetSortedPx[ID][jetindex] = jet.px();
         genJetSortedPy[ID][jetindex] = jet.py();
         genJetSortedPz[ID][jetindex] = jet.pz();
+        genJetSortedMass[ID][jetindex] = jet.mass();
         // genJetSortedID[ID][jetindex] = jet.jetID();
     }
     else
@@ -1485,6 +1486,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
         genJetSortedPx[ID][jetindex] = -999.;
         genJetSortedPy[ID][jetindex] = -999.;
         genJetSortedPz[ID][jetindex] = -999.;
+        genJetSortedMass[ID][jetindex] = -999.;
         // genJetSortedID[ID][jetindex] = 0;
         genJetSortedPID[ID][jetindex] = 0;
         genJetSortedMotherPID[ID][jetindex] = 0;
@@ -1508,6 +1510,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(int /*empty*/,
     genJetSortedPx[ID][jetindex] = -999.;
     genJetSortedPy[ID][jetindex] = -999.;
     genJetSortedPz[ID][jetindex] = -999.;
+    genJetSortedMass[ID][jetindex] = -999.;
     // genJetSortedID[ID][jetindex] = 0;
     genJetSortedPID[ID][jetindex] = 0;
     genJetSortedMotherPID[ID][jetindex] = 0;
@@ -2750,6 +2753,7 @@ void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
     genJetSortedPx[ID].clear();
     genJetSortedPy[ID].clear();
     genJetSortedPz[ID].clear();
+    genJetSortedMass[ID].clear();
     // genJetSortedID[ID].clear();
     jetSortedPID[ID].clear();
     genJetSortedPID[ID].clear();
@@ -4723,6 +4727,7 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     genJetSortedPx[ID] = tempVecF;
     genJetSortedPy[ID] = tempVecF;
     genJetSortedPz[ID] = tempVecF;
+    genJetSortedMass[ID] = tempVecF;
     // genJetSortedID[ID] = tempVecI;
     genJetSortedClosestB[ID] = tempVecF;
     genJetSortedClosestC[ID] = tempVecF;
@@ -4874,6 +4879,7 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
         mytree_->Branch((prefix + "PZ").c_str(),
                         &genJetSortedPz[ID][0],
                         (prefix + "PZ[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "Mass").c_str(), &genJetSortedMass[ID][0], (prefix + "Mass[numJet" + name + "]/F").c_str());
         // mytree_->Branch((prefix + "ID").c_str(),
         //                 &genJetSortedID[ID][0],
         //                 (prefix + "ID[numJet" + name + "]/I").c_str());
