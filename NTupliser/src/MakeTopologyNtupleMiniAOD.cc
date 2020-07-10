@@ -1434,12 +1434,36 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
         if (!constituent.isNull() or not constituent.isAvailable())
         {
             genJetSortedPID[ID][jetindex] = constituent->pdgId();
+            genJetSortedMotherPID[ID][jetindex] = constituent->mother()->pdgId();
+            genJetSortedScalarAncestor[ID][jetindex] = 0;
+            int scalarPid = 9000006;
+
+            if ( std::abs(constituent->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+            else if ( constituent->mother()->numberOfMothers() != 0 ) {
+                if ( std::abs(constituent->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+       	        else if ( constituent->mother()->mother()->numberOfMothers() != 0 ) {
+                    if ( std::abs(constituent->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                    else if ( constituent->mother()->mother()->mother()->numberOfMothers() != 0 ) {
+                        if (std::abs(constituent->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                        else if ( constituent->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
+                            if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                            else if ( constituent->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
+                                if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+
         }
         else
         {
             genJetSortedPID[ID][jetindex] = 0;
+            genJetSortedMotherPID[ID][jetindex] = 0;
+            genJetSortedScalarAncestor[ID][jetindex] = 0;
         }
 
+        genJetSortedE[ID][jetindex] = jet.energy();
         genJetSortedEt[ID][jetindex] = jet.et();
         genJetSortedPt[ID][jetindex] = jet.pt();
         genJetSortedEta[ID][jetindex] = jet.eta();
@@ -1452,6 +1476,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
     }
     else
     {
+        genJetSortedE[ID][jetindex] = -999.;
         genJetSortedEt[ID][jetindex] = -999.;
         genJetSortedPt[ID][jetindex] = -999.;
         genJetSortedEta[ID][jetindex] = -999.;
@@ -1462,6 +1487,8 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
         genJetSortedPz[ID][jetindex] = -999.;
         // genJetSortedID[ID][jetindex] = 0;
         genJetSortedPID[ID][jetindex] = 0;
+        genJetSortedMotherPID[ID][jetindex] = 0;
+        genJetSortedScalarAncestor[ID][jetindex] = 0;
         genJetSortedClosestB[ID][jetindex] = -1;
         genJetSortedClosestC[ID][jetindex] = -1;
     }
@@ -1472,6 +1499,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(int /*empty*/,
                                               const std::string& ID,
                                               bool /*runMC*/)
 {
+    genJetSortedE[ID][jetindex] = -999.;
     genJetSortedEt[ID][jetindex] = -999.;
     genJetSortedPt[ID][jetindex] = -999.;
     genJetSortedEta[ID][jetindex] = -999.;
@@ -1482,6 +1510,8 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(int /*empty*/,
     genJetSortedPz[ID][jetindex] = -999.;
     // genJetSortedID[ID][jetindex] = 0;
     genJetSortedPID[ID][jetindex] = 0;
+    genJetSortedMotherPID[ID][jetindex] = 0;
+    genJetSortedScalarAncestor[ID][jetindex] = 0;
     genJetSortedClosestB[ID][jetindex] = -1;
     genJetSortedClosestC[ID][jetindex] = -1;
 }
@@ -2711,6 +2741,7 @@ void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
     jetSortedNeutralEmEnergyFractionCorr[ID].clear();
     jetSortedMuonFractionCorr[ID].clear();
 
+    genJetSortedE[ID].clear();
     genJetSortedEt[ID].clear();
     genJetSortedPt[ID].clear();
     genJetSortedEta[ID].clear();
@@ -2722,6 +2753,8 @@ void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
     // genJetSortedID[ID].clear();
     jetSortedPID[ID].clear();
     genJetSortedPID[ID].clear();
+    genJetSortedMotherPID[ID].clear();
+    genJetSortedScalarAncestor[ID].clear();
     genJetSortedClosestB[ID].clear();
     genJetSortedClosestC[ID].clear();
 
@@ -4641,6 +4674,8 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     jetSortedPID[ID] = tempVecI;
     jetSortedNConstituents[ID] = tempVecI;
     genJetSortedPID[ID] = tempVecI;
+    genJetSortedMotherPID[ID] = tempVecI;
+    genJetSortedScalarAncestor[ID] = tempVecI;
 
     jetSortedE[ID] = tempVecD;
     jetSortedEt[ID] = tempVecD;
@@ -4679,6 +4714,7 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
         bTagRes[bTagList_[iBtag]][ID] = tempVecF;
     }
 
+    genJetSortedE[ID] = tempVecF;
     genJetSortedEt[ID] = tempVecF;
     genJetSortedPt[ID] = tempVecF;
     genJetSortedEta[ID] = tempVecF;
@@ -4824,9 +4860,8 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     prefix = "genJet" + name;
     if (runMCInfo_)
     {
-        mytree_->Branch((prefix + "ET").c_str(),
-                        &genJetSortedEt[ID][0],
-                        (prefix + "ET[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "E").c_str(),  &genJetSortedE[ID][0],  (prefix + "E[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "ET").c_str(), &genJetSortedEt[ID][0], (prefix + "ET[numJet" + name + "]/F").c_str());
         mytree_->Branch((prefix + "PT").c_str(),
                         &genJetSortedPt[ID][0],
                         (prefix + "PT[numJet" + name + "]/F").c_str());
@@ -4854,6 +4889,12 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
         mytree_->Branch((prefix + "PID").c_str(),
                         &genJetSortedPID[ID][0],
                         (prefix + "PID[numJet" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "MotherPID").c_str(),
+                        &genJetSortedMotherPID[ID][0],
+                        (prefix + "MotherPID[numJet" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "ScalarAncestor").c_str(),
+                        &genJetSortedScalarAncestor[ID][0],
+                        (prefix + "genJetSortedScalarAncestor[numJet" + name + "]/I").c_str());
     }
 
     mytree_->Branch("fixedGridRhoFastjetAll",
@@ -5148,7 +5189,6 @@ void MakeTopologyNtupleMiniAOD::fillTriggerData(const edm::Event& iEvent)
 /////////////
 // identification functions!
 /////////////
-
 bool MakeTopologyNtupleMiniAOD::photonConversionVeto(const pat::Electron& electron, float& dist, float& Dcot)
 {
     // return true if object is good (so not a conversion)

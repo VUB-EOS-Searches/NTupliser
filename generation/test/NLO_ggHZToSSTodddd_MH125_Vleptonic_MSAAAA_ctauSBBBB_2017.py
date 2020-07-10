@@ -32,8 +32,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 options = VarParsing.VarParsing ('analysis')
 options.parseArguments()
 
-intEvts  =  cms.untracked.int32(10)
-uintEvts = cms.untracked.uint32(10)
+intEvts  =  cms.untracked.int32(100)
+uintEvts = cms.untracked.uint32(100)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
@@ -41,6 +41,25 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("EmptySource")
+
+process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
+    externalLHEProducer = cms.PSet(
+       initialSeed = cms.untracked.uint32(1),
+       engineName = cms.untracked.string('HepJamesRandom')
+    ),
+    generator = cms.PSet(
+       initialSeed = cms.untracked.uint32(2),
+       engineName = cms.untracked.string('HepJamesRandom')
+    ),
+    VtxSmeared = cms.PSet(
+       initialSeed = cms.untracked.uint32(3),
+       engineName = cms.untracked.string('HepJamesRandom')
+    ),
+    g4SimHits = cms.PSet(
+       initialSeed = cms.untracked.uint32(4),
+       engineName = cms.untracked.string('HepJamesRandom')
+    )
+)
 
 process.options = cms.untracked.PSet(
 
@@ -75,6 +94,7 @@ SelectEvents = cms.untracked.PSet(
 # Additional output definition
 
 # Other statements
+
 process.XMLFromDBSource.label = cms.string("Extended")
 process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag import GlobalTag

@@ -242,6 +242,7 @@ class AnalysisEvent
     Int_t jetPF2PATPID[NJETSMAX];
     Float_t jetPF2PATClosestBPartonDeltaR[NJETSMAX];
     Float_t jetPF2PATClosestCPartonDeltaR[NJETSMAX];
+    Float_t genJetPF2PATE[NJETSMAX];
     Float_t genJetPF2PATET[NJETSMAX];
     Float_t genJetPF2PATPT[NJETSMAX];
     Float_t genJetPF2PATPX[NJETSMAX];
@@ -251,6 +252,8 @@ class AnalysisEvent
     Float_t genJetPF2PATTheta[NJETSMAX];
     Float_t genJetPF2PATEta[NJETSMAX];
     Int_t genJetPF2PATPID[NJETSMAX];
+    Int_t genJetPF2PATMotherPID[NJETSMAX];
+    Int_t genJetPF2PATScalarAncestor[NJETSMAX];
     Float_t jetPF2PATMuEnergy[NJETSMAX];
     Float_t jetPF2PATMuEnergyFraction[NJETSMAX];
     Float_t jetPF2PATNeutralHadEnergy[NJETSMAX];
@@ -1235,6 +1238,7 @@ class AnalysisEvent
     TBranch* b_jetPF2PATPID; //!
     TBranch* b_jetPF2PATClosestBPartonDeltaR; //!
     TBranch* b_jetPF2PATClosestCPartonDeltaR; //!
+    TBranch* b_genJetPF2PATE; //!
     TBranch* b_genJetPF2PATET; //!
     TBranch* b_genJetPF2PATPT; //!
     TBranch* b_genJetPF2PATPX; //!
@@ -1244,6 +1248,8 @@ class AnalysisEvent
     TBranch* b_genJetPF2PATTheta; //!
     TBranch* b_genJetPF2PATEta; //!
     TBranch* b_genJetPF2PATPID; //!
+    TBranch* b_genJetPF2PATMotherPID; //!
+    TBranch* b_genJetPF2PATScalarAncestor; //!
     TBranch* b_jetPF2PATMuEnergy; //!
     TBranch* b_jetPF2PATMuEnergyFraction; //!
     TBranch* b_jetPF2PATNeutralHadEnergy; //!
@@ -2278,6 +2284,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("jetPF2PATClosestCPartonDeltaR", jetPF2PATClosestCPartonDeltaR, &b_jetPF2PATClosestCPartonDeltaR);
    if (isMC)
    {
+       fChain->SetBranchAddress("genJetPF2PATE", genJetPF2PATE, &b_genJetPF2PATE);
        fChain->SetBranchAddress("genJetPF2PATET", genJetPF2PATET, &b_genJetPF2PATET);
        fChain->SetBranchAddress("genJetPF2PATPT", genJetPF2PATPT, &b_genJetPF2PATPT);
        fChain->SetBranchAddress("genJetPF2PATPX", genJetPF2PATPX, &b_genJetPF2PATPX);
@@ -2287,6 +2294,8 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("genJetPF2PATTheta", genJetPF2PATTheta, &b_genJetPF2PATTheta);
        fChain->SetBranchAddress("genJetPF2PATEta", genJetPF2PATEta, &b_genJetPF2PATEta);
        fChain->SetBranchAddress("genJetPF2PATPID", genJetPF2PATPID, &b_genJetPF2PATPID);
+       fChain->SetBranchAddress("genJetPF2PATMotherPID", genJetPF2PATMotherPID, &b_genJetPF2PATMotherPID);
+       fChain->SetBranchAddress("genJetPF2PATScalarAncestor", genJetPF2PATScalarAncestor, &b_genJetPF2PATScalarAncestor);
    }
    fChain->SetBranchAddress("jetPF2PATMuEnergy", jetPF2PATMuEnergy, &b_jetPF2PATMuEnergy);
    fChain->SetBranchAddress("jetPF2PATMuEnergyFraction", jetPF2PATMuEnergyFraction, &b_jetPF2PATMuEnergyFraction);
