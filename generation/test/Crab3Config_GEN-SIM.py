@@ -10,8 +10,9 @@ config.General.transferLogs = False
 config.JobType.allowUndistributedCMSSW = True
 config.JobType.pluginName = 'PrivateMC'
 config.JobType.psetName = 'NLO_HZJ_HToSTodddd_MH125_Vleptonic_2017.py'
-config.JobType.maxMemoryMB = 20000
+config.JobType.maxMemoryMB = 14000
 config.JobType.numCores = 8
+config.JobType.maxJobRuntimeMin = 375
 
 config.Data.outputPrimaryDataset = 'NLO_HZJ_MH125_MS1_ctauS10_2017_200710'
 config.Data.splitting = 'EventBased'
