@@ -21,11 +21,15 @@ process.source = cms.Source("PoolSource",
 ## Events to process
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
-
-process.printTree = cms.EDAnalyzer("ParticleListDrawer",
-  maxEventsToPrint = cms.untracked.int32(-1),
+process.printTree = cms.EDAnalyzer("ParticleTreeDrawer",
+  src = cms.InputTag("genParticles"),
+  printP4 = cms.untracked.bool(False),
+  printPtEtaPhi = cms.untracked.bool(False),
   printVertex = cms.untracked.bool(False),
-  src = cms.InputTag("genParticles")
+  printStatus = cms.untracked.bool(False),
+  printIndex = cms.untracked.bool(False),
+  status = cms.untracked.vint32( 1 ),
+  maxEventsToPrint = cms.untracked.int32(-1),
 )
 
 process.p = cms.Path(process.printTree)
