@@ -1479,7 +1479,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
         if ( genJetSortedScalarAncestor[ID][jetindex] == 1 ) {
             std::cout << "\ngenJetConstituents: " << jet.numberOfSourceCandidatePtrs() << std::endl;
             const TLorentzVector genJetVec {jet.px(), jet.py(), jet.pz(), jet.energy()};
-            std::cout << "genJet inv mass and energy = " << jet.energy() << " / " << genJetVec.M() << std::endl;
+            std::cout << "genJet energy and inv mass (Tlorentz) = " << jet.energy() << " / " << genJetVec.M() << std::endl;
             for ( uint ijet = 0; ijet != jet.numberOfSourceCandidatePtrs(); ijet ++ ){
                 edm::Ptr<reco::Candidate> const& constit{jet.sourceCandidatePtr(ijet)};
                 if ( !constit.isNull() or not constit.isAvailable()) {
@@ -4875,17 +4875,9 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     }
 
     // generator information
-    mytree_->Branch((prefix + "PID").c_str(),
-                    &jetSortedPID[ID][0],
-                    (prefix + "PID[numJet" + name + "]/I").c_str());
-    mytree_->Branch(
-        (prefix + "ClosestBPartonDeltaR").c_str(),
-        &genJetSortedClosestB[ID][0],
-        (prefix + "ClosestBPartonDeltaR[numJet" + name + "]/F").c_str());
-    mytree_->Branch(
-        (prefix + "ClosestCPartonDeltaR").c_str(),
-        &genJetSortedClosestC[ID][0],
-        (prefix + "ClosestCPartonDeltaR[numJet" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PID").c_str(), &jetSortedPID[ID][0], (prefix + "PID[numJet" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "ClosestBPartonDeltaR").c_str(), &genJetSortedClosestB[ID][0], (prefix + "ClosestBPartonDeltaR[numJet" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ClosestCPartonDeltaR").c_str(), &genJetSortedClosestC[ID][0], (prefix + "ClosestCPartonDeltaR[numJet" + name + "]/F").c_str());
 
     prefix = "genJet" + name;
     if (runMCInfo_)
@@ -4897,32 +4889,16 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
         mytree_->Branch((prefix + "PY").c_str(), &genJetSortedPy[ID][0], (prefix + "PY[numJet" + name + "]/F").c_str());
         mytree_->Branch((prefix + "PZ").c_str(), &genJetSortedPz[ID][0], (prefix + "PZ[numJet" + name + "]/F").c_str());
         mytree_->Branch((prefix + "Mass").c_str(), &genJetSortedMass[ID][0], (prefix + "Mass[numJet" + name + "]/F").c_str());
-        // mytree_->Branch((prefix + "ID").c_str(),
-        //                 &genJetSortedID[ID][0],
-        //                 (prefix + "ID[numJet" + name + "]/I").c_str());
-        mytree_->Branch((prefix + "Phi").c_str(),
-                        &genJetSortedPhi[ID][0],
-                        (prefix + "Phi[numJet" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "Theta").c_str(),
-                        &genJetSortedTheta[ID][0],
-                        (prefix + "Theta[numJet" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "Eta").c_str(),
-                        &genJetSortedEta[ID][0],
-                        (prefix + "Eta[numJet" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PID").c_str(),
-                        &genJetSortedPID[ID][0],
-                        (prefix + "PID[numJet" + name + "]/I").c_str());
-        mytree_->Branch((prefix + "MotherPID").c_str(),
-                        &genJetSortedMotherPID[ID][0],
-                        (prefix + "MotherPID[numJet" + name + "]/I").c_str());
-        mytree_->Branch((prefix + "ScalarAncestor").c_str(),
-                        &genJetSortedScalarAncestor[ID][0],
-                        (prefix + "genJetSortedScalarAncestor[numJet" + name + "]/I").c_str());
+        // mytree_->Branch((prefix + "ID").c_str(), &genJetSortedID[ID][0], (prefix + "ID[numJet" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "Phi").c_str(), &genJetSortedPhi[ID][0], (prefix + "Phi[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "Theta").c_str(), &genJetSortedTheta[ID][0], (prefix + "Theta[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "Eta").c_str(), &genJetSortedEta[ID][0], (prefix + "Eta[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PID").c_str(), &genJetSortedPID[ID][0], (prefix + "PID[numJet" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "MotherPID").c_str(), &genJetSortedMotherPID[ID][0], (prefix + "MotherPID[numJet" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "ScalarAncestor").c_str(), &genJetSortedScalarAncestor[ID][0], (prefix + "genJetSortedScalarAncestor[numJet" + name + "]/I").c_str());
     }
 
-    mytree_->Branch("fixedGridRhoFastjetAll",
-                    &fixedGridRhoFastjetAll[ID],
-                    "fixedGridRhoFastjetAll]/F");
+    mytree_->Branch("fixedGridRhoFastjetAll", &fixedGridRhoFastjetAll[ID], "fixedGridRhoFastjetAll]/F");
 
     bookBIDInfoBranches(ID, name);
 }
