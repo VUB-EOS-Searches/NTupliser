@@ -1279,6 +1279,7 @@ void MakeTopologyNtupleMiniAOD::fillOtherJetInfo(const pat::Jet& jet,
     jetSortedPx[ID][jetindex] = jet.px();
     jetSortedPy[ID][jetindex] = jet.py();
     jetSortedPz[ID][jetindex] = jet.pz();
+    jetSortedMass[ID][jetindex] = jet.mass();
     // jetSortedID[ID][jetindex] = jet.jetID();
     jetSortedNtracksInJet[ID][jetindex] =
         jet.associatedTracks().size(); // Need to fix - not a high priority as
@@ -1428,8 +1429,20 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
         //    Not every status-1 GEN particle is saved in miniAOD and thus some
         //    of the constituents may be missing. Skip GenConstituent pdgId of
         //    such events.
-        edm::Ptr<reco::Candidate> const& constituent{jet.sourceCandidatePtr(
-            0)}; // Get pointer to the first genConstituent.
+        edm::Ptr<reco::Candidate> const& constituent{jet.sourceCandidatePtr(0)}; // Get pointer to the first genConstituent.
+
+/*
+        std::cout << "\ngenJetConstituents: " << jet.numberOfSourceCandidatePtrs() << std::endl;
+        const TLorentzVector genJetVec {jet.px(), jet.py(), jet.pz(), jet.energy()};
+        std::cout << "genJet inv mass and energy = " << jet.energy() << " / " << genJetVec.M() << std::endl;
+        for ( uint ijet = 0; ijet != jet.numberOfSourceCandidatePtrs(); ijet ++ ){
+            edm::Ptr<reco::Candidate> const& constit{jet.sourceCandidatePtr(ijet)};
+            if ( !constit.isNull() or not constit.isAvailable()) {
+                const TLorentzVector constitVec {constit->px(), constit->py(), constit->pz(), constit->energy()};
+                std::cout << "ijet(" << ijet << ") PID = " << constit->pdgId() << " inv mass = " << constitVec.M()<< " ; pT = " << constit->pt() << " ; E = " << constit->energy() << std::endl;
+            }
+        }
+/*
 
         if (!constituent.isNull() or not constituent.isAvailable())
         {
@@ -1462,6 +1475,20 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
             genJetSortedMotherPID[ID][jetindex] = 0;
             genJetSortedScalarAncestor[ID][jetindex] = 0;
         }
+/*
+        if ( genJetSortedScalarAncestor[ID][jetindex] == 1 ) {
+            std::cout << "\ngenJetConstituents: " << jet.numberOfSourceCandidatePtrs() << std::endl;
+            const TLorentzVector genJetVec {jet.px(), jet.py(), jet.pz(), jet.energy()};
+            std::cout << "genJet inv mass and energy = " << jet.energy() << " / " << genJetVec.M() << std::endl;
+            for ( uint ijet = 0; ijet != jet.numberOfSourceCandidatePtrs(); ijet ++ ){
+                edm::Ptr<reco::Candidate> const& constit{jet.sourceCandidatePtr(ijet)};
+                if ( !constit.isNull() or not constit.isAvailable()) {
+                    const TLorentzVector constitVec {constit->px(), constit->py(), constit->pz(), constit->energy()};
+                    std::cout << "ijet(" << ijet << ") PID = " << constit->pdgId() << " inv mass = " << constitVec.M()<< " ; pT = " << constit->pt() << " ; E = " << constit->energy() << std::endl;
+                }
+            }
+        }
+*/
 
         genJetSortedE[ID][jetindex] = jet.energy();
         genJetSortedEt[ID][jetindex] = jet.et();
@@ -2686,6 +2713,7 @@ void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
     jetSortedPx[ID].clear();
     jetSortedPy[ID].clear();
     jetSortedPz[ID].clear();
+    jetSortedMass[ID].clear();
     // jetSortedID[ID].clear();
     jetSortedClosestLepton[ID].clear();
     jetSortedNtracksInJet[ID].clear();
@@ -3221,16 +3249,14 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     }
     for (size_t iTrig{0}; iTrig < triggerList_.size(); iTrig++)
     {
-        std::cout << "Booking trigger branch: " << triggerList_[iTrig]
-                  << std::endl;
+//        std::cout << "Booking trigger branch: " << triggerList_[iTrig] << std::endl;
         mytree_->Branch(triggerList_[iTrig].c_str(),
                         &triggerRes[iTrig],
                         (triggerList_[iTrig] + "/I").c_str());
     }
     for (size_t iMetFilter{0}; iMetFilter < metFilterList_.size(); iMetFilter++)
     {
-        std::cout << "Booking MET filter branch: " << metFilterList_[iMetFilter]
-                  << std::endl;
+//        std::cout << "Booking MET filter branch: " << metFilterList_[iMetFilter] << std::endl;
         mytree_->Branch(metFilterList_[iMetFilter].c_str(),
                         &metFilterRes[iMetFilter],
                         (metFilterList_[iMetFilter] + "/I").c_str());
@@ -4693,6 +4719,7 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     jetSortedPx[ID] = tempVecD;
     jetSortedPy[ID] = tempVecD;
     jetSortedPz[ID] = tempVecD;
+    jetSortedMass[ID] = tempVecD;
     // jetSortedID[ID] = tempVecI;
     jetSortedClosestLepton[ID] = tempVecD;
     jetSortedJetCharge[ID] = tempVecF;
@@ -4770,9 +4797,8 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     mytree_->Branch((prefix + "Py").c_str(),
                     &jetSortedPy[ID][0],
                     (prefix + "Py[numJet" + name + "]/D").c_str());
-    mytree_->Branch((prefix + "Pz").c_str(),
-                    &jetSortedPz[ID][0],
-                    (prefix + "Pz[numJet" + name + "]/D").c_str());
+    mytree_->Branch((prefix + "Pz").c_str(), &jetSortedPz[ID][0], (prefix + "Pz[numJet" + name + "]/D").c_str());
+    mytree_->Branch((prefix + "Mass").c_str(), &jetSortedMass[ID][0], (prefix + "Mass[numJet" + name + "]/D").c_str());
     // mytree_->Branch((prefix + "ID").c_str(),
     //                 &jetSortedID[ID][0],
     //                 (prefix + "ID[numJet" + name + "]/I").c_str());
@@ -4841,8 +4867,7 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
 
     for (size_t iBtag{0}; iBtag < bTagList_.size(); iBtag++)
     {
-        std::cout << "Booking bTag disc branch: " << bTagList_[iBtag]
-                  << std::endl;
+//        std::cout << "Booking bTag disc branch: " << bTagList_[iBtag] << std::endl;
         mytree_->Branch(
             (prefix + bTagList_[iBtag]).c_str(),
             &bTagRes[bTagList_[iBtag]][ID][0],
@@ -4867,18 +4892,10 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     {
         mytree_->Branch((prefix + "E").c_str(),  &genJetSortedE[ID][0],  (prefix + "E[numJet" + name + "]/F").c_str());
         mytree_->Branch((prefix + "ET").c_str(), &genJetSortedEt[ID][0], (prefix + "ET[numJet" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PT").c_str(),
-                        &genJetSortedPt[ID][0],
-                        (prefix + "PT[numJet" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PX").c_str(),
-                        &genJetSortedPx[ID][0],
-                        (prefix + "PX[numJet" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PY").c_str(),
-                        &genJetSortedPy[ID][0],
-                        (prefix + "PY[numJet" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PZ").c_str(),
-                        &genJetSortedPz[ID][0],
-                        (prefix + "PZ[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PT").c_str(), &genJetSortedPt[ID][0], (prefix + "PT[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PX").c_str(), &genJetSortedPx[ID][0], (prefix + "PX[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PY").c_str(), &genJetSortedPy[ID][0], (prefix + "PY[numJet" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PZ").c_str(), &genJetSortedPz[ID][0], (prefix + "PZ[numJet" + name + "]/F").c_str());
         mytree_->Branch((prefix + "Mass").c_str(), &genJetSortedMass[ID][0], (prefix + "Mass[numJet" + name + "]/F").c_str());
         // mytree_->Branch((prefix + "ID").c_str(),
         //                 &genJetSortedID[ID][0],

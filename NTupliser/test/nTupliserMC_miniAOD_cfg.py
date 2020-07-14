@@ -45,7 +45,7 @@ process.MessageLogger.categories=cms.untracked.vstring('FwkJob'
                                                        )
 
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(limit = cms.untracked.int32(0))
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(-1)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 process.options = cms.untracked.PSet(
                      wantSummary = cms.untracked.bool(True)
                      )
