@@ -1442,7 +1442,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet,
                 std::cout << "ijet(" << ijet << ") PID = " << constit->pdgId() << " inv mass = " << constitVec.M()<< " ; pT = " << constit->pt() << " ; E = " << constit->energy() << std::endl;
             }
         }
-/*
+*/
 
         if (!constituent.isNull() or not constituent.isAvailable())
         {
