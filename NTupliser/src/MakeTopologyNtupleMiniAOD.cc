@@ -401,22 +401,24 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
 
             svIsLambda[numSVs] = 0;
             svIsKshort[numSVs] = 0;
-/*
+
             if (kshortHandle.isValid()) {
                 for (auto kIt{kshort.begin()}; kIt != kshort.end(); kIt++) {
-                    
-                }
-                for (auto kIt{kshort.begin()}; kIt != kshort.end(); kIt++) {
-                  if ( kIt == it ) { 
-                      svIsKshort[numSVs] = 1;
-                      break;
-                  }
+                    for (unsigned int i1 = 0; i1 != kIt->numberOfSourceCandidatePtrs(); i1++) {
+                        auto c1s = kIt->sourceCandidatePtr(i1);
+                        for (unsigned int i2 = 0; i2 != it->numberOfSourceCandidatePtrs(); i2++){
+                            if ( it->sourceCandidatePtr(i2) == c1s) {
+                                svIsKshort[numSVs] = 1;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
-
+/*
             if (lambdaHandle.isValid()) {
                 for (auto lIt{lambda.begin()}; lIt != lambda.end(); lIt++) {
-                  if ( lIt == it ) { 
+                  if ( lIt->sourceCandidatePtr() == it->sourceCandidatePtr() ) { 
                       svIsLambda[numSVs] = 1;
                       break;
                   }
@@ -1289,6 +1291,9 @@ void MakeTopologyNtupleMiniAOD::fillOtherJetInfo(const pat::Jet& jet,
     jetSortedJetCharge[ID][jetindex] = jet.jetCharge();
     jetSortedNConstituents[ID][jetindex] = jet.numberOfDaughters();
 
+    // Tracks associated with jet
+//    const reco::TrackRefVector assocTrks = jet.associatedTracks();
+    
 //    std::cout << "isCaloJet() : " << jet.isCaloJet() << std::endl;
 //    std::cout << "isPFJet() : " << jet.isPFJet() << std::endl;
     if ( jet.isJPTJet()) std::cout << "isJPTJet() : " << jet.isJPTJet() << std::endl;
@@ -2059,6 +2064,10 @@ void MakeTopologyNtupleMiniAOD::fillJets(
     // }
     // ran_jetloop_ = true;
 
+    // Make sure tracks are filled before jet stuff occurs
+    fillGeneralTracks(iEvent, iSetup);
+    fillIsolatedTracks(iEvent, iSetup);
+
     edm::Handle<pat::JetCollection> jetHandle;
     iEvent.getByToken(jetIn_, jetHandle);
     const pat::JetCollection& jets{*jetHandle};
@@ -2253,14 +2262,16 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
         generalTracksTheta[numGeneralTracks] = trit->theta();
         generalTracksPhi[numGeneralTracks] = trit->phi();
         generalTracksCharge[numGeneralTracks] = trit->charge();
-        generalTracksDtime[numGeneralTracks] = trit->dtime();
         generalTracksTime[numGeneralTracks] = trit->time();
-        generalTracksTimeError[numGeneralTracks] = trit->timeError();
         generalTracksBeamSpotCorrectedD0[numGeneralTracks] = -1. * (trit->dxy(beamSpotPoint_));
         generalTracksDz[numGeneralTracks] = trit->dz();
         generalTracksDxy[numGeneralTracks] = trit->dxy();
-        generalTracksDzError[numGeneralTracks] = trit->dzError();
-        generalTracksDxyError[numGeneralTracks] = trit->dxyError();
+        if (trit->hasTrackDetails()) {
+            generalTracksDzError[numGeneralTracks] = trit->dzError();
+            generalTracksDxyError[numGeneralTracks] = trit->dxyError();
+            generalTracksDtime[numGeneralTracks] = trit->dtime();
+            generalTracksTimeError[numGeneralTracks] = trit->timeError();
+        }
         generalTracksIsElectron[numGeneralTracks] = trit->isElectron();
         generalTracksIsJet[numGeneralTracks] = trit->isJet();
         generalTracksIsMuon[numGeneralTracks] = trit->isMuon();
@@ -3071,6 +3082,9 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     fillTriggerData(iEvent);
     fillBeamSpot(iEvent, iSetup);
 
+    fillGeneralTracks(iEvent, iSetup);
+    fillIsolatedTracks(iEvent, iSetup);
+
     // std::cout << "done with trigger and beam spot" << std::endl;
 
     // Here I am taking out the Calo and JPT stuff. I don't think this should
@@ -3093,9 +3107,6 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     // fillJets(iEvent, iSetup, jetJPTTag_, "JPT");
     //
     // std::cout << "done with jets" << std::endl;
-
-    fillGeneralTracks(iEvent, iSetup);
-    fillIsolatedTracks(iEvent, iSetup);
 
     // fillElectrons(iEvent, iSetup, eleLabel_, "Calo");
     fillMCInfo(iEvent, iSetup);
