@@ -431,6 +431,7 @@ class AnalysisEvent
     Float_t generalTracksTheta[NTRACKSMAX];
     Float_t generalTracksPhi[NTRACKSMAX];
     Int_t generalTracksCharge[NTRACKSMAX];
+    Int_t generalTracksPdgId[NTRACKSMAX];
     Float_t generalTracksDtime[NTRACKSMAX];
     Float_t generalTracksTime[NTRACKSMAX];
     Float_t generalTracksTimeError[NTRACKSMAX];
@@ -458,6 +459,7 @@ class AnalysisEvent
     Float_t isoTracksTheta[NISOTRACKSMAX];
     Float_t isoTracksPhi[NISOTRACKSMAX];
     Int_t isoTracksCharge[NISOTRACKSMAX];
+    Int_t isoTracksPdgId[NISOTRACKSMAX];
     Float_t isoTracksMatchedCaloJetEmEnergy[NISOTRACKSMAX];
     Float_t isoTracksMatchedCaloJetHadEnergy[NISOTRACKSMAX];
     Float_t isoTracksDz[NISOTRACKSMAX];
@@ -1441,6 +1443,7 @@ class AnalysisEvent
     TBranch* b_generalTracksTheta; //!
     TBranch* b_generalTracksPhi; //!
     TBranch* b_generalTracksCharge; //!
+    TBranch* b_generalTracksPdgId; //!
     TBranch* b_generalTracksDtime; //!
     TBranch* b_generalTracksTime; //!
     TBranch* b_generalTracksTimeError; //!
@@ -1467,6 +1470,7 @@ class AnalysisEvent
     TBranch* b_isoTracksTheta; //!
     TBranch* b_isoTracksPhi; //!
     TBranch* b_isoTracksCharge; //!
+    TBranch* b_isoTracksPdgId; //!
     TBranch* b_isoTracksMatchedCaloJetEmEnergy; //!
     TBranch* b_isoTracksMatchedCaloJetHadEnergy; //!
     TBranch* b_isoTracksDz; //!
@@ -2518,6 +2522,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("generalTracksTheta", generalTracksTheta, &b_generalTracksTheta);
    fChain->SetBranchAddress("generalTracksPhi", generalTracksPhi, &b_generalTracksPhi);
    fChain->SetBranchAddress("generalTracksCharge", generalTracksCharge, &b_generalTracksCharge);
+   fChain->SetBranchAddress("generalTracksPdgId", generalTracksPdgId, &b_generalTracksPdgId);
    fChain->SetBranchAddress("generalTracksDtime", generalTracksDtime, &b_generalTracksDtime);
    fChain->SetBranchAddress("generalTracksTime", generalTracksTime, &b_generalTracksTime);
    fChain->SetBranchAddress("generalTracksTimeError", generalTracksTimeError, &b_generalTracksTimeError);
@@ -2544,6 +2549,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("isoTracksTheta", &isoTracksTheta, &b_isoTracksTheta);
    fChain->SetBranchAddress("isoTracksPhi", &isoTracksPhi, &b_isoTracksPhi);
    fChain->SetBranchAddress("isoTracksCharge", &isoTracksCharge, &b_isoTracksCharge);
+   fChain->SetBranchAddress("isoTracksPdgId", &isoTracksPdgId, &b_isoTracksPdgId);
    fChain->SetBranchAddress("isoTracksMatchedCaloJetEmEnergy", &isoTracksMatchedCaloJetEmEnergy, &b_isoTracksMatchedCaloJetEmEnergy);
    fChain->SetBranchAddress("isoTracksMatchedCaloJetHadEnergy", &isoTracksMatchedCaloJetHadEnergy, &b_isoTracksMatchedCaloJetHadEnergy);
    fChain->SetBranchAddress("isoTracksDz", &isoTracksDz, &b_isoTracksDz);

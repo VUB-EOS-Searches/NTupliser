@@ -2267,6 +2267,7 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
         generalTracksTheta[numGeneralTracks] = trit->theta();
         generalTracksPhi[numGeneralTracks] = trit->phi();
         generalTracksCharge[numGeneralTracks] = trit->charge();
+        generalTracksPdgId[numGeneralTracks] = trit->pdgId();
         generalTracksTime[numGeneralTracks] = trit->time();
         generalTracksBeamSpotCorrectedD0[numGeneralTracks] = -1. * (trit->dxy(beamSpotPoint_));
         generalTracksDz[numGeneralTracks] = trit->dz();
@@ -2315,6 +2316,7 @@ void MakeTopologyNtupleMiniAOD::fillIsolatedTracks(
         isoTracksTheta[numIsolatedTracks] = it->theta();
         isoTracksPhi[numIsolatedTracks] = it->phi();
         isoTracksCharge[numIsolatedTracks] = it->charge();
+        isoTracksPdgId[numIsolatedTracks] = it->pdgId();
         isoTracksMatchedCaloJetEmEnergy[numIsolatedTracks] = it->matchedCaloJetEmEnergy();
         isoTracksMatchedCaloJetHadEnergy[numIsolatedTracks] = it->matchedCaloJetHadEnergy();
         isoTracksDz[numIsolatedTracks] = it->dz();
@@ -2906,6 +2908,7 @@ void MakeTopologyNtupleMiniAOD::clearGeneralTracksarrays()
         generalTracksTheta[i] = 9999;
         generalTracksPhi[i] = 9999;
         generalTracksCharge[i] = 0;
+        generalTracksPdgId[i] = 0;
         generalTracksDtime[i] = 0.;
         generalTracksTime[i] = 0.;
         generalTracksTimeError[i] = 0.;
@@ -2941,6 +2944,7 @@ void MakeTopologyNtupleMiniAOD::clearIsolatedTracksarrays()
         isoTracksTheta[i] = 9999.;
         isoTracksPhi[i] = 9999.;
         isoTracksCharge[i] = 0.;
+        isoTracksPdgId[i] = 0.;
         isoTracksMatchedCaloJetEmEnergy[i] = -1.;
         isoTracksMatchedCaloJetHadEnergy[i] = -1.;
         isoTracksDz[i] = 9999.;
@@ -5005,6 +5009,7 @@ void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
     mytree_->Branch("generalTracksTheta", &generalTracksTheta, "generalTracksTheta[numGeneralTracks]/F");
     mytree_->Branch("generalTracksPhi", &generalTracksPhi, "generalTracksPhi[numGeneralTracks]/F");
     mytree_->Branch("generalTracksCharge", &generalTracksCharge, "generalTracksCharge[numGeneralTracks]/I");
+    mytree_->Branch("generalTracksPdgId", &generalTracksPdgId, "generalTracksPdgId[numGeneralTracks]/I");
     mytree_->Branch("generalTracksDtime", &generalTracksDtime, "generalTracksDtime[numGeneralTracks]/F");
     mytree_->Branch("generalTracksTime", &generalTracksTime, "generalTracksTime[numGeneralTracks]/F");
     mytree_->Branch("generalTracksTimeError", &generalTracksTimeError, "generalTracksTimeError[numGeneralTracks]/F");
@@ -5036,6 +5041,7 @@ void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
     mytree_->Branch("isoTracksTheta", &isoTracksTheta, "isoTracksTheta[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksPhi", &isoTracksPhi, "isoTracksPhi[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksCharge", &isoTracksCharge, "isoTracksCharge[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksPdgId", &isoTracksPdgId, "isoTracksPdgId[numIsolatedTracks]/I");
     mytree_->Branch("isoTracksMatchedCaloJetEmEnergy", &isoTracksMatchedCaloJetEmEnergy, "isoTracksMatchedCaloJetEmEnergy[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksMatchedCaloJetHadEnergy", &isoTracksMatchedCaloJetHadEnergy, "isoTracksMatchedCaloJetHadEnergy[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksDz", &isoTracksDz, "isoTracksDz[numIsolatedTracks]/F");

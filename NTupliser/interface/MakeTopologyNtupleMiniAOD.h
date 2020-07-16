@@ -880,6 +880,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float generalTracksTheta[NTRACKSMAX]{};
     float generalTracksPhi[NTRACKSMAX]{};
     int generalTracksCharge[NTRACKSMAX]{};
+    int generalTracksPdgId[NTRACKSMAX]{};
     float generalTracksDtime[NTRACKSMAX]{};
     float generalTracksTime[NTRACKSMAX]{};
     float generalTracksTimeError[NTRACKSMAX]{};
@@ -907,6 +908,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float isoTracksTheta[NISOTRACKSMAX]{};
     float isoTracksPhi[NISOTRACKSMAX]{};
     int isoTracksCharge[NISOTRACKSMAX]{};
+    int isoTracksPdgId[NISOTRACKSMAX]{};
     float isoTracksMatchedCaloJetEmEnergy[NISOTRACKSMAX]{};
     float isoTracksMatchedCaloJetHadEnergy[NISOTRACKSMAX]{};
     float isoTracksDz[NISOTRACKSMAX]{};
