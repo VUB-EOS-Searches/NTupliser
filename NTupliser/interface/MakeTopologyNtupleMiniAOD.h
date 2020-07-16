@@ -914,6 +914,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float isoTracksDzError[NISOTRACKSMAX]{};
     float isoTracksDxyError[NISOTRACKSMAX]{};
     int isoTracksFromPV[NISOTRACKSMAX]{};
+    int isoTracksVx[NISOTRACKSMAX]{};
+    int isoTracksVy[NISOTRACKSMAX]{};
+    int isoTracksVz[NISOTRACKSMAX]{};
     int isoTracksHighPurity[NISOTRACKSMAX]{};
     int isoTracksTight[NISOTRACKSMAX]{};
     int isoTracksLoose[NISOTRACKSMAX]{};

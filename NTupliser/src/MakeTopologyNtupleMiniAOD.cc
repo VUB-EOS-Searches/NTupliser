@@ -2322,6 +2322,9 @@ void MakeTopologyNtupleMiniAOD::fillIsolatedTracks(
         isoTracksDzError[numIsolatedTracks] = it->dzError();
         isoTracksDxyError[numIsolatedTracks] = it->dxyError();
         isoTracksFromPV[numIsolatedTracks] = it->fromPV();
+        isoTracksVx[numIsolatedTracks] = it->vx();
+        isoTracksVy[numIsolatedTracks] = it->vy();
+        isoTracksVz[numIsolatedTracks] = it->vz();
         isoTracksHighPurity[numIsolatedTracks] = it->isHighPurityTrack();
         isoTracksTight[numIsolatedTracks] = it->isTightTrack();
         isoTracksLoose[numIsolatedTracks] = it->isLooseTrack();
@@ -2945,6 +2948,9 @@ void MakeTopologyNtupleMiniAOD::clearIsolatedTracksarrays()
         isoTracksDzError[i] = 9999.;
         isoTracksDxyError[i] = 9999.;
         isoTracksFromPV[i] = -1;
+        isoTracksVx[i] = 0.;
+        isoTracksVy[i] = 0.;
+        isoTracksVz[i] = 0.;
         isoTracksHighPurity[i] = -1;
         isoTracksTight[i] = -1;
         isoTracksLoose[i] = -1;
@@ -5037,6 +5043,9 @@ void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
     mytree_->Branch("isoTracksDzError", &isoTracksDzError, "isoTracksDzError[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksDxyError", &isoTracksDxyError, "isoTracksDxyError[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksFromPV", &isoTracksFromPV, "isoTracksFromPV[numIsolatedTracks]/I");
+    mytree_->Branch("isoTracksVx", &isoTracksVx, "isoTracksVx[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksVy", &isoTracksVy, "isoTracksVy[numIsolatedTracks]/F");
+    mytree_->Branch("isoTracksVz", &isoTracksVz, "isoTracksVz[numIsolatedTracks]/F");
     mytree_->Branch("isoTracksHighPurity", &isoTracksHighPurity, "isoTracksHighPurity[numIsolatedTracks]/I");
     mytree_->Branch("isoTracksTight", &isoTracksTight, "isoTracksTIght[numIsolatedTracks]/I");
     mytree_->Branch("isoTracksLoose", &isoTracksLoose, "isoTracksLoose[numIsolatedTracks]/I");

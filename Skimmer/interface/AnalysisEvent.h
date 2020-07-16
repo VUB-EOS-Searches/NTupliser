@@ -465,6 +465,9 @@ class AnalysisEvent
     Float_t isoTracksDzError[NISOTRACKSMAX];
     Float_t isoTracksDxyError[NISOTRACKSMAX];
     Int_t isoTracksFromPV[NISOTRACKSMAX];
+    Float_t isoTracksVx[NISOTRACKSMAX];
+    Float_t isoTracksVy[NISOTRACKSMAX];
+    Float_t isoTracksVz[NISOTRACKSMAX];
     Int_t isoTracksHighPurity[NISOTRACKSMAX];
     Int_t isoTracksTight[NISOTRACKSMAX];
     Int_t isoTracksLoose[NISOTRACKSMAX];
@@ -1471,6 +1474,9 @@ class AnalysisEvent
     TBranch* b_isoTracksDzError; //!
     TBranch* b_isoTracksDxyError; //!
     TBranch* b_isoTracksFromPV; //!
+    TBranch* b_isoTracksVx; //!
+    TBranch* b_isoTracksVy; //!
+    TBranch* b_isoTracksVz; //!
     TBranch* b_isoTracksHighPurity; //!
     TBranch* b_isoTracksTight; //!
     TBranch* b_isoTracksLoose; //!
@@ -2545,6 +2551,9 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("isoTracksDzError", &isoTracksDzError, &b_isoTracksDzError);
    fChain->SetBranchAddress("isoTracksDxyError", &isoTracksDxyError, &b_isoTracksDxyError);
    fChain->SetBranchAddress("isoTracksFromPV", &isoTracksFromPV, &b_isoTracksFromPV);
+   fChain->SetBranchAddress("isoTracksVx", &isoTracksVx, &b_isoTracksVx);
+   fChain->SetBranchAddress("isoTracksVy", &isoTracksVy, &b_isoTracksVy);
+   fChain->SetBranchAddress("isoTracksVz", &isoTracksVz, &b_isoTracksVz);
    fChain->SetBranchAddress("isoTracksHighPurity", &isoTracksHighPurity, &b_isoTracksHighPurity);
    fChain->SetBranchAddress("isoTracksTight", &isoTracksTight, &b_isoTracksTight);
    fChain->SetBranchAddress("isoTracksLoose", &isoTracksLoose, &b_isoTracksLoose);
