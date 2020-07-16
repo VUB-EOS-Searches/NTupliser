@@ -2277,6 +2277,9 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
             generalTracksDtime[numGeneralTracks] = trit->dtime();
             generalTracksTimeError[numGeneralTracks] = trit->timeError();
         }
+        generalTracksVx[numGeneralTracks] = trit->vx();
+        generalTracksVy[numGeneralTracks] = trit->vy();
+        generalTracksVz[numGeneralTracks] = trit->vz();
         generalTracksIsElectron[numGeneralTracks] = trit->isElectron();
         generalTracksIsJet[numGeneralTracks] = trit->isJet();
         generalTracksIsMuon[numGeneralTracks] = trit->isMuon();
@@ -2903,6 +2906,9 @@ void MakeTopologyNtupleMiniAOD::clearGeneralTracksarrays()
         generalTracksDtime[i] = 0.;
         generalTracksTime[i] = 0.;
         generalTracksTimeError[i] = 0.;
+        generalTracksVx[i] = 0.;
+        generalTracksVy[i] = 0.;
+        generalTracksVz[i] = 0.;
         generalTracksBeamSpotCorrectedD0[i] = -9999;
         generalTracksDz[i] = 0.;
         generalTracksDxy[i] = 0.;
@@ -4996,6 +5002,9 @@ void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
     mytree_->Branch("generalTracksDtime", &generalTracksDtime, "generalTracksDtime[numGeneralTracks]/F");
     mytree_->Branch("generalTracksTime", &generalTracksTime, "generalTracksTime[numGeneralTracks]/F");
     mytree_->Branch("generalTracksTimeError", &generalTracksTimeError, "generalTracksTimeError[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksVx", &generalTracksVx, "generalTracksVx[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksVy", &generalTracksVy, "generalTracksVy[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksVz", &generalTracksVz, "generalTracksVz[numGeneralTracks]/F");
     mytree_->Branch("generalTracksBeamSpotCorrectedD0", &generalTracksBeamSpotCorrectedD0, "generalTracksBeamSpotCorrectedD0[numGeneralTracks]/F");
     mytree_->Branch("generalTracksDz", &generalTracksDz, "generalTracksDz[numGeneralTracks]/F");
     mytree_->Branch("generalTracksDxy", &generalTracksDxy, "generalTracksDxy[numGeneralTracks]/F");

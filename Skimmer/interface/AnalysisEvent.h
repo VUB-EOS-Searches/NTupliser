@@ -434,6 +434,9 @@ class AnalysisEvent
     Float_t generalTracksDtime[NTRACKSMAX];
     Float_t generalTracksTime[NTRACKSMAX];
     Float_t generalTracksTimeError[NTRACKSMAX];
+    Float_t generalTracksVx[NTRACKSMAX];
+    Float_t generalTracksVy[NTRACKSMAX];
+    Float_t generalTracksVz[NTRACKSMAX];
     Float_t generalTracksBeamSpotCorrectedD0[NTRACKSMAX];
     Float_t generalTracksDz[NTRACKSMAX];
     Float_t generalTracksDxy[NTRACKSMAX];
@@ -1438,6 +1441,9 @@ class AnalysisEvent
     TBranch* b_generalTracksDtime; //!
     TBranch* b_generalTracksTime; //!
     TBranch* b_generalTracksTimeError; //!
+    TBranch* b_generalTracksVx; //!
+    TBranch* b_generalTracksVy; //!
+    TBranch* b_generalTracksVz; //!
     TBranch* b_generalTracksBeamSpotCorrectedD0; //!
     TBranch* b_generalTracksDz; //!
     TBranch* b_generalTracksDxy; //!
@@ -2509,6 +2515,9 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("generalTracksDtime", generalTracksDtime, &b_generalTracksDtime);
    fChain->SetBranchAddress("generalTracksTime", generalTracksTime, &b_generalTracksTime);
    fChain->SetBranchAddress("generalTracksTimeError", generalTracksTimeError, &b_generalTracksTimeError);
+   fChain->SetBranchAddress("generalTracksVx", generalTracksVx, &b_generalTracksVx);
+   fChain->SetBranchAddress("generalTracksVy", generalTracksVy, &b_generalTracksVy);
+   fChain->SetBranchAddress("generalTracksVz", generalTracksVz, &b_generalTracksVz);
    fChain->SetBranchAddress("generalTracksBeamSpotCorrectedD0", generalTracksBeamSpotCorrectedD0, &b_generalTracksBeamSpotCorrectedD0);
    fChain->SetBranchAddress("generalTracksDz", generalTracksDz, &b_generalTracksDz);
    fChain->SetBranchAddress("generalTracksDxy", generalTracksDxy, &b_generalTracksDxy);

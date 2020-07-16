@@ -883,6 +883,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float generalTracksDtime[NTRACKSMAX]{};
     float generalTracksTime[NTRACKSMAX]{};
     float generalTracksTimeError[NTRACKSMAX]{};
+    float generalTracksVx[NTRACKSMAX]{};
+    float generalTracksVy[NTRACKSMAX]{};
+    float generalTracksVz[NTRACKSMAX]{};
     float generalTracksBeamSpotCorrectedD0[NTRACKSMAX]{};
     float generalTracksDz[NTRACKSMAX]{};
     float generalTracksDxy[NTRACKSMAX]{};
