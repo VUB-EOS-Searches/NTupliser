@@ -419,14 +419,30 @@ class AnalysisEvent
     Int_t genPhoOOT_PF2PATIsConvertedPhoton[NOOTPHOTONSMAX];
     Int_t genPhoOOT_PF2PATIsJet[NOOTPHOTONSMAX];
 */
+
     static constexpr size_t NTRACKSMAX{40};
     Int_t numGeneralTracks;
     Float_t generalTracksPt[NTRACKSMAX];
+    Float_t generalTracksPx[NTRACKSMAX];
+    Float_t generalTracksPy[NTRACKSMAX];
+    Float_t generalTracksPz[NTRACKSMAX];
+    Float_t generalTracksE[NTRACKSMAX];
     Float_t generalTracksEta[NTRACKSMAX];
     Float_t generalTracksTheta[NTRACKSMAX];
-    Float_t generalTracksBeamSpotCorrectedD0[NTRACKSMAX];
     Float_t generalTracksPhi[NTRACKSMAX];
     Int_t generalTracksCharge[NTRACKSMAX];
+    Float_t generalTracksDtime[NTRACKSMAX];
+    Float_t generalTracksTime[NTRACKSMAX];
+    Float_t generalTracksTimeError[NTRACKSMAX];
+    Float_t generalTracksBeamSpotCorrectedD0[NTRACKSMAX];
+    Float_t generalTracksDz[NTRACKSMAX];
+    Float_t generalTracksDxy[NTRACKSMAX];
+    Float_t generalTracksDzError[NTRACKSMAX];
+    Float_t generalTracksDxyError[NTRACKSMAX];
+    Int_t generalTracksIsElectron[NTRACKSMAX];
+    Int_t generalTracksIsJet[NTRACKSMAX];
+    Int_t generalTracksIsMuon[NTRACKSMAX];
+    Int_t generalTracksIsPhoton[NTRACKSMAX];
 
     static constexpr size_t NISOTRACKSMAX{40};
     Int_t numIsolatedTracks;
@@ -1411,11 +1427,26 @@ class AnalysisEvent
 */
     TBranch* b_numGeneralTracks; //!
     TBranch* b_generalTracksPt; //!
+    TBranch* b_generalTracksPx; //!
+    TBranch* b_generalTracksPy; //!
+    TBranch* b_generalTracksPz; //!
+    TBranch* b_generalTracksE; //!
     TBranch* b_generalTracksEta; //!
     TBranch* b_generalTracksTheta; //!
-    TBranch* b_generalTracksBeamSpotCorrectedD0; //!
     TBranch* b_generalTracksPhi; //!
     TBranch* b_generalTracksCharge; //!
+    TBranch* b_generalTracksDtime; //!
+    TBranch* b_generalTracksTime; //!
+    TBranch* b_generalTracksTimeError; //!
+    TBranch* b_generalTracksBeamSpotCorrectedD0; //!
+    TBranch* b_generalTracksDz; //!
+    TBranch* b_generalTracksDxy; //!
+    TBranch* b_generalTracksDzError; //!
+    TBranch* b_generalTracksDxyError; //!
+    TBranch* b_generalTracksIsElectron; //!
+    TBranch* b_generalTracksIsJet; //!
+    TBranch* b_generalTracksIsMuon; //!
+    TBranch* b_generalTracksIsPhoton; //!
 
     TBranch* b_numIsolatedTracks; //!
     TBranch* b_isoTracksPt; //!
@@ -2467,11 +2498,27 @@ AnalysisEvent::AnalysisEvent(bool isMC,
 */
    fChain->SetBranchAddress("numGeneralTracks", &numGeneralTracks, &b_numGeneralTracks);
    fChain->SetBranchAddress("generalTracksPt", generalTracksPt, &b_generalTracksPt);
+   fChain->SetBranchAddress("generalTracksPx", generalTracksPx, &b_generalTracksPx);
+   fChain->SetBranchAddress("generalTracksPy", generalTracksPy, &b_generalTracksPy);
+   fChain->SetBranchAddress("generalTracksPz", generalTracksPz, &b_generalTracksPz);
+   fChain->SetBranchAddress("generalTracksE", generalTracksE, &b_generalTracksE);
    fChain->SetBranchAddress("generalTracksEta", generalTracksEta, &b_generalTracksEta);
    fChain->SetBranchAddress("generalTracksTheta", generalTracksTheta, &b_generalTracksTheta);
-   fChain->SetBranchAddress("generalTracksBeamSpotCorrectedD0", generalTracksBeamSpotCorrectedD0, &b_generalTracksBeamSpotCorrectedD0);
    fChain->SetBranchAddress("generalTracksPhi", generalTracksPhi, &b_generalTracksPhi);
    fChain->SetBranchAddress("generalTracksCharge", generalTracksCharge, &b_generalTracksCharge);
+   fChain->SetBranchAddress("generalTracksDtime", generalTracksDtime, &b_generalTracksDtime);
+   fChain->SetBranchAddress("generalTracksTime", generalTracksTime, &b_generalTracksTime);
+   fChain->SetBranchAddress("generalTracksTimeError", generalTracksTimeError, &b_generalTracksTimeError);
+   fChain->SetBranchAddress("generalTracksBeamSpotCorrectedD0", generalTracksBeamSpotCorrectedD0, &b_generalTracksBeamSpotCorrectedD0);
+   fChain->SetBranchAddress("generalTracksDz", generalTracksDz, &b_generalTracksDz);
+   fChain->SetBranchAddress("generalTracksDxy", generalTracksDxy, &b_generalTracksDxy);
+   fChain->SetBranchAddress("generalTracksDzError", generalTracksDzError, &b_generalTracksDzError);
+   fChain->SetBranchAddress("generalTracksDxyError", generalTracksDxyError, &b_generalTracksDxyError);
+   fChain->SetBranchAddress("generalTracksIsElectron", generalTracksIsElectron, &b_generalTracksIsElectron);
+   fChain->SetBranchAddress("generalTracksIsJet", generalTracksIsJet, &b_generalTracksIsJet);
+   fChain->SetBranchAddress("generalTracksIsMuon", generalTracksIsMuon, &b_generalTracksIsMuon);
+   fChain->SetBranchAddress("generalTracksIsPhoton", generalTracksIsPhoton, &b_generalTracksIsPhoton);
+
    fChain->SetBranchAddress("numIsolatedTracks", &numIsolatedTracks, &b_numIsolatedTracks);
    fChain->SetBranchAddress("isoTracksPt", &isoTracksPt, &b_isoTracksPt);
    fChain->SetBranchAddress("isoTracksPx", &isoTracksPx, &b_isoTracksPx);

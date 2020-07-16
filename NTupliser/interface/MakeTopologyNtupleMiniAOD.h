@@ -872,11 +872,26 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     // generalTracks are used to subtract photon conversion background
     static constexpr size_t NTRACKSMAX{40};
     float generalTracksPt[NTRACKSMAX]{};
+    float generalTracksPx[NTRACKSMAX]{};
+    float generalTracksPy[NTRACKSMAX]{};
+    float generalTracksPz[NTRACKSMAX]{};
+    float generalTracksE[NTRACKSMAX]{};
     float generalTracksEta[NTRACKSMAX]{};
     float generalTracksTheta[NTRACKSMAX]{};
     float generalTracksPhi[NTRACKSMAX]{};
-    float generalTracksBeamSpotCorrectedD0[NTRACKSMAX]{};
     int generalTracksCharge[NTRACKSMAX]{};
+    float generalTracksDtime[NTRACKSMAX]{};
+    float generalTracksTime[NTRACKSMAX]{};
+    float generalTracksTimeError[NTRACKSMAX]{};
+    float generalTracksBeamSpotCorrectedD0[NTRACKSMAX]{};
+    float generalTracksDz[NTRACKSMAX]{};
+    float generalTracksDxy[NTRACKSMAX]{};
+    float generalTracksDzError[NTRACKSMAX]{};
+    float generalTracksDxyError[NTRACKSMAX]{};
+    int generalTracksIsElectron[NTRACKSMAX]{};
+    int generalTracksIsJet[NTRACKSMAX]{};
+    int generalTracksIsMuon[NTRACKSMAX]{};
+    int generalTracksIsPhoton[NTRACKSMAX]{};
 
     // isoTracks that are drawn from packedPFCands, lostTracks and generalTracks
     static constexpr size_t NISOTRACKSMAX{40};

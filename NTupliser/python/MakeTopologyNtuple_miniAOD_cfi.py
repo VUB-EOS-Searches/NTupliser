@@ -431,7 +431,7 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
                                            muoRelIso = cms.double(0.50), # muon combined track isolation with delta beta corrections
                                            metCut = cms.double(0.0),
                                            # photon rejection:
-                                               dREleGeneralTrackMatchForPhotonRej=cms.double(0.3),
+                                           dREleGeneralTrackMatchForPhotonRej=cms.double(0.3),
                                            magneticFieldForPhotonRej=cms.double(3.8),
                                            correctFactorForPhotonRej=cms.double(-0.003),
                                            maxDistForPhotonRej=cms.double(0),

@@ -1289,6 +1289,10 @@ void MakeTopologyNtupleMiniAOD::fillOtherJetInfo(const pat::Jet& jet,
     jetSortedJetCharge[ID][jetindex] = jet.jetCharge();
     jetSortedNConstituents[ID][jetindex] = jet.numberOfDaughters();
 
+//    std::cout << "isCaloJet() : " << jet.isCaloJet() << std::endl;
+//    std::cout << "isPFJet() : " << jet.isPFJet() << std::endl;
+    if ( jet.isJPTJet()) std::cout << "isJPTJet() : " << jet.isJPTJet() << std::endl;
+
     // Calo & JPT
     if (jet.isCaloJet())
     {
@@ -2241,12 +2245,26 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
          trit++)
     {
         generalTracksPt[numGeneralTracks] = trit->pt();
+        generalTracksPx[numGeneralTracks] = trit->px();
+        generalTracksPy[numGeneralTracks] = trit->py();
+        generalTracksPz[numGeneralTracks] = trit->pz();
+        generalTracksE[numGeneralTracks] = trit->energy();
         generalTracksEta[numGeneralTracks] = trit->eta();
         generalTracksTheta[numGeneralTracks] = trit->theta();
-        generalTracksBeamSpotCorrectedD0[numGeneralTracks] =
-            -1. * (trit->dxy(beamSpotPoint_));
         generalTracksPhi[numGeneralTracks] = trit->phi();
         generalTracksCharge[numGeneralTracks] = trit->charge();
+        generalTracksDtime[numGeneralTracks] = trit->dtime();
+        generalTracksTime[numGeneralTracks] = trit->time();
+        generalTracksTimeError[numGeneralTracks] = trit->timeError();
+        generalTracksBeamSpotCorrectedD0[numGeneralTracks] = -1. * (trit->dxy(beamSpotPoint_));
+        generalTracksDz[numGeneralTracks] = trit->dz();
+        generalTracksDxy[numGeneralTracks] = trit->dxy();
+        generalTracksDzError[numGeneralTracks] = trit->dzError();
+        generalTracksDxyError[numGeneralTracks] = trit->dxyError();
+        generalTracksIsElectron[numGeneralTracks] = trit->isElectron();
+        generalTracksIsJet[numGeneralTracks] = trit->isJet();
+        generalTracksIsMuon[numGeneralTracks] = trit->isMuon();
+        generalTracksIsPhoton[numGeneralTracks] = trit->isPhoton();
 
         numGeneralTracks++;
     }
@@ -2858,11 +2876,26 @@ void MakeTopologyNtupleMiniAOD::clearGeneralTracksarrays()
     for (size_t i{0}; i < NTRACKSMAX; i++)
     {
         generalTracksPt[i] = -1.;
+        generalTracksPx[i] = -1.;
+        generalTracksPy[i] = -1.;
+        generalTracksPz[i] = -1.;
+        generalTracksE[i] = -1.;
         generalTracksEta[i] = 9999;
         generalTracksTheta[i] = 9999;
-        generalTracksBeamSpotCorrectedD0[i] = -9999;
         generalTracksPhi[i] = 9999;
         generalTracksCharge[i] = 0;
+        generalTracksDtime[i] = 0.;
+        generalTracksTime[i] = 0.;
+        generalTracksTimeError[i] = 0.;
+        generalTracksBeamSpotCorrectedD0[i] = -9999;
+        generalTracksDz[i] = 0.;
+        generalTracksDxy[i] = 0.;
+        generalTracksDzError[i] = 0.;
+        generalTracksDxyError[i] = 0.;
+        generalTracksIsElectron[i] = -1;
+        generalTracksIsJet[i] = -1;
+        generalTracksIsMuon[i] =	-1;
+        generalTracksIsPhoton[i] = -1;
     }
 }
 
@@ -4936,11 +4969,27 @@ void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
     // std::cout << "bookGeneralTrackBranches CHECK" << std::endl;
     mytree_->Branch("numGeneralTracks", &numGeneralTracks, "numGeneralTracks/I");
     mytree_->Branch("generalTracksPt", &generalTracksPt, "generalTracksPt[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPx", &generalTracksPx, "generalTracksPx[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPy", &generalTracksPy, "generalTracksPy[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPz", &generalTracksPz, "generalTracksPz[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksE", &generalTracksE, "generalTracksE[numGeneralTracks]/F");
     mytree_->Branch("generalTracksEta", &generalTracksEta, "generalTracksEta[numGeneralTracks]/F");
     mytree_->Branch("generalTracksTheta", &generalTracksTheta, "generalTracksTheta[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksBeamSpotCorrectedD0", &generalTracksBeamSpotCorrectedD0, "generalTracksBeamSpotCorrectedD0[numGeneralTracks]/F");
     mytree_->Branch("generalTracksPhi", &generalTracksPhi, "generalTracksPhi[numGeneralTracks]/F");
     mytree_->Branch("generalTracksCharge", &generalTracksCharge, "generalTracksCharge[numGeneralTracks]/I");
+    mytree_->Branch("generalTracksDtime", &generalTracksDtime, "generalTracksDtime[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksTime", &generalTracksTime, "generalTracksTime[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksTimeError", &generalTracksTimeError, "generalTracksTimeError[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksBeamSpotCorrectedD0", &generalTracksBeamSpotCorrectedD0, "generalTracksBeamSpotCorrectedD0[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksDz", &generalTracksDz, "generalTracksDz[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksDxy", &generalTracksDxy, "generalTracksDxy[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksDzError", &generalTracksDzError, "generalTracksDzError[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksDxyError", &generalTracksDxyError, "generalTracksDxyError[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksIsElectron", &generalTracksIsElectron, "generalTracksIsElectron[numGeneralTracks]/I");
+    mytree_->Branch("generalTracksIsJet", &generalTracksIsJet, "generalTracksIsJet[numGeneralTracks]/I");
+    mytree_->Branch("generalTracksIsMuon", &generalTracksIsMuon, "generalTracksIsMuon[numGeneralTracks]/I");
+    mytree_->Branch("generalTracksIsPhoton", &generalTracksIsPhoton, "generalTracksIsPhoton[numGeneralTracks]/I");
+
 }
 
 void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
