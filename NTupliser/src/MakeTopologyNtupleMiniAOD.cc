@@ -406,7 +406,7 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
                 for (auto kIt{kshort.begin()}; kIt != kshort.end(); kIt++) {
                     for (unsigned int i1 = 0; i1 != kIt->numberOfSourceCandidatePtrs(); i1++) {
                         auto c1s = kIt->sourceCandidatePtr(i1);
-                        for (unsigned int i2 = 0; i2 != it->numberOfSourceCandidatePtrs(); i2++){
+                        for (unsigned int i2 = 0; i2 != it->numberOfSourceCandidatePtrs(); i2++) {
                             if ( it->sourceCandidatePtr(i2) == c1s) {
                                 svIsKshort[numSVs] = 1;
                                 break;
@@ -415,16 +415,21 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
                     }
                 }
             }
-/*
+
             if (lambdaHandle.isValid()) {
                 for (auto lIt{lambda.begin()}; lIt != lambda.end(); lIt++) {
-                  if ( lIt->sourceCandidatePtr() == it->sourceCandidatePtr() ) { 
-                      svIsLambda[numSVs] = 1;
-                      break;
-                  }
+                    for (unsigned int  i1 = 0; i1 !=  lIt->numberOfSourceCandidatePtrs(); i1++) {
+                        auto c1s = lIt->sourceCandidatePtr(i1);
+                        for (unsigned int i2 = 0; i2 != it->numberOfSourceCandidatePtrs(); i2++) {
+                            if ( it->sourceCandidatePtr(i2) == c1s) {
+                                svIsLambda[numSVs] = 1;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
-*/
+
             numSVs++;
         }
     }
