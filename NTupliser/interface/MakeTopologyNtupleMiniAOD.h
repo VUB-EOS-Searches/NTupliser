@@ -892,6 +892,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float generalTracksDxy[NTRACKSMAX]{};
     float generalTracksDzError[NTRACKSMAX]{};
     float generalTracksDxyError[NTRACKSMAX]{};
+    int generalTracksHasTrackDetails[NTRACKSMAX]{};
     int generalTracksIsElectron[NTRACKSMAX]{};
     int generalTracksIsJet[NTRACKSMAX]{};
     int generalTracksIsMuon[NTRACKSMAX]{};

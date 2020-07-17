@@ -3,7 +3,8 @@ import FWCore.ParameterSet.Config as cms
 makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 					   is2016rereco = cms.bool(False),
                                            # "Calo"
-                                           trackToken   = cms.InputTag("lostTracks"),
+#                                           trackToken   = cms.InputTag("generalTracks"),
+                                           trackToken   = cms.InputTag("packedPFCandidates"),
                                            electronTag  = cms.InputTag("slimmedElectrons"),
                                            tauTag       = cms.InputTag("slimmedTaus"),
                                            muonTag      = cms.InputTag("slimmedMuons"),

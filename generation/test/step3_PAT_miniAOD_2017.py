@@ -121,6 +121,8 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
 )
 
 # Additional output definition
+process.MINIAODSIMoutput.outputCommands.append('keep *_generalTracks_*_*'),
+process.MINIAODSIMoutput.outputCommands.append('keep *_displacedTracks_*_*'),
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag

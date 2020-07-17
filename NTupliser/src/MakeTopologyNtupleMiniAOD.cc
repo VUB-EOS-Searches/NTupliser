@@ -2250,41 +2250,43 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
     }
     ran_tracks_ = true;
 
-    edm::Handle<std::vector<pat::PackedCandidate>> lostTracks;
-    iEvent.getByToken(trackToken_, lostTracks);
+    edm::Handle<std::vector<pat::PackedCandidate>> generalTracks;
+//    edm::Handle<std::vector<reco::Track>> generalTracks;
+    iEvent.getByToken(trackToken_, generalTracks);
 
     numGeneralTracks = 0;
 
-    for (auto trit{lostTracks->begin()}; trit != lostTracks->end() && numGeneralTracks < numeric_cast<int>(NTRACKSMAX);
+    for (auto trit{generalTracks->begin()}; trit != generalTracks->end() && numGeneralTracks < numeric_cast<int>(NTRACKSMAX);
          trit++)
     {
         generalTracksPt[numGeneralTracks] = trit->pt();
         generalTracksPx[numGeneralTracks] = trit->px();
         generalTracksPy[numGeneralTracks] = trit->py();
         generalTracksPz[numGeneralTracks] = trit->pz();
-        generalTracksE[numGeneralTracks] = trit->energy();
+        generalTracksE[numGeneralTracks] = trit->energy(); // lost track
         generalTracksEta[numGeneralTracks] = trit->eta();
         generalTracksTheta[numGeneralTracks] = trit->theta();
         generalTracksPhi[numGeneralTracks] = trit->phi();
         generalTracksCharge[numGeneralTracks] = trit->charge();
-        generalTracksPdgId[numGeneralTracks] = trit->pdgId();
-        generalTracksTime[numGeneralTracks] = trit->time();
+        generalTracksPdgId[numGeneralTracks] = trit->pdgId(); // lost track
+        generalTracksTime[numGeneralTracks] = trit->time(); // lost track
         generalTracksBeamSpotCorrectedD0[numGeneralTracks] = -1. * (trit->dxy(beamSpotPoint_));
         generalTracksDz[numGeneralTracks] = trit->dz();
         generalTracksDxy[numGeneralTracks] = trit->dxy();
-        if (trit->hasTrackDetails()) {
-            generalTracksDzError[numGeneralTracks] = trit->dzError();
-            generalTracksDxyError[numGeneralTracks] = trit->dxyError();
-            generalTracksDtime[numGeneralTracks] = trit->dtime();
-            generalTracksTimeError[numGeneralTracks] = trit->timeError();
+        if (trit->hasTrackDetails()) {  // lost track
+            generalTracksDzError[numGeneralTracks] = trit->dzError();  // lost track
+            generalTracksDxyError[numGeneralTracks] = trit->dxyError();  // lost track
+            generalTracksDtime[numGeneralTracks] = trit->dtime();  // lost track
+            generalTracksTimeError[numGeneralTracks] = trit->timeError();  // lost track
         }
         generalTracksVx[numGeneralTracks] = trit->vx();
         generalTracksVy[numGeneralTracks] = trit->vy();
         generalTracksVz[numGeneralTracks] = trit->vz();
-        generalTracksIsElectron[numGeneralTracks] = trit->isElectron();
-        generalTracksIsJet[numGeneralTracks] = trit->isJet();
-        generalTracksIsMuon[numGeneralTracks] = trit->isMuon();
-        generalTracksIsPhoton[numGeneralTracks] = trit->isPhoton();
+        generalTracksHasTrackDetails[numGeneralTracks] = trit->hasTrackDetails();
+        generalTracksIsElectron[numGeneralTracks] = trit->isElectron();  // lost track
+        generalTracksIsJet[numGeneralTracks] = trit->isJet();  // lost track
+        generalTracksIsMuon[numGeneralTracks] = trit->isMuon(); // lost track
+        generalTracksIsPhoton[numGeneralTracks] = trit->isPhoton(); // lost track
 
         numGeneralTracks++;
     }
@@ -2920,6 +2922,7 @@ void MakeTopologyNtupleMiniAOD::clearGeneralTracksarrays()
         generalTracksDxy[i] = 0.;
         generalTracksDzError[i] = 0.;
         generalTracksDxyError[i] = 0.;
+        generalTracksHasTrackDetails[i] = -1;
         generalTracksIsElectron[i] = -1;
         generalTracksIsJet[i] = -1;
         generalTracksIsMuon[i] =	-1;
@@ -5021,6 +5024,7 @@ void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
     mytree_->Branch("generalTracksDxy", &generalTracksDxy, "generalTracksDxy[numGeneralTracks]/F");
     mytree_->Branch("generalTracksDzError", &generalTracksDzError, "generalTracksDzError[numGeneralTracks]/F");
     mytree_->Branch("generalTracksDxyError", &generalTracksDxyError, "generalTracksDxyError[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksHasTrackDetails", &generalTracksHasTrackDetails, "generalTracksHasTrackDetails[numGeneralTracks]/I");
     mytree_->Branch("generalTracksIsElectron", &generalTracksIsElectron, "generalTracksIsElectron[numGeneralTracks]/I");
     mytree_->Branch("generalTracksIsJet", &generalTracksIsJet, "generalTracksIsJet[numGeneralTracks]/I");
     mytree_->Branch("generalTracksIsMuon", &generalTracksIsMuon, "generalTracksIsMuon[numGeneralTracks]/I");

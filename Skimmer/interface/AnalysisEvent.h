@@ -443,6 +443,7 @@ class AnalysisEvent
     Float_t generalTracksDxy[NTRACKSMAX];
     Float_t generalTracksDzError[NTRACKSMAX];
     Float_t generalTracksDxyError[NTRACKSMAX];
+    Int_t generalTracksHasTrackDetails[NTRACKSMAX];
     Int_t generalTracksIsElectron[NTRACKSMAX];
     Int_t generalTracksIsJet[NTRACKSMAX];
     Int_t generalTracksIsMuon[NTRACKSMAX];
@@ -1455,6 +1456,7 @@ class AnalysisEvent
     TBranch* b_generalTracksDxy; //!
     TBranch* b_generalTracksDzError; //!
     TBranch* b_generalTracksDxyError; //!
+    TBranch* b_generalTracksHasTrackDetails; //!
     TBranch* b_generalTracksIsElectron; //!
     TBranch* b_generalTracksIsJet; //!
     TBranch* b_generalTracksIsMuon; //!
@@ -2534,6 +2536,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("generalTracksDxy", generalTracksDxy, &b_generalTracksDxy);
    fChain->SetBranchAddress("generalTracksDzError", generalTracksDzError, &b_generalTracksDzError);
    fChain->SetBranchAddress("generalTracksDxyError", generalTracksDxyError, &b_generalTracksDxyError);
+   fChain->SetBranchAddress("generalTracksHasTrackDetails", generalTracksHasTrackDetails, &b_generalTracksHasTrackDetails);
    fChain->SetBranchAddress("generalTracksIsElectron", generalTracksIsElectron, &b_generalTracksIsElectron);
    fChain->SetBranchAddress("generalTracksIsJet", generalTracksIsJet, &b_generalTracksIsJet);
    fChain->SetBranchAddress("generalTracksIsMuon", generalTracksIsMuon, &b_generalTracksIsMuon);
