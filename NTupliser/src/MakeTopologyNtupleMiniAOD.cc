@@ -2255,6 +2255,11 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(
 
     numPackedCands = 0;
 
+    uint numPackedTracks = 0;
+
+    for (auto it{packedCands->begin()}; it != packedCands->end(); it++ ) if ( it->hasTrackDetails() && !it->isMuon() ) numPackedTracks++;
+    std::cout << "numPackedTracks: " << numPackedTracks << std::endl;
+
     for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX);
          it++)
     {
@@ -2285,34 +2290,36 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(
         packedCandsVtxChi2Norm[numPackedCands] = it->vertexNormalizedChi2();
 
         packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
-        packedCandsPtTrk[numPackedCands] = it->ptTrk();
-        packedCandsDzError[numPackedCands] = it->dzError();
-        packedCandsDxyError[numPackedCands] = it->dxyError();
-        packedCandsDtime[numPackedCands] = it->dtime();
-        packedCandsTimeError[numPackedCands] = it->timeError();
-        packedCandsNumberOfHits[numPackedCands] = it->numberOfHits();
-        packedCandsNumberOfPixelHits[numPackedCands] = it->numberOfPixelHits();
-        packedCandsPixelLayersWithMeasurement[numPackedCands] = it->pixelLayersWithMeasurement();
-        packedCandsStripLayersWithMeasurement[numPackedCands] = it->stripLayersWithMeasurement();
-        packedCandsTrackerLayersWithMeasurement[numPackedCands] = it->trackerLayersWithMeasurement();
+        if ( it->hasTrackDetails() ) {
+            packedCandsPtTrk[numPackedCands] = it->ptTrk();
+            packedCandsDzError[numPackedCands] = it->dzError();
+            packedCandsDxyError[numPackedCands] = it->dxyError();
+            packedCandsDtime[numPackedCands] = it->dtime();
+            packedCandsTimeError[numPackedCands] = it->timeError();
+            packedCandsNumberOfHits[numPackedCands] = it->numberOfHits();
+            packedCandsNumberOfPixelHits[numPackedCands] = it->numberOfPixelHits();
+            packedCandsPixelLayersWithMeasurement[numPackedCands] = it->pixelLayersWithMeasurement();
+            packedCandsStripLayersWithMeasurement[numPackedCands] = it->stripLayersWithMeasurement();
+            packedCandsTrackerLayersWithMeasurement[numPackedCands] = it->trackerLayersWithMeasurement();
 
-        packedCandsPseudoTrkPt[numPackedCands] = it->pseudoTrack().pt();
-        packedCandsPseudoTrkPx[numPackedCands] = it->pseudoTrack().px();
-        packedCandsPseudoTrkPy[numPackedCands] = it->pseudoTrack().py();
-        packedCandsPseudoTrkPz[numPackedCands] = it->pseudoTrack().pz();
-        packedCandsPseudoTrkEta[numPackedCands] = it->pseudoTrack().eta();
-        packedCandsPseudoTrkPhi[numPackedCands] = it->pseudoTrack().phi();
-        packedCandsPseudoTrkCharge[numPackedCands] = it->pseudoTrack().charge();
-        packedCandsPseudoTrkVx[numPackedCands] = it->pseudoTrack().vx();
-        packedCandsPseudoTrkVy[numPackedCands] = it->pseudoTrack().vy();
-        packedCandsPseudoTrkVz[numPackedCands] = it->pseudoTrack().vz();
-        packedCandsPseudoTrkChi2Norm[numPackedCands] = it->pseudoTrack().normalizedChi2();
-        packedCandsPseudoTrkNumberOfHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidTrackerHits();
-        packedCandsPseudoTrkNumberOfPixelHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidPixelHits();
-        packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().pixelLayersWithMeasurement();
-        packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().stripLayersWithMeasurement();
-        packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().trackerLayersWithMeasurement();
-        packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
+            packedCandsPseudoTrkPt[numPackedCands] = it->pseudoTrack().pt();
+            packedCandsPseudoTrkPx[numPackedCands] = it->pseudoTrack().px();
+            packedCandsPseudoTrkPy[numPackedCands] = it->pseudoTrack().py();
+            packedCandsPseudoTrkPz[numPackedCands] = it->pseudoTrack().pz();
+            packedCandsPseudoTrkEta[numPackedCands] = it->pseudoTrack().eta();
+            packedCandsPseudoTrkPhi[numPackedCands] = it->pseudoTrack().phi();
+            packedCandsPseudoTrkCharge[numPackedCands] = it->pseudoTrack().charge();
+            packedCandsPseudoTrkVx[numPackedCands] = it->pseudoTrack().vx();
+            packedCandsPseudoTrkVy[numPackedCands] = it->pseudoTrack().vy();
+            packedCandsPseudoTrkVz[numPackedCands] = it->pseudoTrack().vz();
+            packedCandsPseudoTrkChi2Norm[numPackedCands] = it->pseudoTrack().normalizedChi2();
+            packedCandsPseudoTrkNumberOfHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidTrackerHits();
+            packedCandsPseudoTrkNumberOfPixelHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidPixelHits();
+            packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().pixelLayersWithMeasurement();
+            packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().stripLayersWithMeasurement();
+            packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().trackerLayersWithMeasurement();
+            packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
+        }
 
         packedCandsIsElectron[numPackedCands] = it->isElectron();
         packedCandsIsJet[numPackedCands] = it->isJet();
@@ -2946,7 +2953,6 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays()
         packedCandsCharge[i] = 0;
         packedCandsPdgId[i] = 0;
         packedCandsTime[i] = 0.;
-
         packedCandsFromPV[i] = -1.;
         packedCandsPVquality[i] = -1.;
         packedCandsVx[i] = 0.;
@@ -2959,7 +2965,6 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays()
         packedCandsDxy[i] = 9999;
         packedCandsDzAssocPV[i] = 9999;
         packedCandsVtxChi2Norm[i] = -9999;
-
         packedCandsHasTrackDetails[i] = -1;
         packedCandsPtTrk[i] = -1.;
         packedCandsDzError[i] = 9999;
@@ -2971,7 +2976,6 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays()
         packedCandsPixelLayersWithMeasurement[i] = -1;
         packedCandsStripLayersWithMeasurement[i] = -1;
         packedCandsTrackerLayersWithMeasurement[i] = -1;
-
         packedCandsPseudoTrkPt[i] = -1.;
         packedCandsPseudoTrkPx[i] = -1.;
         packedCandsPseudoTrkPy[i] = -1.;
@@ -2989,14 +2993,12 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays()
         packedCandsPseudoTrkStripLayersWithMeasurement[i] = -1;
         packedCandsPseudoTrkTrackerLayersWithMeasurement[i] = -1;
         packedCandsHighPurityTrack[i] = -1;
-
         packedCandsIsElectron[i] = -1;
         packedCandsIsJet[i] = -1;
         packedCandsIsMuon[i] =	-1;
         packedCandsIsPhoton[i] = -1;
         packedCandsIsConvertedPhoton[i] = -1;
         packedCandsIsLongLived[i] = -1;
-
     }
 }
 
@@ -5085,7 +5087,6 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
     mytree_->Branch("packedCandsCharge", &packedCandsCharge, "packedCandsCharge[numPackedCands]/I");
     mytree_->Branch("packedCandsPdgId", &packedCandsPdgId, "packedCandsPdgId[numPackedCands]/I");
     mytree_->Branch("packedCandsTime", &packedCandsTime, "packedCandsTime[numPackedCands]/F");
-
     mytree_->Branch("packedCandsFromPV", &packedCandsFromPV, "packedCandsFromPV[numPackedCands]/I");
     mytree_->Branch("packedCandsPVquality", &packedCandsPVquality, "packedCandsPVquality[numPackedCands]/I");
     mytree_->Branch("packedCandsVx", &packedCandsVx, "packedCandsVx[numPackedCands]/F");
@@ -5098,8 +5099,6 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
     mytree_->Branch("packedCandsDxy", &packedCandsDxy, "packedCandsDxy[numPackedCands]/F");
     mytree_->Branch("packedCandsDzAssocPV", &packedCandsDzAssocPV, "packedCandsDzAssocPV[numPackedCands]/F");
     mytree_->Branch("packedCandsVtxChi2Norm", &packedCandsVtxChi2Norm, "packedCandsVtxChi2Norm[numPackedCands]/F");
-
-
     mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
     mytree_->Branch("packedCandsPtTrk", &packedCandsPtTrk, "packedCandsPtTrk[numPackedCands]/F");
     mytree_->Branch("packedCandsDzError", &packedCandsDzError, "packedCandsDzError[numPackedCands]/F");
@@ -5111,7 +5110,6 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
     mytree_->Branch("packedCandsPixelLayersWithMeasurement", &packedCandsPixelLayersWithMeasurement, "packedCandsPixelLayersWithMeasurement[numPackedCands]/I");
     mytree_->Branch("packedCandsStripLayersWithMeasurement", &packedCandsStripLayersWithMeasurement, "packedCandsStripLayersWithMeasurement[numPackedCands]/I");
     mytree_->Branch("packedCandsTrackerLayersWithMeasurement", &packedCandsTrackerLayersWithMeasurement, "packedCandsTrackerLayersWithMeasurement[numPackedCands]/I");
-
     mytree_->Branch("packedCandsPseudoTrkPt", &packedCandsPseudoTrkPt, "packedCandsPseudoTrkPt[numPackedCands]/F");
     mytree_->Branch("packedCandsPseudoTrkPx", &packedCandsPseudoTrkPx, "packedCandsPseudoTrkPx[numPackedCands]/F");
     mytree_->Branch("packedCandsPseudoTrkPy", &packedCandsPseudoTrkPy, "packedCandsPseudoTrkPy[numPackedCands]/F");
@@ -5129,14 +5127,12 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
     mytree_->Branch("packedCandsPseudoTrkStripLayersWithMeasurement", &packedCandsPseudoTrkStripLayersWithMeasurement, "packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands]/I");
     mytree_->Branch("packedCandsPseudoTrkTrackerLayersWithMeasurement", &packedCandsPseudoTrkTrackerLayersWithMeasurement, "packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands]/I");
     mytree_->Branch("packedCandsHighPurityTrack", &packedCandsHighPurityTrack, "packedCandsHighPurityTrack[numPackedCands]/I");
-
     mytree_->Branch("packedCandsIsElectron", &packedCandsIsElectron, "packedCandsIsElectron[numPackedCands]/I");
     mytree_->Branch("packedCandsIsJet", &packedCandsIsJet, "packedCandsIsJet[numPackedCands]/I");
     mytree_->Branch("packedCandsIsMuon", &packedCandsIsMuon, "packedCandsIsMuon[numPackedCands]/I");
     mytree_->Branch("packedCandsIsPhoton", &packedCandsIsPhoton, "packedCandsIsPhoton[numPackedCands]/I");
     mytree_->Branch("packedCandsIsConvertedPhoton", &packedCandsIsConvertedPhoton, "packedCandsIsConvertedPhoton[numPackedCands]/I");
     mytree_->Branch("packedCandsIsLongLived", &packedCandsIsLongLived, "packedCandsIsLongLived[numPackedCands]/I");
-
 }
 
 void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()

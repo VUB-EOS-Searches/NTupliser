@@ -70,20 +70,20 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
         ),
                                            triggerList = cms.vstring(*[
 	#Updated Triggers for 2017
-	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v1',
-	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v2',
-	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v3',
-	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v4',
-	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v5',
-	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v6',
-	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v7',
-	'HLT_Ele35_WPTight_Gsf_v1',
-	'HLT_Ele35_WPTight_Gsf_v2',
-	'HLT_Ele35_WPTight_Gsf_v3',
-	'HLT_Ele35_WPTight_Gsf_v4',
-	'HLT_Ele35_WPTight_Gsf_v5',
-	'HLT_Ele35_WPTight_Gsf_v6',
-	'HLT_Ele35_WPTight_Gsf_v7',
+#	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v1',
+#	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v2',
+#	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v3',
+#	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v4',
+#	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v5',
+#	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v6',
+#	'HLT_Ele32_WPTight_Gsf_L1DoubleEG_v7',
+#	'HLT_Ele35_WPTight_Gsf_v1',
+#	'HLT_Ele35_WPTight_Gsf_v2',
+#	'HLT_Ele35_WPTight_Gsf_v3',
+#	'HLT_Ele35_WPTight_Gsf_v4',
+#	'HLT_Ele35_WPTight_Gsf_v5',
+#	'HLT_Ele35_WPTight_Gsf_v6',
+#	'HLT_Ele35_WPTight_Gsf_v7',
 
 	'HLT_IsoMu27_v8', ## All Runs
 	'HLT_IsoMu27_v9', ## All Runs
@@ -93,22 +93,22 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 	'HLT_IsoMu27_v13', ## All Runs
 	'HLT_IsoMu27_v14', ## All Runs
 
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v10', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v11', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v12', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v13', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v14', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v15', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v16', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v17', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v10', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v11', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v12', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v13', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v14', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v15', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v16', ## All Runs
-	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v17', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v10', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v11', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v12', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v13', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v14', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v15', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v16', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v17', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v10', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v11', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v12', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v13', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v14', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v15', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v16', ## All Runs
+#	'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v17', ## All Runs
 
 	'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v8', ## Runs A-B
 	'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v9', ## Runs A-B
@@ -129,65 +129,66 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 	'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v4', ## Runs C onwards
 
 	## All DZ and Mu23Ele12 non-DZ are unprescaled for All Runs
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v3',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v4',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v5',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v5',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v6',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v8',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v9',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v10',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v11',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v12',
-	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v13',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v5',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v6',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v8',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v9',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v10',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v11',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v12',
-	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v13',
-	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v4',
-	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v6',
-	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v7',
-	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v8',
-	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v9',
-	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v10',
-	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v11',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v3',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v4',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v5',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v5',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v6',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v8',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v9',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v10',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v11',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v12',
+#	'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v13',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v5',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v6',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v8',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v9',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v10',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v11',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v12',
+#	'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v13',
+#	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v4',
+#	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v6',
+#	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v7',
+#	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v8',
+#	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v9',
+#	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v10',
+#	'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v11',
 
         ## Potential H->SS triggers
-        'HLT_DoublePhoton33_CaloIdL_v5',
-        'HLT_DoublePhoton70_v5',
-        'HLT_DoublePhoton85_v13',
-        'HLT_TriplePhoton_20_20_20_CaloIdLV2_v2',
-        'HLT_TriplePhoton_20_20_20_CaloIdLV2_R9IdVL_v2',
-        'HLT_TriplePhoton_30_30_10_CaloIdLV2_v3',
-        'HLT_TriplePhoton_30_30_10_CaloIdLV2_R9IdVL_v3',
-        'HLT_TriplePhoton_35_35_5_CaloIdLV2_R9IdVL_v3',
-        'HLT_Photon25_v2',
-        'HLT_Photon33_v4',
-        'HLT_Photon50_v12',
-        'HLT_Photon75_v12',
-        'HLT_Photon90_v12',
-        'HLT_Photon120_v12',
-        'HLT_Photon150_v5',
-        'HLT_Photon175_v13',
-        'HLT_Photon200_v12',
-        'HLT_Photon50_R9Id90_HE10_IsoM_v13',
-        'HLT_Photon75_R9Id90_HE10_IsoM_v13',
-        'HLT_Photon90_R9Id90_HE10_IsoM_v13',
-        'HLT_Photon120_R9Id90_HE10_IsoM_v13',
-        'HLT_Photon165_R9Id90_HE10_IsoM_v14',
-        'HLT_Photon90_CaloIdL_PFHT700_v12',
-        'HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v12',
-        'HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass95_v12',
-        'HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13',
-        'HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12',
-        'HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12',
-        'HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13',
+#        'HLT_DoublePhoton33_CaloIdL_v5',
+#        'HLT_DoublePhoton70_v5',
+#        'HLT_DoublePhoton85_v13',
+#        'HLT_TriplePhoton_20_20_20_CaloIdLV2_v2',
+#        'HLT_TriplePhoton_20_20_20_CaloIdLV2_R9IdVL_v2',
+#        'HLT_TriplePhoton_30_30_10_CaloIdLV2_v3',
+#        'HLT_TriplePhoton_30_30_10_CaloIdLV2_R9IdVL_v3',
+#        'HLT_TriplePhoton_35_35_5_CaloIdLV2_R9IdVL_v3',
+#        'HLT_Photon25_v2',
+#        'HLT_Photon33_v4',
+#        'HLT_Photon50_v12',
+#        'HLT_Photon75_v12',
+#        'HLT_Photon90_v12',
+#        'HLT_Photon120_v12',
+#        'HLT_Photon150_v5',
+#        'HLT_Photon175_v13',
+#        'HLT_Photon200_v12',
+#        'HLT_Photon50_R9Id90_HE10_IsoM_v13',
+#        'HLT_Photon75_R9Id90_HE10_IsoM_v13',
+#        'HLT_Photon90_R9Id90_HE10_IsoM_v13',
+#        'HLT_Photon120_R9Id90_HE10_IsoM_v13',
+#        'HLT_Photon165_R9Id90_HE10_IsoM_v14',
+#        'HLT_Photon90_CaloIdL_PFHT700_v12',
+#        'HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v12',
+#        'HLT_Diphoton30_22_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass95_v12',
+#        'HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13',
+#        'HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12',
+#        'HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_NoPixelVeto_Mass55_v12',
+#        'HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55_v13',
+
         'HLT_HT430_DisplacedDijet40_DisplacedTrack_v10',
         'HLT_HT430_DisplacedDijet60_DisplacedTrack_v10',
         'HLT_HT430_DisplacedDijet80_DisplacedTrack_v10',
@@ -197,13 +198,13 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
         'HLT_HT550_DisplacedDijet60_Inclusive_v10',
         'HLT_HT650_DisplacedDijet80_Inclusive_v11',
         'HLT_HT750_DisplacedDijet80_Inclusive_v11',
-        'HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_v4',
-        'HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15_v7',
-        'HLT_Photon20_HoverELoose_v9',
-        'HLT_Photon30_HoverELoose_v9',
-        'HLT_Photon40_HoverELoose_v9',
-        'HLT_Photon50_HoverELoose_v9',
-        'HLT_Photon60_HoverELoose_v9',
+#        'HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_v4',
+#        'HLT_Photon60_R9Id90_CaloIdL_IsoL_DisplacedIdL_PFHT350MinPFJet15_v7',
+#        'HLT_Photon20_HoverELoose_v9',
+#        'HLT_Photon30_HoverELoose_v9',
+#        'HLT_Photon40_HoverELoose_v9',
+#        'HLT_Photon50_HoverELoose_v9',
+#        'HLT_Photon60_HoverELoose_v9',
 
 	#Updated MET Triggers for 2017
 	# Needs doing ...

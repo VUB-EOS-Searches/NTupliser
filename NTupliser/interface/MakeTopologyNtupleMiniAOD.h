@@ -870,8 +870,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, float> fixedGridRhoFastjetAll;
 
     // packedCands are used to subtract photon conversion background
-    static constexpr size_t NPACKEDCANDSMAX{40};
-
+    static constexpr size_t NPACKEDCANDSMAX{1000};
     float packedCandsPt[NPACKEDCANDSMAX]{};
     float packedCandsPx[NPACKEDCANDSMAX]{};
     float packedCandsPy[NPACKEDCANDSMAX]{};
@@ -884,7 +883,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int packedCandsCharge[NPACKEDCANDSMAX]{};
     int packedCandsPdgId[NPACKEDCANDSMAX]{};
     float packedCandsTime[NPACKEDCANDSMAX]{};
-
     int packedCandsFromPV[NPACKEDCANDSMAX]{};
     int packedCandsPVquality[NPACKEDCANDSMAX]{};
     float packedCandsVx[NPACKEDCANDSMAX]{};
@@ -897,7 +895,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float packedCandsDxy[NPACKEDCANDSMAX]{};
     float packedCandsDzAssocPV[NPACKEDCANDSMAX]{};
     float packedCandsVtxChi2Norm[NPACKEDCANDSMAX]{};
-
     int packedCandsHasTrackDetails[NPACKEDCANDSMAX]{};
     float packedCandsPtTrk[NPACKEDCANDSMAX]{};
     float packedCandsDzError[NPACKEDCANDSMAX]{};
@@ -909,7 +906,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int packedCandsPixelLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsStripLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
-
     float packedCandsPseudoTrkPt[NPACKEDCANDSMAX]{};
     float packedCandsPseudoTrkPx[NPACKEDCANDSMAX]{};
     float packedCandsPseudoTrkPy[NPACKEDCANDSMAX]{};
@@ -927,7 +923,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int packedCandsPseudoTrkStripLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsPseudoTrkTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsHighPurityTrack[NPACKEDCANDSMAX]{};
-
     int packedCandsIsElectron[NPACKEDCANDSMAX]{};
     int packedCandsIsJet[NPACKEDCANDSMAX]{};
     int packedCandsIsMuon[NPACKEDCANDSMAX]{};
