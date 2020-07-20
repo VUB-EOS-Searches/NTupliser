@@ -202,10 +202,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
         void); // should only be called after all other functions.
     void fillPackedCands(const edm::Event&, const edm::EventSetup&);
     void fillIsolatedTracks(const edm::Event&, const edm::EventSetup&);
-    // ID functions
-    bool photonConversionVeto(const pat::Electron&, float&, float&);
-    // Helper functions
 
+    // Helper functions
     void bookBranches(void); // does all the branching.
     void bookJetBranches(const std::string& ID,
                          const std::string& name); // called by bookBranches,
