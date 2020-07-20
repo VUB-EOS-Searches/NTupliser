@@ -106,10 +106,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, int> hltpasses_;
     std::vector<std::string> hltnames_;
     std::vector<std::string> metFilterNames_;
-    std::vector<std::string> btaggingparamnames_;
-    std::vector<std::string> btaggingparaminputtypes_;
-    std::map<std::string, PerformanceResult::ResultType> btaggingparamtype_;
-    std::vector<std::string> eleIDsToNtuple_;
 
     bool filledBIDInfo_{};
     bool runMCInfo_{};
@@ -123,9 +119,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     bool runPDFUncertainties_{};
     bool useResidualJEC_{};
-    std::string eleIDquality_;
-    std::string eleIDqualityLoose_; // only used for Z rejection
-    bool ignore_emIDtight_{}; // possibility to completely ignore EM id
 
     int minLeptons_{};
     double elePtCut_{};

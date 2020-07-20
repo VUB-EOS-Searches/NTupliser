@@ -3,7 +3,6 @@ import FWCore.ParameterSet.Config as cms
 makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 					   is2016rereco = cms.bool(False),
                                            # "Calo"
-#                                           packedCandToken     = cms.InputTag("lostTracks"),
                                            packedCandToken = cms.InputTag("packedPFCandidates"),
                                            electronTag     = cms.InputTag("slimmedElectrons"),
                                            tauTag          = cms.InputTag("slimmedTaus"),
@@ -423,7 +422,6 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
                                            runSwissCross = cms.bool(True),
                                            runPDFUncertainties = cms.bool(False),
                                            useResidualJEC = cms.bool(False),
-                                           ignoreElectronID = cms.bool(True), # if set to true will save all electrons, also those not passing electronID.
                                            minElePt = cms.double(9.0), #  electron pT in GeV
                                            maxEleEta = cms.double(2.70), #  electron |eta|
 					   eleRelIso = cms.double(0.50), # electron combined rel track iso with rho corrections
@@ -439,50 +437,6 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
                                            maxDistForPhotonRej=cms.double(0),
                                            maxDcotForPhotonRej=cms.double(0),
                                            isMCatNLO=cms.bool(False),
-                                           #New B-tagging info
-
-                                           # Btagging parameterizations to look at (the vectors btagParameterizationList and btagParameterizationMode are coupled!). Documentation on algo names (go in btagParamerizationList) and parameterizations (go in btagParameterizationMode) are available on this twiki:
-                                               # https://twiki.cern.ch/twiki/bin/view/CMS/BtagOctober09ExerciseUsePayload
-                                           btagParameterizationList = cms.vstring(
-        #MC Measurements
-        "MCCaloSSVHPTb","MCCaloSSVHPTc","MCCaloSSVHPTl",
-        "MCCaloSSVHEMb","MCCaloSSVHEMc","MCCaloSSVHEMl",
-        "MCCaloSSVHETb","MCCaloSSVHETc","MCCaloSSVHETl",
-        "MCCaloTCHELb","MCCaloTCHELc","MCCaloTCHELl",
-        "MCCaloTCHEMb","MCCaloTCHEMc","MCCaloTCHEMl",
-        "MCCaloTCHETb","MCCaloTCHETc","MCCaloTCHETl",
-        #MC Measurements Errors
-        "MCCaloSSVHPTb","MCCaloSSVHPTc","MCCaloSSVHPTl",
-        "MCCaloSSVHEMb","MCCaloSSVHEMc","MCCaloSSVHEMl",
-        "MCCaloSSVHETb","MCCaloSSVHETc","MCCaloSSVHETl",
-        "MCCaloTCHELb","MCCaloTCHELc","MCCaloTCHELl",
-        "MCCaloTCHEMb","MCCaloTCHEMc","MCCaloTCHEMl",
-        "MCCaloTCHETb","MCCaloTCHETc","MCCaloTCHETl",
-        #Mistag fall10
-        "MISTAGSSVHEM", "MISTAGSSVHEM", "MISTAGSSVHEM", "MISTAGSSVHEM",
-        "MISTAGSSVHPT", "MISTAGSSVHPT", "MISTAGSSVHPT", "MISTAGSSVHPT",
-        "MISTAGTCHEL", "MISTAGTCHEL", "MISTAGTCHEL", "MISTAGTCHEL",
-        "MISTAGTCHEM", "MISTAGTCHEM", "MISTAGTCHEM", "MISTAGTCHEM"
-        ),
-                                           btagParameterizationMode = cms.vstring(
-        "BTAGBEFF", "BTAGCEFF", "BTAGLEFF",
-        "BTAGBEFF", "BTAGCEFF", "BTAGLEFF",
-        "BTAGBEFF", "BTAGCEFF", "BTAGLEFF",
-        "BTAGBEFF", "BTAGCEFF", "BTAGLEFF",
-        "BTAGBEFF", "BTAGCEFF", "BTAGLEFF",
-        "BTAGBEFF", "BTAGCEFF", "BTAGLEFF",
-        "BTAGBERR", "BTAGCERR", "BTAGLERR",
-        "BTAGBERR", "BTAGCERR", "BTAGLERR",
-        "BTAGBERR", "BTAGCERR", "BTAGLERR",
-        "BTAGBERR", "BTAGCERR", "BTAGLERR",
-        "BTAGBERR", "BTAGCERR", "BTAGLERR",
-        "BTAGBERR", "BTAGCERR", "BTAGLERR",
-        #Mistag fall10
-        "BTAGLEFF", "BTAGLERR", "BTAGLEFFCORR", "BTAGLERRCORR",
-        "BTAGLEFF", "BTAGLERR", "BTAGLEFFCORR", "BTAGLERRCORR",
-        "BTAGLEFF", "BTAGLERR", "BTAGLEFFCORR", "BTAGLERRCORR",
-        "BTAGLEFF", "BTAGLERR", "BTAGLEFFCORR", "BTAGLERRCORR"
-        ),
                                            isttBar = cms.bool(True),# This affects reweighting things. If set to false, then has a weight of 1.
                                            ttGenEvent = cms.InputTag("null")
                                            )# end of MakeTopologyNtupleMiniAOD

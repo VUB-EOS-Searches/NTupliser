@@ -178,9 +178,6 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , alphaIdEnd_{iConfig.getParameter<int>("alphaIdEnd")}
     , pdfInfoToken_{mayConsume<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("pdfInfoFixingToken"))}
     , generatorToken_{mayConsume<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("generatorToken"))}
-    , btaggingparamnames_{iConfig.getParameter<std::vector<std::string>>("btagParameterizationList")}
-    , btaggingparaminputtypes_{iConfig.getParameter<std::vector<std::string>>("btagParameterizationMode")}
-    // , eleIDsToNtuple_(iConfig.getParameter<std::vector<std::string>>("eleIDsToNtuple"))
     , runMCInfo_{iConfig.getParameter<bool>("runMCInfo")}
     , runPUReWeight_{iConfig.getParameter<bool>("runPUReWeight")}
     , doCuts_{iConfig.getParameter<bool>("doCuts")}
@@ -188,7 +185,6 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , jetEtaCut_{iConfig.getParameter<double>("maxJetEta")}
     , runPDFUncertainties_{iConfig.getParameter<bool>("runPDFUncertainties")}
     , useResidualJEC_{iConfig.getParameter<bool>("useResidualJEC")}
-    , ignore_emIDtight_{iConfig.getParameter<bool>("ignoreElectronID")}
     , minLeptons_{iConfig.getParameter<int>("minLeptons")}
     , elePtCut_{iConfig.getParameter<double>("minElePt")}
     , eleEtaCut_{iConfig.getParameter<double>("maxEleEta")}
@@ -5040,35 +5036,6 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
 
     mytree_->Branch("fixedGridRhoFastjetAll", &fixedGridRhoFastjetAll[ID], "fixedGridRhoFastjetAll]/F");
 
-    bookBIDInfoBranches(ID, name);
-}
-
-void MakeTopologyNtupleMiniAOD::bookBIDInfoBranches(const std::string& /*ID*/,
-                                                    const std::string& /*name*/)
-{
-    // std::cout << "bookBIDInfoHistos CHECK" << std::endl;
-    // for all parameterizations:
-    btaggingparamtype_["BTAGBEFF"] = PerformanceResult::BTAGBEFF;
-    btaggingparamtype_["BTAGBERR"] = PerformanceResult::BTAGBERR;
-    btaggingparamtype_["BTAGCEFF"] = PerformanceResult::BTAGCEFF;
-    btaggingparamtype_["BTAGCERR"] = PerformanceResult::BTAGCERR;
-    btaggingparamtype_["BTAGLEFF"] = PerformanceResult::BTAGLEFF;
-    btaggingparamtype_["BTAGLERR"] = PerformanceResult::BTAGLERR;
-    btaggingparamtype_["BTAGNBEFF"] = PerformanceResult::BTAGNBEFF;
-    btaggingparamtype_["BTAGNBERR"] = PerformanceResult::BTAGNBERR;
-    btaggingparamtype_["BTAGBEFFCORR"] = PerformanceResult::BTAGBEFFCORR;
-    btaggingparamtype_["BTAGBERRCORR"] = PerformanceResult::BTAGBERRCORR;
-    btaggingparamtype_["BTAGCEFFCORR"] = PerformanceResult::BTAGCEFFCORR;
-    btaggingparamtype_["BTAGCERRCORR"] = PerformanceResult::BTAGCERRCORR;
-    btaggingparamtype_["BTAGLEFFCORR"] = PerformanceResult::BTAGLEFFCORR;
-    btaggingparamtype_["BTAGLERRCORR"] = PerformanceResult::BTAGLERRCORR;
-    btaggingparamtype_["BTAGNBEFFCORR"] = PerformanceResult::BTAGNBEFFCORR;
-    btaggingparamtype_["BTAGNBERRCORR"] = PerformanceResult::BTAGNBERRCORR;
-    btaggingparamtype_["BTAGNBERRCORR"] = PerformanceResult::BTAGNBERRCORR;
-    btaggingparamtype_["MUEFF"] = PerformanceResult::MUEFF;
-    btaggingparamtype_["MUERR"] = PerformanceResult::MUERR;
-    btaggingparamtype_["MUFAKE"] = PerformanceResult::MUFAKE;
-    btaggingparamtype_["MUEFAKE"] = PerformanceResult::MUEFAKE;
 }
 
 void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
