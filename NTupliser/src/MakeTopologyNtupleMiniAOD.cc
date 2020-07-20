@@ -131,7 +131,7 @@ typedef math::XYZTLorentzVectorF LorentzVector;
 MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     const edm::ParameterSet& iConfig)
     : beamSpotToken_{consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpotToken"))}
-    , trackToken_{consumes<std::vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("trackToken"))}
+    , packedCandToken_{consumes<std::vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("packedCandToken"))}
     , isolatedTrackToken_{consumes<std::vector<pat::IsolatedTrack>>(iConfig.getParameter<edm::InputTag>("isolatedTrackToken"))}
     , conversionsToken_{consumes<std::vector<reco::Conversion>>(iConfig.getParameter<edm::InputTag>("conversionsToken"))}
     , eleLabel_{mayConsume<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronTag"))}
@@ -535,7 +535,7 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
   iSetup.get<IdealMagneticFieldRecord>().get(magneticField);
   
 //  fillBeamSpot(iEvent, iSetup);
-//  fillGeneralTracks(iEvent, iSetup);
+//  fillPackedCands(iEvent, iSetup);
 //  fillIsolatedTracks(iEvent, iSetup);
 
   edm::Handle<pat::PhotonCollection> photonHandle;
@@ -684,7 +684,7 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
     //  needs beam spot
     //fillBeamSpot(iEvent, iSetup);
     // and tracks for photon conversion checks:
-    //fillGeneralTracks(iEvent, iSetup);
+    //fillPackedCands(iEvent, iSetup);
     //fillIsolatedTracks(iEvent, iSetup);
 
     // note that the fillJets() method needs electrons, due to the fact that we
@@ -1030,7 +1030,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
     const pat::MuonCollection& muons = *muonHandle;
 
     //fillBeamSpot(iEvent, iSetup);
-    //fillGeneralTracks(iEvent, iSetup);
+    //fillPackedCands(iEvent, iSetup);
     //fillIsolatedTracks(iEvent, iSetup);
 
     //   !!!
@@ -2070,7 +2070,7 @@ void MakeTopologyNtupleMiniAOD::fillJets(
     // ran_jetloop_ = true;
 
     // Make sure tracks are filled before jet stuff occurs
-    fillGeneralTracks(iEvent, iSetup);
+    fillPackedCands(iEvent, iSetup);
     fillIsolatedTracks(iEvent, iSetup);
 
     edm::Handle<pat::JetCollection> jetHandle;
@@ -2241,7 +2241,7 @@ void MakeTopologyNtupleMiniAOD::fillJets(
 
 /////////////////////////////////////
 
-void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
+void MakeTopologyNtupleMiniAOD::fillPackedCands(
     const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
     if (ran_tracks_)
@@ -2250,45 +2250,45 @@ void MakeTopologyNtupleMiniAOD::fillGeneralTracks(
     }
     ran_tracks_ = true;
 
-    edm::Handle<std::vector<pat::PackedCandidate>> generalTracks;
-//    edm::Handle<std::vector<reco::Track>> generalTracks;
-    iEvent.getByToken(trackToken_, generalTracks);
+    edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
+    iEvent.getByToken(packedCandToken_, packedCands);
 
-    numGeneralTracks = 0;
+    numPackedCands = 0;
 
-    for (auto trit{generalTracks->begin()}; trit != generalTracks->end() && numGeneralTracks < numeric_cast<int>(NTRACKSMAX);
-         trit++)
+    for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX);
+         it++)
     {
-        generalTracksPt[numGeneralTracks] = trit->pt();
-        generalTracksPx[numGeneralTracks] = trit->px();
-        generalTracksPy[numGeneralTracks] = trit->py();
-        generalTracksPz[numGeneralTracks] = trit->pz();
-        generalTracksE[numGeneralTracks] = trit->energy(); // lost track
-        generalTracksEta[numGeneralTracks] = trit->eta();
-        generalTracksTheta[numGeneralTracks] = trit->theta();
-        generalTracksPhi[numGeneralTracks] = trit->phi();
-        generalTracksCharge[numGeneralTracks] = trit->charge();
-        generalTracksPdgId[numGeneralTracks] = trit->pdgId(); // lost track
-        generalTracksTime[numGeneralTracks] = trit->time(); // lost track
-        generalTracksBeamSpotCorrectedD0[numGeneralTracks] = -1. * (trit->dxy(beamSpotPoint_));
-        generalTracksDz[numGeneralTracks] = trit->dz();
-        generalTracksDxy[numGeneralTracks] = trit->dxy();
-        if (trit->hasTrackDetails()) {  // lost track
-            generalTracksDzError[numGeneralTracks] = trit->dzError();  // lost track
-            generalTracksDxyError[numGeneralTracks] = trit->dxyError();  // lost track
-            generalTracksDtime[numGeneralTracks] = trit->dtime();  // lost track
-            generalTracksTimeError[numGeneralTracks] = trit->timeError();  // lost track
+        packedCandsPt[numPackedCands] = it->pt();
+        packedCandsPx[numPackedCands] = it->px();
+        packedCandsPy[numPackedCands] = it->py();
+        packedCandsPz[numPackedCands] = it->pz();
+        packedCandsE[numPackedCands] = it->energy();
+        packedCandsEta[numPackedCands] = it->eta();
+        packedCandsTheta[numPackedCands] = it->theta();
+        packedCandsPhi[numPackedCands] = it->phi();
+        packedCandsCharge[numPackedCands] = it->charge();
+        packedCandsPdgId[numPackedCands] = it->pdgId();
+        packedCandsTime[numPackedCands] = it->time();
+        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (it->dxy(beamSpotPoint_));
+        packedCandsDz[numPackedCands] = it->dz();
+        packedCandsDxy[numPackedCands] = it->dxy();
+        packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
+        if (it->hasTrackDetails()) {
+            packedCandsDzError[numPackedCands] = it->dzError();
+            packedCandsDxyError[numPackedCands] = it->dxyError();
+            packedCandsDtime[numPackedCands] = it->dtime();
+            packedCandsTimeError[numPackedCands] = it->timeError();
+            packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
         }
-        generalTracksVx[numGeneralTracks] = trit->vx();
-        generalTracksVy[numGeneralTracks] = trit->vy();
-        generalTracksVz[numGeneralTracks] = trit->vz();
-        generalTracksHasTrackDetails[numGeneralTracks] = trit->hasTrackDetails();
-        generalTracksIsElectron[numGeneralTracks] = trit->isElectron();  // lost track
-        generalTracksIsJet[numGeneralTracks] = trit->isJet();  // lost track
-        generalTracksIsMuon[numGeneralTracks] = trit->isMuon(); // lost track
-        generalTracksIsPhoton[numGeneralTracks] = trit->isPhoton(); // lost track
+        packedCandsVx[numPackedCands] = it->vx();
+        packedCandsVy[numPackedCands] = it->vy();
+        packedCandsVz[numPackedCands] = it->vz();
+        packedCandsIsElectron[numPackedCands] = it->isElectron();
+        packedCandsIsJet[numPackedCands] = it->isJet();
+        packedCandsIsMuon[numPackedCands] = it->isMuon();
+        packedCandsIsPhoton[numPackedCands] = it->isPhoton();
 
-        numGeneralTracks++;
+        numPackedCands++;
     }
 }
 
@@ -2894,39 +2894,40 @@ void MakeTopologyNtupleMiniAOD::clearSVarrays() {
 
 /////////////////////////////////////
 
-void MakeTopologyNtupleMiniAOD::clearGeneralTracksarrays()
+void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays()
 {
-    // std::cout << "clearGeneralTracksarrays CHECK" << std::endl;
-    numGeneralTracks = 0;
+    // std::cout << "clearPackedCandsArrays CHECK" << std::endl;
+    numPackedCands = 0;
 
-    for (size_t i{0}; i < NTRACKSMAX; i++)
+    for (size_t i{0}; i < NISOTRACKSMAX; i++)
     {
-        generalTracksPt[i] = -1.;
-        generalTracksPx[i] = -1.;
-        generalTracksPy[i] = -1.;
-        generalTracksPz[i] = -1.;
-        generalTracksE[i] = -1.;
-        generalTracksEta[i] = 9999;
-        generalTracksTheta[i] = 9999;
-        generalTracksPhi[i] = 9999;
-        generalTracksCharge[i] = 0;
-        generalTracksPdgId[i] = 0;
-        generalTracksDtime[i] = 0.;
-        generalTracksTime[i] = 0.;
-        generalTracksTimeError[i] = 0.;
-        generalTracksVx[i] = 0.;
-        generalTracksVy[i] = 0.;
-        generalTracksVz[i] = 0.;
-        generalTracksBeamSpotCorrectedD0[i] = -9999;
-        generalTracksDz[i] = 0.;
-        generalTracksDxy[i] = 0.;
-        generalTracksDzError[i] = 0.;
-        generalTracksDxyError[i] = 0.;
-        generalTracksHasTrackDetails[i] = -1;
-        generalTracksIsElectron[i] = -1;
-        generalTracksIsJet[i] = -1;
-        generalTracksIsMuon[i] =	-1;
-        generalTracksIsPhoton[i] = -1;
+        packedCandsPt[i] = -1.;
+        packedCandsPx[i] = -1.;
+        packedCandsPy[i] = -1.;
+        packedCandsPz[i] = -1.;
+        packedCandsE[i] = -1.;
+        packedCandsEta[i] = 9999;
+        packedCandsTheta[i] = 9999;
+        packedCandsPhi[i] = 9999;
+        packedCandsCharge[i] = 0;
+        packedCandsPdgId[i] = 0;
+        packedCandsDtime[i] = 0.;
+        packedCandsTime[i] = 0.;
+        packedCandsTimeError[i] = 0.;
+        packedCandsVx[i] = 0.;
+        packedCandsVy[i] = 0.;
+        packedCandsVz[i] = 0.;
+        packedCandsBeamSpotCorrectedD0[i] = -9999;
+        packedCandsDz[i] = 0.;
+        packedCandsDxy[i] = 0.;
+        packedCandsDzError[i] = 0.;
+        packedCandsDxyError[i] = 0.;
+        packedCandsHasTrackDetails[i] = -1;
+        packedCandsHighPurityTrack[i] = -1;
+        packedCandsIsElectron[i] = -1;
+        packedCandsIsJet[i] = -1;
+        packedCandsIsMuon[i] =	-1;
+        packedCandsIsPhoton[i] = -1;
     }
 }
 
@@ -2936,7 +2937,7 @@ void MakeTopologyNtupleMiniAOD::clearIsolatedTracksarrays()
     // std::cout << "clearIsolatedTracksarrays CHECK" << std::endl;
     numIsolatedTracks = 0;
 
-    for (size_t i{0}; i < NTRACKSMAX; i++)
+    for (size_t i{0}; i < NISOTRACKSMAX; i++)
     {
         isoTracksPt[i] = -1.;
         isoTracksPx[i] = -1.;
@@ -3017,7 +3018,7 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
     clearMetArrays("JPT");
 
     clearMCarrays();
-    clearGeneralTracksarrays();
+    clearPackedCandsArrays();
     clearIsolatedTracksarrays();
 
     mhtSignif = -1;
@@ -3106,7 +3107,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     fillTriggerData(iEvent);
     fillBeamSpot(iEvent, iSetup);
 
-    fillGeneralTracks(iEvent, iSetup);
+    fillPackedCands(iEvent, iSetup);
     fillIsolatedTracks(iEvent, iSetup);
 
     // std::cout << "done with trigger and beam spot" << std::endl;
@@ -3137,7 +3138,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     // fillMissingET(iEvent, iSetup, metLabel_, "Calo");
     //
     // fillMissingET(iEvent, iSetup, metJPTTag_, "JPT");
-    // fillGeneralTracks(iEvent, iSetup);
+    // fillPackedCands(iEvent, iSetup);
 
     fillSummaryVariables();
 
@@ -3232,7 +3233,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     // bookJetBranches("JPT", "JPT");
     // bookMETBranches("JPT", "TC");
 
-    bookGeneralTracksBranches();
+    bookPackedCandsBranches();
     bookIsolatedTracksBranches();
     if (runMCInfo_)
     {
@@ -4999,36 +5000,37 @@ void MakeTopologyNtupleMiniAOD::bookBIDInfoBranches(const std::string& /*ID*/,
     btaggingparamtype_["MUEFAKE"] = PerformanceResult::MUEFAKE;
 }
 
-void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches()
+void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
 {
-    // std::cout << "bookGeneralTrackBranches CHECK" << std::endl;
-    mytree_->Branch("numGeneralTracks", &numGeneralTracks, "numGeneralTracks/I");
-    mytree_->Branch("generalTracksPt", &generalTracksPt, "generalTracksPt[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksPx", &generalTracksPx, "generalTracksPx[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksPy", &generalTracksPy, "generalTracksPy[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksPz", &generalTracksPz, "generalTracksPz[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksE", &generalTracksE, "generalTracksE[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksEta", &generalTracksEta, "generalTracksEta[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksTheta", &generalTracksTheta, "generalTracksTheta[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksPhi", &generalTracksPhi, "generalTracksPhi[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksCharge", &generalTracksCharge, "generalTracksCharge[numGeneralTracks]/I");
-    mytree_->Branch("generalTracksPdgId", &generalTracksPdgId, "generalTracksPdgId[numGeneralTracks]/I");
-    mytree_->Branch("generalTracksDtime", &generalTracksDtime, "generalTracksDtime[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksTime", &generalTracksTime, "generalTracksTime[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksTimeError", &generalTracksTimeError, "generalTracksTimeError[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksVx", &generalTracksVx, "generalTracksVx[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksVy", &generalTracksVy, "generalTracksVy[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksVz", &generalTracksVz, "generalTracksVz[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksBeamSpotCorrectedD0", &generalTracksBeamSpotCorrectedD0, "generalTracksBeamSpotCorrectedD0[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksDz", &generalTracksDz, "generalTracksDz[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksDxy", &generalTracksDxy, "generalTracksDxy[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksDzError", &generalTracksDzError, "generalTracksDzError[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksDxyError", &generalTracksDxyError, "generalTracksDxyError[numGeneralTracks]/F");
-    mytree_->Branch("generalTracksHasTrackDetails", &generalTracksHasTrackDetails, "generalTracksHasTrackDetails[numGeneralTracks]/I");
-    mytree_->Branch("generalTracksIsElectron", &generalTracksIsElectron, "generalTracksIsElectron[numGeneralTracks]/I");
-    mytree_->Branch("generalTracksIsJet", &generalTracksIsJet, "generalTracksIsJet[numGeneralTracks]/I");
-    mytree_->Branch("generalTracksIsMuon", &generalTracksIsMuon, "generalTracksIsMuon[numGeneralTracks]/I");
-    mytree_->Branch("generalTracksIsPhoton", &generalTracksIsPhoton, "generalTracksIsPhoton[numGeneralTracks]/I");
+    // std::cout << "bookPackedCandsBranches CHECK" << std::endl;
+    mytree_->Branch("numPackedCands", &numPackedCands, "numPackedCands/I");
+    mytree_->Branch("packedCandsPt", &packedCandsPt, "packedCandsPt[numPackedCands]/F");
+    mytree_->Branch("packedCandsPx", &packedCandsPx, "packedCandsPx[numPackedCands]/F");
+    mytree_->Branch("packedCandsPy", &packedCandsPy, "packedCandsPy[numPackedCands]/F");
+    mytree_->Branch("packedCandsPz", &packedCandsPz, "packedCandsPz[numPackedCands]/F");
+    mytree_->Branch("packedCandsE", &packedCandsE, "packedCandsE[numPackedCands]/F");
+    mytree_->Branch("packedCandsEta", &packedCandsEta, "packedCandsEta[numPackedCands]/F");
+    mytree_->Branch("packedCandsTheta", &packedCandsTheta, "packedCandsTheta[numPackedCands]/F");
+    mytree_->Branch("packedCandsPhi", &packedCandsPhi, "packedCandsPhi[numPackedCands]/F");
+    mytree_->Branch("packedCandsCharge", &packedCandsCharge, "packedCandsCharge[numPackedCands]/I");
+    mytree_->Branch("packedCandsPdgId", &packedCandsPdgId, "packedCandsPdgId[numPackedCands]/I");
+    mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
+    mytree_->Branch("packedCandsHighPurityTrack", &packedCandsHighPurityTrack, "packedCandsHighPurityTrack[numPackedCands]/I");
+    mytree_->Branch("packedCandsDtime", &packedCandsDtime, "packedCandsDtime[numPackedCands]/F");
+    mytree_->Branch("packedCandsTime", &packedCandsTime, "packedCandsTime[numPackedCands]/F");
+    mytree_->Branch("packedCandsTimeError", &packedCandsTimeError, "packedCandsTimeError[numPackedCands]/F");
+    mytree_->Branch("packedCandsVx", &packedCandsVx, "packedCandsVx[numPackedCands]/F");
+    mytree_->Branch("packedCandsVy", &packedCandsVy, "packedCandsVy[numPackedCands]/F");
+    mytree_->Branch("packedCandsVz", &packedCandsVz, "packedCandsVz[numPackedCands]/F");
+    mytree_->Branch("packedCandsBeamSpotCorrectedD0", &packedCandsBeamSpotCorrectedD0, "packedCandsBeamSpotCorrectedD0[numPackedCands]/F");
+    mytree_->Branch("packedCandsDz", &packedCandsDz, "packedCandsDz[numPackedCands]/F");
+    mytree_->Branch("packedCandsDxy", &packedCandsDxy, "packedCandsDxy[numPackedCands]/F");
+    mytree_->Branch("packedCandsDzError", &packedCandsDzError, "packedCandsDzError[numPackedCands]/F");
+    mytree_->Branch("packedCandsDxyError", &packedCandsDxyError, "packedCandsDxyError[numPackedCands]/F");
+    mytree_->Branch("packedCandsIsElectron", &packedCandsIsElectron, "packedCandsIsElectron[numPackedCands]/I");
+    mytree_->Branch("packedCandsIsJet", &packedCandsIsJet, "packedCandsIsJet[numPackedCands]/I");
+    mytree_->Branch("packedCandsIsMuon", &packedCandsIsMuon, "packedCandsIsMuon[numPackedCands]/I");
+    mytree_->Branch("packedCandsIsPhoton", &packedCandsIsPhoton, "packedCandsIsPhoton[numPackedCands]/I");
 
 }
 
@@ -5302,13 +5304,13 @@ bool MakeTopologyNtupleMiniAOD::photonConversionVeto(const pat::Electron& electr
     // deltaR<0.3, this track is close to the electron, this track is saved as
     // the candidate to calculate the photon conversion,
 
-    // loop over all the generalTrack collections
-    for (int nGeneral{0}; nGeneral < numGeneralTracks; nGeneral++)
+    // loop over all the packedCands collections
+    for (int nPackedCands{0}; nPackedCands < numPackedCands; nPackedCands++)
     {
-        // eta and phi of both generalTrack and electron are the angles measured
+        // eta and phi of both packedCand and electron are the angles measured
         // in vertex
-        float DR{reco::deltaR(generalTracksEta[nGeneral],
-                              generalTracksPhi[nGeneral],
+        float DR{reco::deltaR(packedCandsEta[nPackedCands],
+                              packedCandsPhi[nPackedCands],
                               electron.eta(),
                               electron.phi())};
 
@@ -5332,48 +5334,48 @@ bool MakeTopologyNtupleMiniAOD::photonConversionVeto(const pat::Electron& electr
         */
 
         TrackWithinConeRho[numTrackWithinCone - 1] =
-            correctFactor_ * magneticField_ * generalTracksCharge[nGeneral]
-            / generalTracksPt[nGeneral];
+            correctFactor_ * magneticField_ * packedCandsCharge[nPackedCands]
+            / packedCandsPt[nPackedCands];
         /* rx=(1/rho-d0)sin(phi), ry=-(1/rho-d0)cos(phi)*/
         TrackWithinConeRx[numTrackWithinCone - 1] =
             (1 / TrackWithinConeRho[numTrackWithinCone - 1]
-             - generalTracksBeamSpotCorrectedD0[nGeneral])
-            * sin(generalTracksPhi[nGeneral]);
+             - packedCandsBeamSpotCorrectedD0[nPackedCands])
+            * sin(packedCandsPhi[nPackedCands]);
         TrackWithinConeRy[numTrackWithinCone - 1] =
             -1.
             * (1 / TrackWithinConeRho[numTrackWithinCone - 1]
-               - generalTracksBeamSpotCorrectedD0[nGeneral])
-            * cos(generalTracksPhi[nGeneral]);
+               - packedCandsBeamSpotCorrectedD0[nPackedCands])
+            * cos(packedCandsPhi[nPackedCands]);
         TrackWithinConeTheta[numTrackWithinCone - 1] =
-            generalTracksTheta[nGeneral];
+            packedCandsTheta[nPackedCands];
         TrackWithinConeCharge[numTrackWithinCone - 1] =
-            generalTracksCharge[nGeneral];
+            packedCandsCharge[nPackedCands];
     }
 
     if (numTrackWithinCone > 0)
     {
         for (int nTrack{0}; nTrack < numTrackWithinCone; nTrack++)
         {
-            // loop over generalTracks collection again
-            for (int i{0}; i < numGeneralTracks; i++)
+            // loop over packedCands collection again
+            for (int i{0}; i < numPackedCands; i++)
             {
                 // try to find the second track with opposite charege, do not
                 // need to match this track with the electron
-                if (TrackWithinConeCharge[nTrack] == generalTracksCharge[i])
+                if (TrackWithinConeCharge[nTrack] == packedCandsCharge[i])
                 {
                     continue;
                 }
                 double SecondTrackRho{correctFactor_ * magneticField_
-                                      * generalTracksCharge[i]
-                                      / generalTracksPt[i]};
+                                      * packedCandsCharge[i]
+                                      / packedCandsPt[i]};
                 double SecondTrackRx{
-                    (1. / SecondTrackRho - generalTracksBeamSpotCorrectedD0[i])
-                    * sin(generalTracksPhi[i])};
+                    (1. / SecondTrackRho - packedCandsBeamSpotCorrectedD0[i])
+                    * sin(packedCandsPhi[i])};
                 double SecondTrackRy{-1.
                                      * (1. / SecondTrackRho
-                                        - generalTracksBeamSpotCorrectedD0[i])
-                                     * cos(generalTracksPhi[i])};
-                float SecondTrackTheta{generalTracksTheta[i]};
+                                        - packedCandsBeamSpotCorrectedD0[i])
+                                     * cos(packedCandsPhi[i])};
+                float SecondTrackTheta{packedCandsTheta[i]};
 
                 /*  dist=|vector(r1)-vector(r2)|-|1/rho1|-|1/rho2|         */
 

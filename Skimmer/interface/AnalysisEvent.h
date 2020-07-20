@@ -420,34 +420,35 @@ class AnalysisEvent
     Int_t genPhoOOT_PF2PATIsJet[NOOTPHOTONSMAX];
 */
 
-    static constexpr size_t NTRACKSMAX{40};
-    Int_t numGeneralTracks;
-    Float_t generalTracksPt[NTRACKSMAX];
-    Float_t generalTracksPx[NTRACKSMAX];
-    Float_t generalTracksPy[NTRACKSMAX];
-    Float_t generalTracksPz[NTRACKSMAX];
-    Float_t generalTracksE[NTRACKSMAX];
-    Float_t generalTracksEta[NTRACKSMAX];
-    Float_t generalTracksTheta[NTRACKSMAX];
-    Float_t generalTracksPhi[NTRACKSMAX];
-    Int_t generalTracksCharge[NTRACKSMAX];
-    Int_t generalTracksPdgId[NTRACKSMAX];
-    Float_t generalTracksDtime[NTRACKSMAX];
-    Float_t generalTracksTime[NTRACKSMAX];
-    Float_t generalTracksTimeError[NTRACKSMAX];
-    Float_t generalTracksVx[NTRACKSMAX];
-    Float_t generalTracksVy[NTRACKSMAX];
-    Float_t generalTracksVz[NTRACKSMAX];
-    Float_t generalTracksBeamSpotCorrectedD0[NTRACKSMAX];
-    Float_t generalTracksDz[NTRACKSMAX];
-    Float_t generalTracksDxy[NTRACKSMAX];
-    Float_t generalTracksDzError[NTRACKSMAX];
-    Float_t generalTracksDxyError[NTRACKSMAX];
-    Int_t generalTracksHasTrackDetails[NTRACKSMAX];
-    Int_t generalTracksIsElectron[NTRACKSMAX];
-    Int_t generalTracksIsJet[NTRACKSMAX];
-    Int_t generalTracksIsMuon[NTRACKSMAX];
-    Int_t generalTracksIsPhoton[NTRACKSMAX];
+    static constexpr size_t NPACKEDCANDSMAX{40};
+    Int_t numPackedCands;
+    Float_t packedCandsPt[NPACKEDCANDSMAX];
+    Float_t packedCandsPx[NPACKEDCANDSMAX];
+    Float_t packedCandsPy[NPACKEDCANDSMAX];
+    Float_t packedCandsPz[NPACKEDCANDSMAX];
+    Float_t packedCandsE[NPACKEDCANDSMAX];
+    Float_t packedCandsEta[NPACKEDCANDSMAX];
+    Float_t packedCandsTheta[NPACKEDCANDSMAX];
+    Float_t packedCandsPhi[NPACKEDCANDSMAX];
+    Int_t packedCandsCharge[NPACKEDCANDSMAX];
+    Int_t packedCandsPdgId[NPACKEDCANDSMAX];
+    Float_t packedCandsDtime[NPACKEDCANDSMAX];
+    Float_t packedCandsTime[NPACKEDCANDSMAX];
+    Float_t packedCandsTimeError[NPACKEDCANDSMAX];
+    Float_t packedCandsVx[NPACKEDCANDSMAX];
+    Float_t packedCandsVy[NPACKEDCANDSMAX];
+    Float_t packedCandsVz[NPACKEDCANDSMAX];
+    Float_t packedCandsBeamSpotCorrectedD0[NPACKEDCANDSMAX];
+    Float_t packedCandsDz[NPACKEDCANDSMAX];
+    Float_t packedCandsDxy[NPACKEDCANDSMAX];
+    Float_t packedCandsDzError[NPACKEDCANDSMAX];
+    Float_t packedCandsDxyError[NPACKEDCANDSMAX];
+    Int_t packedCandsHasTrackDetails[NPACKEDCANDSMAX];
+    Int_t packedCandsHighPurityTrack[NPACKEDCANDSMAX];
+    Int_t packedCandsIsElectron[NPACKEDCANDSMAX];
+    Int_t packedCandsIsJet[NPACKEDCANDSMAX];
+    Int_t packedCandsIsMuon[NPACKEDCANDSMAX];
+    Int_t packedCandsIsPhoton[NPACKEDCANDSMAX];
 
     static constexpr size_t NISOTRACKSMAX{40};
     Int_t numIsolatedTracks;
@@ -1434,33 +1435,34 @@ class AnalysisEvent
     TBranch* b_genPhoOOT_PF2PATIsConvertedPhoton; //!
     TBranch* b_genPhoOOT_PF2PATIsJet; //!
 */
-    TBranch* b_numGeneralTracks; //!
-    TBranch* b_generalTracksPt; //!
-    TBranch* b_generalTracksPx; //!
-    TBranch* b_generalTracksPy; //!
-    TBranch* b_generalTracksPz; //!
-    TBranch* b_generalTracksE; //!
-    TBranch* b_generalTracksEta; //!
-    TBranch* b_generalTracksTheta; //!
-    TBranch* b_generalTracksPhi; //!
-    TBranch* b_generalTracksCharge; //!
-    TBranch* b_generalTracksPdgId; //!
-    TBranch* b_generalTracksDtime; //!
-    TBranch* b_generalTracksTime; //!
-    TBranch* b_generalTracksTimeError; //!
-    TBranch* b_generalTracksVx; //!
-    TBranch* b_generalTracksVy; //!
-    TBranch* b_generalTracksVz; //!
-    TBranch* b_generalTracksBeamSpotCorrectedD0; //!
-    TBranch* b_generalTracksDz; //!
-    TBranch* b_generalTracksDxy; //!
-    TBranch* b_generalTracksDzError; //!
-    TBranch* b_generalTracksDxyError; //!
-    TBranch* b_generalTracksHasTrackDetails; //!
-    TBranch* b_generalTracksIsElectron; //!
-    TBranch* b_generalTracksIsJet; //!
-    TBranch* b_generalTracksIsMuon; //!
-    TBranch* b_generalTracksIsPhoton; //!
+    TBranch* b_numPackedCands; //!
+    TBranch* b_packedCandsPt; //!
+    TBranch* b_packedCandsPx; //!
+    TBranch* b_packedCandsPy; //!
+    TBranch* b_packedCandsPz; //!
+    TBranch* b_packedCandsE; //!
+    TBranch* b_packedCandsEta; //!
+    TBranch* b_packedCandsTheta; //!
+    TBranch* b_packedCandsPhi; //!
+    TBranch* b_packedCandsCharge; //!
+    TBranch* b_packedCandsPdgId; //!
+    TBranch* b_packedCandsDtime; //!
+    TBranch* b_packedCandsTime; //!
+    TBranch* b_packedCandsTimeError; //!
+    TBranch* b_packedCandsVx; //!
+    TBranch* b_packedCandsVy; //!
+    TBranch* b_packedCandsVz; //!
+    TBranch* b_packedCandsBeamSpotCorrectedD0; //!
+    TBranch* b_packedCandsDz; //!
+    TBranch* b_packedCandsDxy; //!
+    TBranch* b_packedCandsDzError; //!
+    TBranch* b_packedCandsDxyError; //!
+    TBranch* b_packedCandsHasTrackDetails; //!
+    TBranch* b_packedCandsHighPurityTrack; //!
+    TBranch* b_packedCandsIsElectron; //!
+    TBranch* b_packedCandsIsJet; //!
+    TBranch* b_packedCandsIsMuon; //!
+    TBranch* b_packedCandsIsPhoton; //!
 
     TBranch* b_numIsolatedTracks; //!
     TBranch* b_isoTracksPt; //!
@@ -2514,33 +2516,34 @@ AnalysisEvent::AnalysisEvent(bool isMC,
       fChain->SetBranchAddress("genPhoOOT_PF2PATIsJet", &genPhoOOT_PF2PATIsJet, &b_genPhoOOT_PF2PATIsJet);
    }
 */
-   fChain->SetBranchAddress("numGeneralTracks", &numGeneralTracks, &b_numGeneralTracks);
-   fChain->SetBranchAddress("generalTracksPt", generalTracksPt, &b_generalTracksPt);
-   fChain->SetBranchAddress("generalTracksPx", generalTracksPx, &b_generalTracksPx);
-   fChain->SetBranchAddress("generalTracksPy", generalTracksPy, &b_generalTracksPy);
-   fChain->SetBranchAddress("generalTracksPz", generalTracksPz, &b_generalTracksPz);
-   fChain->SetBranchAddress("generalTracksE", generalTracksE, &b_generalTracksE);
-   fChain->SetBranchAddress("generalTracksEta", generalTracksEta, &b_generalTracksEta);
-   fChain->SetBranchAddress("generalTracksTheta", generalTracksTheta, &b_generalTracksTheta);
-   fChain->SetBranchAddress("generalTracksPhi", generalTracksPhi, &b_generalTracksPhi);
-   fChain->SetBranchAddress("generalTracksCharge", generalTracksCharge, &b_generalTracksCharge);
-   fChain->SetBranchAddress("generalTracksPdgId", generalTracksPdgId, &b_generalTracksPdgId);
-   fChain->SetBranchAddress("generalTracksDtime", generalTracksDtime, &b_generalTracksDtime);
-   fChain->SetBranchAddress("generalTracksTime", generalTracksTime, &b_generalTracksTime);
-   fChain->SetBranchAddress("generalTracksTimeError", generalTracksTimeError, &b_generalTracksTimeError);
-   fChain->SetBranchAddress("generalTracksVx", generalTracksVx, &b_generalTracksVx);
-   fChain->SetBranchAddress("generalTracksVy", generalTracksVy, &b_generalTracksVy);
-   fChain->SetBranchAddress("generalTracksVz", generalTracksVz, &b_generalTracksVz);
-   fChain->SetBranchAddress("generalTracksBeamSpotCorrectedD0", generalTracksBeamSpotCorrectedD0, &b_generalTracksBeamSpotCorrectedD0);
-   fChain->SetBranchAddress("generalTracksDz", generalTracksDz, &b_generalTracksDz);
-   fChain->SetBranchAddress("generalTracksDxy", generalTracksDxy, &b_generalTracksDxy);
-   fChain->SetBranchAddress("generalTracksDzError", generalTracksDzError, &b_generalTracksDzError);
-   fChain->SetBranchAddress("generalTracksDxyError", generalTracksDxyError, &b_generalTracksDxyError);
-   fChain->SetBranchAddress("generalTracksHasTrackDetails", generalTracksHasTrackDetails, &b_generalTracksHasTrackDetails);
-   fChain->SetBranchAddress("generalTracksIsElectron", generalTracksIsElectron, &b_generalTracksIsElectron);
-   fChain->SetBranchAddress("generalTracksIsJet", generalTracksIsJet, &b_generalTracksIsJet);
-   fChain->SetBranchAddress("generalTracksIsMuon", generalTracksIsMuon, &b_generalTracksIsMuon);
-   fChain->SetBranchAddress("generalTracksIsPhoton", generalTracksIsPhoton, &b_generalTracksIsPhoton);
+   fChain->SetBranchAddress("numPackedCands", &numPackedCands, &b_numPackedCands);
+   fChain->SetBranchAddress("packedCandsPt", packedCandsPt, &b_packedCandsPt);
+   fChain->SetBranchAddress("packedCandsPx", packedCandsPx, &b_packedCandsPx);
+   fChain->SetBranchAddress("packedCandsPy", packedCandsPy, &b_packedCandsPy);
+   fChain->SetBranchAddress("packedCandsPz", packedCandsPz, &b_packedCandsPz);
+   fChain->SetBranchAddress("packedCandsE", packedCandsE, &b_packedCandsE);
+   fChain->SetBranchAddress("packedCandsEta", packedCandsEta, &b_packedCandsEta);
+   fChain->SetBranchAddress("packedCandsTheta", packedCandsTheta, &b_packedCandsTheta);
+   fChain->SetBranchAddress("packedCandsPhi", packedCandsPhi, &b_packedCandsPhi);
+   fChain->SetBranchAddress("packedCandsCharge", packedCandsCharge, &b_packedCandsCharge);
+   fChain->SetBranchAddress("packedCandsPdgId", packedCandsPdgId, &b_packedCandsPdgId);
+   fChain->SetBranchAddress("packedCandsDtime", packedCandsDtime, &b_packedCandsDtime);
+   fChain->SetBranchAddress("packedCandsTime", packedCandsTime, &b_packedCandsTime);
+   fChain->SetBranchAddress("packedCandsTimeError", packedCandsTimeError, &b_packedCandsTimeError);
+   fChain->SetBranchAddress("packedCandsVx", packedCandsVx, &b_packedCandsVx);
+   fChain->SetBranchAddress("packedCandsVy", packedCandsVy, &b_packedCandsVy);
+   fChain->SetBranchAddress("packedCandsVz", packedCandsVz, &b_packedCandsVz);
+   fChain->SetBranchAddress("packedCandsBeamSpotCorrectedD0", packedCandsBeamSpotCorrectedD0, &b_packedCandsBeamSpotCorrectedD0);
+   fChain->SetBranchAddress("packedCandsDz", packedCandsDz, &b_packedCandsDz);
+   fChain->SetBranchAddress("packedCandsDxy", packedCandsDxy, &b_packedCandsDxy);
+   fChain->SetBranchAddress("packedCandsDzError", packedCandsDzError, &b_packedCandsDzError);
+   fChain->SetBranchAddress("packedCandsDxyError", packedCandsDxyError, &b_packedCandsDxyError);
+   fChain->SetBranchAddress("packedCandsHasTrackDetails", packedCandsHasTrackDetails, &b_packedCandsHasTrackDetails);
+   fChain->SetBranchAddress("packedCandsHighPurityTrack", packedCandsHighPurityTrack, &b_packedCandsHighPurityTrack);
+   fChain->SetBranchAddress("packedCandsIsElectron", packedCandsIsElectron, &b_packedCandsIsElectron);
+   fChain->SetBranchAddress("packedCandsIsJet", packedCandsIsJet, &b_packedCandsIsJet);
+   fChain->SetBranchAddress("packedCandsIsMuon", packedCandsIsMuon, &b_packedCandsIsMuon);
+   fChain->SetBranchAddress("packedCandsIsPhoton", packedCandsIsPhoton, &b_packedCandsIsPhoton);
 
    fChain->SetBranchAddress("numIsolatedTracks", &numIsolatedTracks, &b_numIsolatedTracks);
    fChain->SetBranchAddress("isoTracksPt", &isoTracksPt, &b_isoTracksPt);
