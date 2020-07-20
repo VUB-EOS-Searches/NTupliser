@@ -150,6 +150,11 @@ int main(int argc, char* argv[])
                 }
                 // clang-format on
 
+                // valid packedPFCands tracks cuts
+                bool hasTrackDetails {false};
+                for (int j{0}; j < event.numPackedCands; j++) if (event.packedCandsHasTrackDetails[j] && event.packedCandsPdgId[j] == 211) hasTrackDetails = true;
+/*
+
                 // Lepton cuts
                 int numLeps{0};
 
@@ -181,10 +186,9 @@ int main(int argc, char* argv[])
                     }
                     numLeps++;
                 }
-                if (numLeps >= MIN_LEPTONS)
-                {
-                    outTree->Fill();
-                }
+*/
+//                if (numLeps >= MIN_LEPTONS)  outTree->Fill();
+                  if (hasTrackDetails) outTree->Fill();	
             }
 
             if (isMC)

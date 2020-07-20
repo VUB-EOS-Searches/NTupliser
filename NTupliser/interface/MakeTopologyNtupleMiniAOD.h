@@ -861,7 +861,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, float> fixedGridRhoFastjetAll;
 
     // packedCands are used to subtract photon conversion background
-    static constexpr size_t NPACKEDCANDSMAX{1000};
+    static constexpr size_t NPACKEDCANDSMAX{700};
     float packedCandsPt[NPACKEDCANDSMAX]{};
     float packedCandsPx[NPACKEDCANDSMAX]{};
     float packedCandsPy[NPACKEDCANDSMAX]{};
@@ -890,7 +890,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float packedCandsPtTrk[NPACKEDCANDSMAX]{};
     float packedCandsDzError[NPACKEDCANDSMAX]{};
     float packedCandsDxyError[NPACKEDCANDSMAX]{};
-    float packedCandsDtime[NPACKEDCANDSMAX]{};
     float packedCandsTimeError[NPACKEDCANDSMAX]{};
     int packedCandsNumberOfHits[NPACKEDCANDSMAX]{};
     int packedCandsNumberOfPixelHits[NPACKEDCANDSMAX]{};
@@ -914,12 +913,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int packedCandsPseudoTrkStripLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsPseudoTrkTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsHighPurityTrack[NPACKEDCANDSMAX]{};
-    int packedCandsIsElectron[NPACKEDCANDSMAX]{};
-    int packedCandsIsJet[NPACKEDCANDSMAX]{};
-    int packedCandsIsMuon[NPACKEDCANDSMAX]{};
-    int packedCandsIsPhoton[NPACKEDCANDSMAX]{};
-    int packedCandsIsConvertedPhoton[NPACKEDCANDSMAX]{};
-    int packedCandsIsLongLived[NPACKEDCANDSMAX]{};
 
     // isoTracks that are drawn from packedPFCands, lostTracks and packedCands
     static constexpr size_t NISOTRACKSMAX{40};
