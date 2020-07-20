@@ -420,7 +420,7 @@ class AnalysisEvent
     Int_t genPhoOOT_PF2PATIsJet[NOOTPHOTONSMAX];
 */
 
-    static constexpr size_t NPACKEDCANDSMAX{40};
+    static constexpr size_t NPACKEDCANDSMAX{700};
     Int_t numPackedCands;
 //    Float_t packedCandsPt[NPACKEDCANDSMAX];
     Float_t packedCandsPx[NPACKEDCANDSMAX];
