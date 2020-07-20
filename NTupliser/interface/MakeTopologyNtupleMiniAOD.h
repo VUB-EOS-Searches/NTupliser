@@ -871,33 +871,69 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     // packedCands are used to subtract photon conversion background
     static constexpr size_t NPACKEDCANDSMAX{40};
+
     float packedCandsPt[NPACKEDCANDSMAX]{};
     float packedCandsPx[NPACKEDCANDSMAX]{};
     float packedCandsPy[NPACKEDCANDSMAX]{};
     float packedCandsPz[NPACKEDCANDSMAX]{};
     float packedCandsE[NPACKEDCANDSMAX]{};
+    float packedCandsM[NPACKEDCANDSMAX]{};
     float packedCandsEta[NPACKEDCANDSMAX]{};
     float packedCandsTheta[NPACKEDCANDSMAX]{};
     float packedCandsPhi[NPACKEDCANDSMAX]{};
     int packedCandsCharge[NPACKEDCANDSMAX]{};
     int packedCandsPdgId[NPACKEDCANDSMAX]{};
-    float packedCandsDtime[NPACKEDCANDSMAX]{};
     float packedCandsTime[NPACKEDCANDSMAX]{};
-    float packedCandsTimeError[NPACKEDCANDSMAX]{};
+
+    int packedCandsFromPV[NPACKEDCANDSMAX]{};
+    int packedCandsPVquality[NPACKEDCANDSMAX]{};
     float packedCandsVx[NPACKEDCANDSMAX]{};
     float packedCandsVy[NPACKEDCANDSMAX]{};
     float packedCandsVz[NPACKEDCANDSMAX]{};
+    float packedCandsVEta[NPACKEDCANDSMAX]{};
+    float packedCandsVPhi[NPACKEDCANDSMAX]{};
     float packedCandsBeamSpotCorrectedD0[NPACKEDCANDSMAX]{};
-    int packedCandsHasTrackDetails[NPACKEDCANDSMAX]{};
-    int packedCandsHighPurityTrack[NPACKEDCANDSMAX]{};
     float packedCandsDz[NPACKEDCANDSMAX]{};
     float packedCandsDxy[NPACKEDCANDSMAX]{};
+    float packedCandsDzAssocPV[NPACKEDCANDSMAX]{};
+    float packedCandsVtxChi2Norm[NPACKEDCANDSMAX]{};
+
+    int packedCandsHasTrackDetails[NPACKEDCANDSMAX]{};
+    float packedCandsPtTrk[NPACKEDCANDSMAX]{};
     float packedCandsDzError[NPACKEDCANDSMAX]{};
     float packedCandsDxyError[NPACKEDCANDSMAX]{};
+    float packedCandsDtime[NPACKEDCANDSMAX]{};
+    float packedCandsTimeError[NPACKEDCANDSMAX]{};
+    int packedCandsNumberOfHits[NPACKEDCANDSMAX]{};
+    int packedCandsNumberOfPixelHits[NPACKEDCANDSMAX]{};
+    int packedCandsPixelLayersWithMeasurement[NPACKEDCANDSMAX]{};
+    int packedCandsStripLayersWithMeasurement[NPACKEDCANDSMAX]{};
+    int packedCandsTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
+
+    float packedCandsPseudoTrkPt[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkPx[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkPy[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkPz[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkEta[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkPhi[NPACKEDCANDSMAX]{};
+    int packedCandsPseudoTrkCharge[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkVx[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkVy[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkVz[NPACKEDCANDSMAX]{};
+    float packedCandsPseudoTrkChi2Norm[NPACKEDCANDSMAX]{};
+    int packedCandsPseudoTrkNumberOfHits[NPACKEDCANDSMAX]{};
+    int packedCandsPseudoTrkNumberOfPixelHits[NPACKEDCANDSMAX]{};
+    int packedCandsPseudoTrkPixelLayersWithMeasurement[NPACKEDCANDSMAX]{};
+    int packedCandsPseudoTrkStripLayersWithMeasurement[NPACKEDCANDSMAX]{};
+    int packedCandsPseudoTrkTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
+    int packedCandsHighPurityTrack[NPACKEDCANDSMAX]{};
+
     int packedCandsIsElectron[NPACKEDCANDSMAX]{};
     int packedCandsIsJet[NPACKEDCANDSMAX]{};
     int packedCandsIsMuon[NPACKEDCANDSMAX]{};
     int packedCandsIsPhoton[NPACKEDCANDSMAX]{};
+    int packedCandsIsConvertedPhoton[NPACKEDCANDSMAX]{};
+    int packedCandsIsLongLived[NPACKEDCANDSMAX]{};
 
     // isoTracks that are drawn from packedPFCands, lostTracks and packedCands
     static constexpr size_t NISOTRACKSMAX{40};

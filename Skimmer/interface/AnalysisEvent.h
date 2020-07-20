@@ -427,28 +427,60 @@ class AnalysisEvent
     Float_t packedCandsPy[NPACKEDCANDSMAX];
     Float_t packedCandsPz[NPACKEDCANDSMAX];
     Float_t packedCandsE[NPACKEDCANDSMAX];
+    Float_t packedCandsM[NPACKEDCANDSMAX];
     Float_t packedCandsEta[NPACKEDCANDSMAX];
     Float_t packedCandsTheta[NPACKEDCANDSMAX];
     Float_t packedCandsPhi[NPACKEDCANDSMAX];
     Int_t packedCandsCharge[NPACKEDCANDSMAX];
     Int_t packedCandsPdgId[NPACKEDCANDSMAX];
-    Float_t packedCandsDtime[NPACKEDCANDSMAX];
     Float_t packedCandsTime[NPACKEDCANDSMAX];
-    Float_t packedCandsTimeError[NPACKEDCANDSMAX];
+    Int_t packedCandsFromPV[NPACKEDCANDSMAX];
+    Int_t packedCandsPVquality[NPACKEDCANDSMAX];
     Float_t packedCandsVx[NPACKEDCANDSMAX];
     Float_t packedCandsVy[NPACKEDCANDSMAX];
     Float_t packedCandsVz[NPACKEDCANDSMAX];
+    Float_t packedCandsVEta[NPACKEDCANDSMAX];
+    Float_t packedCandsVPhi[NPACKEDCANDSMAX];
     Float_t packedCandsBeamSpotCorrectedD0[NPACKEDCANDSMAX];
     Float_t packedCandsDz[NPACKEDCANDSMAX];
     Float_t packedCandsDxy[NPACKEDCANDSMAX];
+    Float_t packedCandsDzAssocPV[NPACKEDCANDSMAX];
+    Float_t packedCandsVtxChi2Norm[NPACKEDCANDSMAX];
+    Int_t packedCandsHasTrackDetails[NPACKEDCANDSMAX];
+    Float_t packedCandsPtTrk[NPACKEDCANDSMAX];
     Float_t packedCandsDzError[NPACKEDCANDSMAX];
     Float_t packedCandsDxyError[NPACKEDCANDSMAX];
-    Int_t packedCandsHasTrackDetails[NPACKEDCANDSMAX];
+    Float_t packedCandsDtime[NPACKEDCANDSMAX];
+    Float_t packedCandsTimeError[NPACKEDCANDSMAX];
+    Int_t packedCandsNumberOfHits[NPACKEDCANDSMAX];
+    Int_t packedCandsNumberOfPixelHits[NPACKEDCANDSMAX];
+    Int_t packedCandsPixelLayersWithMeasurement[NPACKEDCANDSMAX];
+    Int_t packedCandsStripLayersWithMeasurement[NPACKEDCANDSMAX];
+    Int_t packedCandsTrackerLayersWithMeasurement[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkPt[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkPx[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkPy[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkPz[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkEta[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkPhi[NPACKEDCANDSMAX];
+    Int_t packedCandsPseudoTrkCharge[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkVx[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkVy[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkVz[NPACKEDCANDSMAX];
+    Float_t packedCandsPseudoTrkChi2Norm[NPACKEDCANDSMAX];
+    Int_t packedCandsPseudoTrkNumberOfHits[NPACKEDCANDSMAX];
+    Int_t packedCandsPseudoTrkNumberOfPixelHits[NPACKEDCANDSMAX];
+    Int_t packedCandsPseudoTrkPixelLayersWithMeasurement[NPACKEDCANDSMAX];
+    Int_t packedCandsPseudoTrkStripLayersWithMeasurement[NPACKEDCANDSMAX];
+    Int_t packedCandsPseudoTrkTrackerLayersWithMeasurement[NPACKEDCANDSMAX];
     Int_t packedCandsHighPurityTrack[NPACKEDCANDSMAX];
+
     Int_t packedCandsIsElectron[NPACKEDCANDSMAX];
     Int_t packedCandsIsJet[NPACKEDCANDSMAX];
     Int_t packedCandsIsMuon[NPACKEDCANDSMAX];
     Int_t packedCandsIsPhoton[NPACKEDCANDSMAX];
+    Int_t packedCandsIsConvertedPhoton[NPACKEDCANDSMAX];
+    Int_t packedCandsIsLongLived[NPACKEDCANDSMAX];
 
     static constexpr size_t NISOTRACKSMAX{40};
     Int_t numIsolatedTracks;
@@ -1441,28 +1473,59 @@ class AnalysisEvent
     TBranch* b_packedCandsPy; //!
     TBranch* b_packedCandsPz; //!
     TBranch* b_packedCandsE; //!
+    TBranch* b_packedCandsM; //!
     TBranch* b_packedCandsEta; //!
     TBranch* b_packedCandsTheta; //!
     TBranch* b_packedCandsPhi; //!
     TBranch* b_packedCandsCharge; //!
     TBranch* b_packedCandsPdgId; //!
-    TBranch* b_packedCandsDtime; //!
     TBranch* b_packedCandsTime; //!
-    TBranch* b_packedCandsTimeError; //!
+    TBranch* b_packedCandsFromPV; //!
+    TBranch* b_packedCandsPVquality; //!
     TBranch* b_packedCandsVx; //!
     TBranch* b_packedCandsVy; //!
     TBranch* b_packedCandsVz; //!
+    TBranch* b_packedCandsVEta; //!
+    TBranch* b_packedCandsVPhi; //!
     TBranch* b_packedCandsBeamSpotCorrectedD0; //!
     TBranch* b_packedCandsDz; //!
     TBranch* b_packedCandsDxy; //!
+    TBranch* b_packedCandsDzAssocPV; //!
+    TBranch* b_packedCandsVtxChi2Norm; //!
+    TBranch* b_packedCandsHasTrackDetails; //!
+    TBranch* b_packedCandsPtTrk; //!
     TBranch* b_packedCandsDzError; //!
     TBranch* b_packedCandsDxyError; //!
-    TBranch* b_packedCandsHasTrackDetails; //!
+    TBranch* b_packedCandsDtime; //!
+    TBranch* b_packedCandsTimeError; //!
+    TBranch* b_packedCandsNumberOfHits; //!
+    TBranch* b_packedCandsNumberOfPixelHits; //!
+    TBranch* b_packedCandsPixelLayersWithMeasurement; //!
+    TBranch* b_packedCandsStripLayersWithMeasurement; //!
+    TBranch* b_packedCandsTrackerLayersWithMeasurement; //!
+    TBranch* b_packedCandsPseudoTrkPt; //!
+    TBranch* b_packedCandsPseudoTrkPx; //!
+    TBranch* b_packedCandsPseudoTrkPy; //!
+    TBranch* b_packedCandsPseudoTrkPz; //!
+    TBranch* b_packedCandsPseudoTrkEta; //!
+    TBranch* b_packedCandsPseudoTrkPhi; //!
+    TBranch* b_packedCandsPseudoTrkCharge; //!
+    TBranch* b_packedCandsPseudoTrkVx; //!
+    TBranch* b_packedCandsPseudoTrkVy; //!
+    TBranch* b_packedCandsPseudoTrkVz; //!
+    TBranch* b_packedCandsPseudoTrkChi2Norm; //!
+    TBranch* b_packedCandsPseudoTrkNumberOfHits; //!
+    TBranch* b_packedCandsPseudoTrkNumberOfPixelHits; //!
+    TBranch* b_packedCandsPseudoTrkPixelLayersWithMeasurement; //!
+    TBranch* b_packedCandsPseudoTrkStripLayersWithMeasurement; //!
+    TBranch* b_packedCandsPseudoTrkTrackerLayersWithMeasurement; //!
     TBranch* b_packedCandsHighPurityTrack; //!
     TBranch* b_packedCandsIsElectron; //!
     TBranch* b_packedCandsIsJet; //!
     TBranch* b_packedCandsIsMuon; //!
     TBranch* b_packedCandsIsPhoton; //!
+    TBranch* b_packedCandsIsConvertedPhoton; //!
+    TBranch* b_packedCandsIsLongLived; //!
 
     TBranch* b_numIsolatedTracks; //!
     TBranch* b_isoTracksPt; //!
@@ -2397,64 +2460,65 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("tauPF2PATEta", &tauPF2PATEta, &b_tauPF2PATEta);
 
    fChain->SetBranchAddress("numPhoPF2PAT", &numPhoPF2PAT, &b_numPhoPF2PAT);
-   fChain->SetBranchAddress("phoPF2PATE", &phoPF2PATE, &b_phoPF2PATE);
-   fChain->SetBranchAddress("phoPF2PATSigmaE", &phoPF2PATSigmaE, &b_phoPF2PATSigmaE);
-   fChain->SetBranchAddress("phoPF2PATET", &phoPF2PATET, &b_phoPF2PATET);
-   fChain->SetBranchAddress("phoPF2PATPhi", &phoPF2PATPhi, &b_phoPF2PATPhi);
-   fChain->SetBranchAddress("phoPF2PATEta", &phoPF2PATEta, &b_phoPF2PATEta);
-   fChain->SetBranchAddress("phoPF2PATTheta", &phoPF2PATTheta, &b_phoPF2PATTheta);
-   fChain->SetBranchAddress("phoPF2PATPt", &phoPF2PATPt, &b_phoPF2PATPt);
-   fChain->SetBranchAddress("phoPF2PATPx", &phoPF2PATPx, &b_phoPF2PATPx);
-   fChain->SetBranchAddress("phoPF2PATPy", &phoPF2PATPy, &b_phoPF2PATPy);
-   fChain->SetBranchAddress("phoPF2PATPz", &phoPF2PATPz, &b_phoPF2PATPz);
-   fChain->SetBranchAddress("phoPF2PATCalibE", &phoPF2PATCalibE, &b_phoPF2PATCalibE);
-   fChain->SetBranchAddress("phoPF2PATCalibEt", &phoPF2PATCalibEt, &b_phoPF2PATCalibEt);
-   fChain->SetBranchAddress("phoPF2PATSCE", &phoPF2PATSCE, &b_phoPF2PATSCE);
-   fChain->SetBranchAddress("phoPF2PATSCRawE", &phoPF2PATSCRawE, &b_phoPF2PATSCRawE);
-   fChain->SetBranchAddress("phoPF2PATESEnP1", &phoPF2PATESEnP1, &b_phoPF2PATESEnP1);
-   fChain->SetBranchAddress("phoPF2PATESEnP2", &phoPF2PATESEnP2, &b_phoPF2PATESEnP1);
-   fChain->SetBranchAddress("phoPF2PATSCEta", &phoPF2PATSCEta, &b_phoPF2PATSCEta);
-   fChain->SetBranchAddress("phoPF2PATSCEtaWidth", &phoPF2PATSCEtaWidth, &b_phoPF2PATSCEtaWidth);
-   fChain->SetBranchAddress("phoPF2PATSCPhi", &phoPF2PATSCPhi, &b_phoPF2PATSCPhi);
-   fChain->SetBranchAddress("phoPF2PATSCPhiWidth", &phoPF2PATSCPhiWidth, &b_phoPF2PATSCPhiWidth);
-   fChain->SetBranchAddress("phoPF2PATSCBrem", &phoPF2PATSCBrem, &b_phoPF2PATSCBrem);
-   fChain->SetBranchAddress("phoPF2PATHasPixelSeed", &phoPF2PATHasPixelSeed, &b_phoPF2PATHasPixelSeed);
-   fChain->SetBranchAddress("phoPF2PATEleVeto", &phoPF2PATEleVeto, &b_phoPF2PATEleVeto);
-   fChain->SetBranchAddress("phoPF2PATR9", &phoPF2PATR9, &b_phoPF2PATR9);
-   fChain->SetBranchAddress("phoPF2PATHoverE", &phoPF2PATHoverE, &b_phoPF2PATHoverE);
-   fChain->SetBranchAddress("phoPF2PATESEffSigmaRR", &phoPF2PATESEffSigmaRR, &b_phoPF2PATESEffSigmaRR);
-   fChain->SetBranchAddress("phoPF2PATSigmaIEtaIEtaFull5x5", &phoPF2PATSigmaIEtaIEtaFull5x5, &b_phoPF2PATSigmaIEtaIEtaFull5x5);
-   fChain->SetBranchAddress("phoPF2PATSigmaIEtaIPhiFull5x5", &phoPF2PATSigmaIEtaIPhiFull5x5, &b_phoPF2PATSigmaIEtaIPhiFull5x5);
-   fChain->SetBranchAddress("phoPF2PATSigmaIPhiIPhiFull5x5", &phoPF2PATSigmaIPhiIPhiFull5x5, &b_phoPF2PATSigmaIPhiIPhiFull5x5);
-   fChain->SetBranchAddress("phoPF2PATE2x2Full5x5", &phoPF2PATE2x2Full5x5, &b_phoPF2PATE2x2Full5x5);
-   fChain->SetBranchAddress("phoPF2PATE5x5Full5x5", &phoPF2PATE5x5Full5x5, &b_phoPF2PATE5x5Full5x5);
-   fChain->SetBranchAddress("phoPF2PATR9Full5x5", &phoPF2PATR9Full5x5, &b_phoPF2PATR9Full5x5);
-   fChain->SetBranchAddress("phoPF2PATPFChIso", &phoPF2PATPFChIso, &b_phoPF2PATPFChIso);
-   fChain->SetBranchAddress("phoPF2PATPFPhoIso", &phoPF2PATPFPhoIso, &b_phoPF2PATPFPhoIso);
-   fChain->SetBranchAddress("phoPF2PATPFNeuIso", &phoPF2PATPFNeuIso, &b_phoPF2PATPFNeuIso);
-   fChain->SetBranchAddress("phoPF2PATPFChWorstIso", &phoPF2PATPFChWorstIso, &b_phoPF2PATPFChWorstIso);
-   fChain->SetBranchAddress("phoPF2PATMIPTotEnergy", &phoPF2PATMIPTotEnergy, &b_phoPF2PATMIPTotEnergy);
-   fChain->SetBranchAddress("phoPF2PATCutIdLoose", &phoPF2PATCutIdLoose, &b_phoPF2PATCutIdLoose);
-   fChain->SetBranchAddress("phoPF2PATCutIdMedium", &phoPF2PATCutIdMedium, &b_phoPF2PATCutIdMedium);
-   fChain->SetBranchAddress("phoPF2PATCutIdTight", &phoPF2PATCutIdTight, &b_phoPF2PATCutIdTight);
-   fChain->SetBranchAddress("phoPF2PATMvaIdWp80", &phoPF2PATMvaIdWp80, &b_phoPF2PATMvaIdWp80);
-   fChain->SetBranchAddress("phoPF2PATMvaIdWp90", &phoPF2PATMvaIdWp90, &b_phoPF2PATMvaIdWp90);
+   fChain->SetBranchAddress("phoPF2PATE", phoPF2PATE, &b_phoPF2PATE);
+   fChain->SetBranchAddress("phoPF2PATSigmaE", phoPF2PATSigmaE, &b_phoPF2PATSigmaE);
+   fChain->SetBranchAddress("phoPF2PATET", phoPF2PATET, &b_phoPF2PATET);
+   fChain->SetBranchAddress("phoPF2PATPhi", phoPF2PATPhi, &b_phoPF2PATPhi);
+   fChain->SetBranchAddress("phoPF2PATEta", phoPF2PATEta, &b_phoPF2PATEta);
+   fChain->SetBranchAddress("phoPF2PATTheta", phoPF2PATTheta, &b_phoPF2PATTheta);
+   fChain->SetBranchAddress("phoPF2PATPt", phoPF2PATPt, &b_phoPF2PATPt);
+   fChain->SetBranchAddress("phoPF2PATPx", phoPF2PATPx, &b_phoPF2PATPx);
+   fChain->SetBranchAddress("phoPF2PATPy", phoPF2PATPy, &b_phoPF2PATPy);
+   fChain->SetBranchAddress("phoPF2PATPz", phoPF2PATPz, &b_phoPF2PATPz);
+   fChain->SetBranchAddress("phoPF2PATCalibE", phoPF2PATCalibE, &b_phoPF2PATCalibE);
+   fChain->SetBranchAddress("phoPF2PATCalibEt", phoPF2PATCalibEt, &b_phoPF2PATCalibEt);
+   fChain->SetBranchAddress("phoPF2PATSCE", phoPF2PATSCE, &b_phoPF2PATSCE);
+   fChain->SetBranchAddress("phoPF2PATSCRawE", phoPF2PATSCRawE, &b_phoPF2PATSCRawE);
+   fChain->SetBranchAddress("phoPF2PATESEnP1", phoPF2PATESEnP1, &b_phoPF2PATESEnP1);
+   fChain->SetBranchAddress("phoPF2PATESEnP2", phoPF2PATESEnP2, &b_phoPF2PATESEnP1);
+   fChain->SetBranchAddress("phoPF2PATSCEta", phoPF2PATSCEta, &b_phoPF2PATSCEta);
+   fChain->SetBranchAddress("phoPF2PATSCEtaWidth", phoPF2PATSCEtaWidth, &b_phoPF2PATSCEtaWidth);
+   fChain->SetBranchAddress("phoPF2PATSCPhi", phoPF2PATSCPhi, &b_phoPF2PATSCPhi);
+   fChain->SetBranchAddress("phoPF2PATSCPhiWidth", phoPF2PATSCPhiWidth, &b_phoPF2PATSCPhiWidth);
+   fChain->SetBranchAddress("phoPF2PATSCBrem", phoPF2PATSCBrem, &b_phoPF2PATSCBrem);
+   fChain->SetBranchAddress("phoPF2PATHasPixelSeed", phoPF2PATHasPixelSeed, &b_phoPF2PATHasPixelSeed);
+   fChain->SetBranchAddress("phoPF2PATEleVeto", phoPF2PATEleVeto, &b_phoPF2PATEleVeto);
+   fChain->SetBranchAddress("phoPF2PATR9", phoPF2PATR9, &b_phoPF2PATR9);
+   fChain->SetBranchAddress("phoPF2PATHoverE", phoPF2PATHoverE, &b_phoPF2PATHoverE);
+   fChain->SetBranchAddress("phoPF2PATESEffSigmaRR", phoPF2PATESEffSigmaRR, &b_phoPF2PATESEffSigmaRR);
+   fChain->SetBranchAddress("phoPF2PATSigmaIEtaIEtaFull5x5", phoPF2PATSigmaIEtaIEtaFull5x5, &b_phoPF2PATSigmaIEtaIEtaFull5x5);
+   fChain->SetBranchAddress("phoPF2PATSigmaIEtaIPhiFull5x5", phoPF2PATSigmaIEtaIPhiFull5x5, &b_phoPF2PATSigmaIEtaIPhiFull5x5);
+   fChain->SetBranchAddress("phoPF2PATSigmaIPhiIPhiFull5x5", phoPF2PATSigmaIPhiIPhiFull5x5, &b_phoPF2PATSigmaIPhiIPhiFull5x5);
+   fChain->SetBranchAddress("phoPF2PATE2x2Full5x5", phoPF2PATE2x2Full5x5, &b_phoPF2PATE2x2Full5x5);
+   fChain->SetBranchAddress("phoPF2PATE5x5Full5x5", phoPF2PATE5x5Full5x5, &b_phoPF2PATE5x5Full5x5);
+   fChain->SetBranchAddress("phoPF2PATR9Full5x5", phoPF2PATR9Full5x5, &b_phoPF2PATR9Full5x5);
+   fChain->SetBranchAddress("phoPF2PATPFChIso", phoPF2PATPFChIso, &b_phoPF2PATPFChIso);
+   fChain->SetBranchAddress("phoPF2PATPFPhoIso", phoPF2PATPFPhoIso, &b_phoPF2PATPFPhoIso);
+   fChain->SetBranchAddress("phoPF2PATPFNeuIso", phoPF2PATPFNeuIso, &b_phoPF2PATPFNeuIso);
+   fChain->SetBranchAddress("phoPF2PATPFChWorstIso", phoPF2PATPFChWorstIso, &b_phoPF2PATPFChWorstIso);
+   fChain->SetBranchAddress("phoPF2PATMIPTotEnergy", phoPF2PATMIPTotEnergy, &b_phoPF2PATMIPTotEnergy);
+   fChain->SetBranchAddress("phoPF2PATCutIdLoose", phoPF2PATCutIdLoose, &b_phoPF2PATCutIdLoose);
+   fChain->SetBranchAddress("phoPF2PATCutIdMedium", phoPF2PATCutIdMedium, &b_phoPF2PATCutIdMedium);
+   fChain->SetBranchAddress("phoPF2PATCutIdTight", phoPF2PATCutIdTight, &b_phoPF2PATCutIdTight);
+   fChain->SetBranchAddress("phoPF2PATMvaIdWp80", phoPF2PATMvaIdWp80, &b_phoPF2PATMvaIdWp80);
+   fChain->SetBranchAddress("phoPF2PATMvaIdWp90", phoPF2PATMvaIdWp90, &b_phoPF2PATMvaIdWp90);
    if (isMC) {
-      fChain->SetBranchAddress("genPhoPF2PATPt", &genPhoPF2PATPt, &b_genPhoPF2PATPt);
-      fChain->SetBranchAddress("genPhoPF2PATET", &genPhoPF2PATET, &b_genPhoPF2PATET);
-      fChain->SetBranchAddress("genPhoPF2PATEta", &genPhoPF2PATEta, &b_genPhoPF2PATEta);
-      fChain->SetBranchAddress("genPhoPF2PATTheta", &genPhoPF2PATTheta, &b_genPhoPF2PATTheta);
-      fChain->SetBranchAddress("genPhoPF2PATPhi", &genPhoPF2PATPhi, &b_genPhoPF2PATPhi);
-      fChain->SetBranchAddress("genPhoPF2PATPx", &genPhoPF2PATPx, &b_genPhoPF2PATPx);
-      fChain->SetBranchAddress("genPhoPF2PATPy", &genPhoPF2PATPy, &b_genPhoPF2PATPy);
-      fChain->SetBranchAddress("genPhoPF2PATPz", &genPhoPF2PATPz, &b_genPhoPF2PATPz);
-      fChain->SetBranchAddress("genPhoPF2PATCharge", &genPhoPF2PATCharge, &b_genPhoPF2PATCharge);
-      fChain->SetBranchAddress("genPhoPF2PATPdgId", &genPhoPF2PATPdgId, &b_genPhoPF2PATPdgId);
-      fChain->SetBranchAddress("genPhoPF2PATMotherId", &genPhoPF2PATMotherId, &b_genPhoPF2PATMotherId);
-      fChain->SetBranchAddress("genPhoPF2PATIsPhoton", &genPhoPF2PATIsPhoton, &b_genPhoPF2PATIsPhoton);
-      fChain->SetBranchAddress("genPhoPF2PATIsConvertedPhoton", &genPhoPF2PATIsConvertedPhoton, &b_genPhoPF2PATIsConvertedPhoton);
-      fChain->SetBranchAddress("genPhoPF2PATIsJet", &genPhoPF2PATIsJet, &b_genPhoPF2PATIsJet);
+      fChain->SetBranchAddress("genPhoPF2PATPt", genPhoPF2PATPt, &b_genPhoPF2PATPt);
+      fChain->SetBranchAddress("genPhoPF2PATET", genPhoPF2PATET, &b_genPhoPF2PATET);
+      fChain->SetBranchAddress("genPhoPF2PATEta", genPhoPF2PATEta, &b_genPhoPF2PATEta);
+      fChain->SetBranchAddress("genPhoPF2PATTheta", genPhoPF2PATTheta, &b_genPhoPF2PATTheta);
+      fChain->SetBranchAddress("genPhoPF2PATPhi", genPhoPF2PATPhi, &b_genPhoPF2PATPhi);
+      fChain->SetBranchAddress("genPhoPF2PATPx", genPhoPF2PATPx, &b_genPhoPF2PATPx);
+      fChain->SetBranchAddress("genPhoPF2PATPy", genPhoPF2PATPy, &b_genPhoPF2PATPy);
+      fChain->SetBranchAddress("genPhoPF2PATPz", genPhoPF2PATPz, &b_genPhoPF2PATPz);
+      fChain->SetBranchAddress("genPhoPF2PATCharge", genPhoPF2PATCharge, &b_genPhoPF2PATCharge);
+      fChain->SetBranchAddress("genPhoPF2PATPdgId", genPhoPF2PATPdgId, &b_genPhoPF2PATPdgId);
+      fChain->SetBranchAddress("genPhoPF2PATMotherId", genPhoPF2PATMotherId, &b_genPhoPF2PATMotherId);
+      fChain->SetBranchAddress("genPhoPF2PATIsPhoton", genPhoPF2PATIsPhoton, &b_genPhoPF2PATIsPhoton);
+      fChain->SetBranchAddress("genPhoPF2PATIsConvertedPhoton", genPhoPF2PATIsConvertedPhoton, &b_genPhoPF2PATIsConvertedPhoton);
+      fChain->SetBranchAddress("genPhoPF2PATIsJet", genPhoPF2PATIsJet, &b_genPhoPF2PATIsJet);
    }
+
 /*
    fChain->SetBranchAddress("numPhoOOT_PF2PAT", &numPhoOOT_PF2PAT, &b_numPhoOOT_PF2PAT);
    fChain->SetBranchAddress("phoOOT_PF2PATE", &phoOOT_PF2PATE, &b_phoOOT_PF2PATE);
@@ -2516,61 +2580,97 @@ AnalysisEvent::AnalysisEvent(bool isMC,
       fChain->SetBranchAddress("genPhoOOT_PF2PATIsJet", &genPhoOOT_PF2PATIsJet, &b_genPhoOOT_PF2PATIsJet);
    }
 */
+
    fChain->SetBranchAddress("numPackedCands", &numPackedCands, &b_numPackedCands);
    fChain->SetBranchAddress("packedCandsPt", packedCandsPt, &b_packedCandsPt);
    fChain->SetBranchAddress("packedCandsPx", packedCandsPx, &b_packedCandsPx);
    fChain->SetBranchAddress("packedCandsPy", packedCandsPy, &b_packedCandsPy);
    fChain->SetBranchAddress("packedCandsPz", packedCandsPz, &b_packedCandsPz);
    fChain->SetBranchAddress("packedCandsE", packedCandsE, &b_packedCandsE);
+   fChain->SetBranchAddress("packedCandsM", packedCandsM, &b_packedCandsM);
    fChain->SetBranchAddress("packedCandsEta", packedCandsEta, &b_packedCandsEta);
    fChain->SetBranchAddress("packedCandsTheta", packedCandsTheta, &b_packedCandsTheta);
    fChain->SetBranchAddress("packedCandsPhi", packedCandsPhi, &b_packedCandsPhi);
    fChain->SetBranchAddress("packedCandsCharge", packedCandsCharge, &b_packedCandsCharge);
    fChain->SetBranchAddress("packedCandsPdgId", packedCandsPdgId, &b_packedCandsPdgId);
-   fChain->SetBranchAddress("packedCandsDtime", packedCandsDtime, &b_packedCandsDtime);
    fChain->SetBranchAddress("packedCandsTime", packedCandsTime, &b_packedCandsTime);
-   fChain->SetBranchAddress("packedCandsTimeError", packedCandsTimeError, &b_packedCandsTimeError);
+
+   fChain->SetBranchAddress("packedCandsFromPV", packedCandsFromPV, &b_packedCandsFromPV);
+   fChain->SetBranchAddress("packedCandsPVquality", packedCandsPVquality, &b_packedCandsPVquality);
    fChain->SetBranchAddress("packedCandsVx", packedCandsVx, &b_packedCandsVx);
    fChain->SetBranchAddress("packedCandsVy", packedCandsVy, &b_packedCandsVy);
    fChain->SetBranchAddress("packedCandsVz", packedCandsVz, &b_packedCandsVz);
+   fChain->SetBranchAddress("packedCandsVEta", packedCandsVEta, &b_packedCandsVEta);
+   fChain->SetBranchAddress("packedCandsVPhi", packedCandsVPhi, &b_packedCandsVPhi);
    fChain->SetBranchAddress("packedCandsBeamSpotCorrectedD0", packedCandsBeamSpotCorrectedD0, &b_packedCandsBeamSpotCorrectedD0);
    fChain->SetBranchAddress("packedCandsDz", packedCandsDz, &b_packedCandsDz);
    fChain->SetBranchAddress("packedCandsDxy", packedCandsDxy, &b_packedCandsDxy);
+   fChain->SetBranchAddress("packedCandsDzAssocPV", packedCandsDzAssocPV, &b_packedCandsDzAssocPV);
+   fChain->SetBranchAddress("packedCandsVtxChi2Norm", packedCandsVtxChi2Norm, &b_packedCandsVtxChi2Norm);
+
+   fChain->SetBranchAddress("packedCandsHasTrackDetails", packedCandsHasTrackDetails, &b_packedCandsHasTrackDetails);
+   fChain->SetBranchAddress("packedCandsPtTrk", packedCandsPtTrk, &b_packedCandsPtTrk);
    fChain->SetBranchAddress("packedCandsDzError", packedCandsDzError, &b_packedCandsDzError);
    fChain->SetBranchAddress("packedCandsDxyError", packedCandsDxyError, &b_packedCandsDxyError);
-   fChain->SetBranchAddress("packedCandsHasTrackDetails", packedCandsHasTrackDetails, &b_packedCandsHasTrackDetails);
+   fChain->SetBranchAddress("packedCandsDtime", packedCandsDtime, &b_packedCandsDtime);
+   fChain->SetBranchAddress("packedCandsTimeError", packedCandsTimeError, &b_packedCandsTimeError);
+   fChain->SetBranchAddress("packedCandsNumberOfHits", packedCandsNumberOfHits, &b_packedCandsNumberOfHits);
+   fChain->SetBranchAddress("packedCandsNumberOfPixelHits", packedCandsNumberOfPixelHits, &b_packedCandsNumberOfPixelHits);
+   fChain->SetBranchAddress("packedCandsPixelLayersWithMeasurement", packedCandsPixelLayersWithMeasurement, &b_packedCandsPixelLayersWithMeasurement);
+   fChain->SetBranchAddress("packedCandsStripLayersWithMeasurement", packedCandsStripLayersWithMeasurement, &b_packedCandsStripLayersWithMeasurement);
+   fChain->SetBranchAddress("packedCandsTrackerLayersWithMeasurement", packedCandsTrackerLayersWithMeasurement, &b_packedCandsTrackerLayersWithMeasurement);
+
+   fChain->SetBranchAddress("packedCandsPseudoTrkPt", packedCandsPseudoTrkPt, &b_packedCandsPseudoTrkPt);
+   fChain->SetBranchAddress("packedCandsPseudoTrkPx", packedCandsPseudoTrkPx, &b_packedCandsPseudoTrkPx);
+   fChain->SetBranchAddress("packedCandsPseudoTrkPy", packedCandsPseudoTrkPy, &b_packedCandsPseudoTrkPy);
+   fChain->SetBranchAddress("packedCandsPseudoTrkPz", packedCandsPseudoTrkPz, &b_packedCandsPseudoTrkPz);
+   fChain->SetBranchAddress("packedCandsPseudoTrkEta", packedCandsPseudoTrkEta, &b_packedCandsPseudoTrkEta);
+   fChain->SetBranchAddress("packedCandsPseudoTrkPhi", packedCandsPseudoTrkPhi, &b_packedCandsPseudoTrkPhi);
+   fChain->SetBranchAddress("packedCandsPseudoTrkCharge", packedCandsPseudoTrkCharge, &b_packedCandsPseudoTrkCharge);
+   fChain->SetBranchAddress("packedCandsPseudoTrkVx", packedCandsPseudoTrkVx, &b_packedCandsPseudoTrkVx);
+   fChain->SetBranchAddress("packedCandsPseudoTrkVy", packedCandsPseudoTrkVy, &b_packedCandsPseudoTrkVy);
+   fChain->SetBranchAddress("packedCandsPseudoTrkVz", packedCandsPseudoTrkVz, &b_packedCandsPseudoTrkVz);
+   fChain->SetBranchAddress("packedCandsPseudoTrkChi2Norm", packedCandsPseudoTrkChi2Norm, &b_packedCandsPseudoTrkChi2Norm);
+   fChain->SetBranchAddress("packedCandsPseudoTrkNumberOfHits", packedCandsPseudoTrkNumberOfHits, &b_packedCandsPseudoTrkNumberOfHits);
+   fChain->SetBranchAddress("packedCandsPseudoTrkNumberOfPixelHits", packedCandsPseudoTrkNumberOfPixelHits, &b_packedCandsPseudoTrkNumberOfHits);
+   fChain->SetBranchAddress("packedCandsPseudoTrkPixelLayersWithMeasurement", packedCandsPseudoTrkPixelLayersWithMeasurement, &b_packedCandsPseudoTrkPixelLayersWithMeasurement);
+   fChain->SetBranchAddress("packedCandsPseudoTrkStripLayersWithMeasurement", packedCandsPseudoTrkStripLayersWithMeasurement, &b_packedCandsPseudoTrkStripLayersWithMeasurement);
+   fChain->SetBranchAddress("packedCandsPseudoTrkTrackerLayersWithMeasurement", packedCandsPseudoTrkTrackerLayersWithMeasurement, &b_packedCandsPseudoTrkTrackerLayersWithMeasurement);
    fChain->SetBranchAddress("packedCandsHighPurityTrack", packedCandsHighPurityTrack, &b_packedCandsHighPurityTrack);
+
    fChain->SetBranchAddress("packedCandsIsElectron", packedCandsIsElectron, &b_packedCandsIsElectron);
    fChain->SetBranchAddress("packedCandsIsJet", packedCandsIsJet, &b_packedCandsIsJet);
    fChain->SetBranchAddress("packedCandsIsMuon", packedCandsIsMuon, &b_packedCandsIsMuon);
    fChain->SetBranchAddress("packedCandsIsPhoton", packedCandsIsPhoton, &b_packedCandsIsPhoton);
+   fChain->SetBranchAddress("packedCandsIsConvertedPhoton", packedCandsIsConvertedPhoton, &b_packedCandsIsConvertedPhoton);
+   fChain->SetBranchAddress("packedCandsIsLongLived", packedCandsIsLongLived, &b_packedCandsIsLongLived);
 
    fChain->SetBranchAddress("numIsolatedTracks", &numIsolatedTracks, &b_numIsolatedTracks);
-   fChain->SetBranchAddress("isoTracksPt", &isoTracksPt, &b_isoTracksPt);
-   fChain->SetBranchAddress("isoTracksPx", &isoTracksPx, &b_isoTracksPx);
-   fChain->SetBranchAddress("isoTracksPy", &isoTracksPy, &b_isoTracksPy);
-   fChain->SetBranchAddress("isoTracksPz", &isoTracksPz, &b_isoTracksPz);
-   fChain->SetBranchAddress("isoTracksE", &isoTracksE, &b_isoTracksE);
-   fChain->SetBranchAddress("isoTracksEta", &isoTracksEta, &b_isoTracksEta);
-   fChain->SetBranchAddress("isoTracksTheta", &isoTracksTheta, &b_isoTracksTheta);
-   fChain->SetBranchAddress("isoTracksPhi", &isoTracksPhi, &b_isoTracksPhi);
-   fChain->SetBranchAddress("isoTracksCharge", &isoTracksCharge, &b_isoTracksCharge);
-   fChain->SetBranchAddress("isoTracksPdgId", &isoTracksPdgId, &b_isoTracksPdgId);
-   fChain->SetBranchAddress("isoTracksMatchedCaloJetEmEnergy", &isoTracksMatchedCaloJetEmEnergy, &b_isoTracksMatchedCaloJetEmEnergy);
-   fChain->SetBranchAddress("isoTracksMatchedCaloJetHadEnergy", &isoTracksMatchedCaloJetHadEnergy, &b_isoTracksMatchedCaloJetHadEnergy);
-   fChain->SetBranchAddress("isoTracksDz", &isoTracksDz, &b_isoTracksDz);
-   fChain->SetBranchAddress("isoTracksDxy", &isoTracksDxy, &b_isoTracksDxy);
-   fChain->SetBranchAddress("isoTracksDzError", &isoTracksDzError, &b_isoTracksDzError);
-   fChain->SetBranchAddress("isoTracksDxyError", &isoTracksDxyError, &b_isoTracksDxyError);
-   fChain->SetBranchAddress("isoTracksFromPV", &isoTracksFromPV, &b_isoTracksFromPV);
-   fChain->SetBranchAddress("isoTracksVx", &isoTracksVx, &b_isoTracksVx);
-   fChain->SetBranchAddress("isoTracksVy", &isoTracksVy, &b_isoTracksVy);
-   fChain->SetBranchAddress("isoTracksVz", &isoTracksVz, &b_isoTracksVz);
-   fChain->SetBranchAddress("isoTracksHighPurity", &isoTracksHighPurity, &b_isoTracksHighPurity);
-   fChain->SetBranchAddress("isoTracksTight", &isoTracksTight, &b_isoTracksTight);
-   fChain->SetBranchAddress("isoTracksLoose", &isoTracksLoose, &b_isoTracksLoose);
-   fChain->SetBranchAddress("isoTracksDeltaEta", &isoTracksDeltaEta, &b_isoTracksDeltaEta);
-   fChain->SetBranchAddress("isoTracksDeltaPhi", &isoTracksDeltaPhi, &b_isoTracksDeltaPhi);
+   fChain->SetBranchAddress("isoTracksPt", isoTracksPt, &b_isoTracksPt);
+   fChain->SetBranchAddress("isoTracksPx", isoTracksPx, &b_isoTracksPx);
+   fChain->SetBranchAddress("isoTracksPy", isoTracksPy, &b_isoTracksPy);
+   fChain->SetBranchAddress("isoTracksPz", isoTracksPz, &b_isoTracksPz);
+   fChain->SetBranchAddress("isoTracksE", isoTracksE, &b_isoTracksE);
+   fChain->SetBranchAddress("isoTracksEta", isoTracksEta, &b_isoTracksEta);
+   fChain->SetBranchAddress("isoTracksTheta", isoTracksTheta, &b_isoTracksTheta);
+   fChain->SetBranchAddress("isoTracksPhi", isoTracksPhi, &b_isoTracksPhi);
+   fChain->SetBranchAddress("isoTracksCharge", isoTracksCharge, &b_isoTracksCharge);
+   fChain->SetBranchAddress("isoTracksPdgId", isoTracksPdgId, &b_isoTracksPdgId);
+   fChain->SetBranchAddress("isoTracksMatchedCaloJetEmEnergy", isoTracksMatchedCaloJetEmEnergy, &b_isoTracksMatchedCaloJetEmEnergy);
+   fChain->SetBranchAddress("isoTracksMatchedCaloJetHadEnergy", isoTracksMatchedCaloJetHadEnergy, &b_isoTracksMatchedCaloJetHadEnergy);
+   fChain->SetBranchAddress("isoTracksDz", isoTracksDz, &b_isoTracksDz);
+   fChain->SetBranchAddress("isoTracksDxy", isoTracksDxy, &b_isoTracksDxy);
+   fChain->SetBranchAddress("isoTracksDzError", isoTracksDzError, &b_isoTracksDzError);
+   fChain->SetBranchAddress("isoTracksDxyError", isoTracksDxyError, &b_isoTracksDxyError);
+   fChain->SetBranchAddress("isoTracksFromPV", isoTracksFromPV, &b_isoTracksFromPV);
+   fChain->SetBranchAddress("isoTracksVx", isoTracksVx, &b_isoTracksVx);
+   fChain->SetBranchAddress("isoTracksVy", isoTracksVy, &b_isoTracksVy);
+   fChain->SetBranchAddress("isoTracksVz", isoTracksVz, &b_isoTracksVz);
+   fChain->SetBranchAddress("isoTracksHighPurity", isoTracksHighPurity, &b_isoTracksHighPurity);
+   fChain->SetBranchAddress("isoTracksTight", isoTracksTight, &b_isoTracksTight);
+   fChain->SetBranchAddress("isoTracksLoose", isoTracksLoose, &b_isoTracksLoose);
+   fChain->SetBranchAddress("isoTracksDeltaEta", isoTracksDeltaEta, &b_isoTracksDeltaEta);
+   fChain->SetBranchAddress("isoTracksDeltaPhi", isoTracksDeltaPhi, &b_isoTracksDeltaPhi);
 
    if (isMC)
    {
@@ -2590,43 +2690,43 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("beamSpotZ", &beamSpotZ, &b_beamSpotZ);
 
    fChain->SetBranchAddress("numPVs", &numPVs, &b_numPVs);
-   fChain->SetBranchAddress("pvX", &pvX, &b_pvX);
-   fChain->SetBranchAddress("pvY", &pvY, &b_pvY);
-   fChain->SetBranchAddress("pvZ", &pvZ, &b_pvZ);
-   fChain->SetBranchAddress("pvDX", &pvDX, &b_pvDX);
-   fChain->SetBranchAddress("pvDY", &pvDY, &b_pvDY);
-   fChain->SetBranchAddress("pvDZ", &pvDZ, &b_pvDZ);
-   fChain->SetBranchAddress("pvRho", &pvRho, &b_pvRho);
-   fChain->SetBranchAddress("pvIsFake", &pvIsFake, &b_pvIsFake);
-   fChain->SetBranchAddress("pvNdof", &pvNdof, &b_pvNdof);
-   fChain->SetBranchAddress("pvChi2", &pvChi2, &b_pvChi2);
-   fChain->SetBranchAddress("pvNtracks", &pvNtracks, &b_pvNtracks);
-   fChain->SetBranchAddress("pvNtracksW05", &pvNtracksW05, &b_pvNtracksW05);
+   fChain->SetBranchAddress("pvX", pvX, &b_pvX);
+   fChain->SetBranchAddress("pvY", pvY, &b_pvY);
+   fChain->SetBranchAddress("pvZ", pvZ, &b_pvZ);
+   fChain->SetBranchAddress("pvDX", pvDX, &b_pvDX);
+   fChain->SetBranchAddress("pvDY", pvDY, &b_pvDY);
+   fChain->SetBranchAddress("pvDZ", pvDZ, &b_pvDZ);
+   fChain->SetBranchAddress("pvRho", pvRho, &b_pvRho);
+   fChain->SetBranchAddress("pvIsFake", pvIsFake, &b_pvIsFake);
+   fChain->SetBranchAddress("pvNdof", pvNdof, &b_pvNdof);
+   fChain->SetBranchAddress("pvChi2", pvChi2, &b_pvChi2);
+   fChain->SetBranchAddress("pvNtracks", pvNtracks, &b_pvNtracks);
+   fChain->SetBranchAddress("pvNtracksW05", pvNtracksW05, &b_pvNtracksW05);
    fChain->SetBranchAddress("numSVs", &numSVs, &b_numSVs);
-   fChain->SetBranchAddress("svPt", &svPt, &b_svPt);
-   fChain->SetBranchAddress("svPx", &svPx, &b_svPx);
-   fChain->SetBranchAddress("svPy", &svPy, &b_svPy);
-   fChain->SetBranchAddress("svPz", &svPz, &b_svPz);
-   fChain->SetBranchAddress("svMass", &svMass, &b_svMass);
-   fChain->SetBranchAddress("svE", &svE, &b_svE);
-   fChain->SetBranchAddress("svEta", &svEta, &b_svEta);
-   fChain->SetBranchAddress("svTheta", &svTheta, &b_svTheta);
-   fChain->SetBranchAddress("svPhi", &svPhi, &b_svPhi);
-   fChain->SetBranchAddress("svX", &svX, &b_svX);
-   fChain->SetBranchAddress("svY", &svY, &b_svY);
-   fChain->SetBranchAddress("svZ", &svZ, &b_svZ);
-   fChain->SetBranchAddress("svVertexChi2", &svVertexChi2, &b_svVertexChi2);
-   fChain->SetBranchAddress("svVertexNdof", &svVertexNdof, &b_svVertexNdof);
-   fChain->SetBranchAddress("svNtracks", &svNtracks, &b_svNtracks);
-   fChain->SetBranchAddress("svDist3D", &svDist3D, &b_svDist3D);
-   fChain->SetBranchAddress("svDist3DSig", &svDist3DSig, &b_svDist3DSig);
-   fChain->SetBranchAddress("svDist3DError", &svDist3DError, &b_svDist3DError);
-   fChain->SetBranchAddress("svDistXY", &svDistXY, &b_svDistXY);
-   fChain->SetBranchAddress("svDistXYSig", &svDistXYSig, &b_svDistXYSig);
-   fChain->SetBranchAddress("svDistXYError", &svDistXYError, &b_svDistXYError);
-   fChain->SetBranchAddress("svAnglePV", &svAnglePV, &b_svAnglePV);
-   fChain->SetBranchAddress("svIsLambda", &svIsLambda, &b_svIsLambda);
-   fChain->SetBranchAddress("svIsKshort", &svIsKshort, &b_svIsKshort);
+   fChain->SetBranchAddress("svPt", svPt, &b_svPt);
+   fChain->SetBranchAddress("svPx", svPx, &b_svPx);
+   fChain->SetBranchAddress("svPy", svPy, &b_svPy);
+   fChain->SetBranchAddress("svPz", svPz, &b_svPz);
+   fChain->SetBranchAddress("svMass", svMass, &b_svMass);
+   fChain->SetBranchAddress("svE", svE, &b_svE);
+   fChain->SetBranchAddress("svEta", svEta, &b_svEta);
+   fChain->SetBranchAddress("svTheta", svTheta, &b_svTheta);
+   fChain->SetBranchAddress("svPhi", svPhi, &b_svPhi);
+   fChain->SetBranchAddress("svX", svX, &b_svX);
+   fChain->SetBranchAddress("svY", svY, &b_svY);
+   fChain->SetBranchAddress("svZ", svZ, &b_svZ);
+   fChain->SetBranchAddress("svVertexChi2", svVertexChi2, &b_svVertexChi2);
+   fChain->SetBranchAddress("svVertexNdof", svVertexNdof, &b_svVertexNdof);
+   fChain->SetBranchAddress("svNtracks", svNtracks, &b_svNtracks);
+   fChain->SetBranchAddress("svDist3D", svDist3D, &b_svDist3D);
+   fChain->SetBranchAddress("svDist3DSig", svDist3DSig, &b_svDist3DSig);
+   fChain->SetBranchAddress("svDist3DError", svDist3DError, &b_svDist3DError);
+   fChain->SetBranchAddress("svDistXY", svDistXY, &b_svDistXY);
+   fChain->SetBranchAddress("svDistXYSig", svDistXYSig, &b_svDistXYSig);
+   fChain->SetBranchAddress("svDistXYError", svDistXYError, &b_svDistXYError);
+   fChain->SetBranchAddress("svAnglePV", svAnglePV, &b_svAnglePV);
+   fChain->SetBranchAddress("svIsLambda", svIsLambda, &b_svIsLambda);
+   fChain->SetBranchAddress("svIsKshort", svIsKshort, &b_svIsKshort);
    fChain->SetBranchAddress("mhtPt", &mhtPt, &b_mhtPt);
    fChain->SetBranchAddress("mhtPy", &mhtPy, &b_mhtPy);
    fChain->SetBranchAddress("mhtPx", &mhtPx, &b_mhtPx);

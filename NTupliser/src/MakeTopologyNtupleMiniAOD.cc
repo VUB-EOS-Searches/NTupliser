@@ -2263,30 +2263,63 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(
         packedCandsPy[numPackedCands] = it->py();
         packedCandsPz[numPackedCands] = it->pz();
         packedCandsE[numPackedCands] = it->energy();
+        packedCandsM[numPackedCands] = it->p4().M();
         packedCandsEta[numPackedCands] = it->eta();
         packedCandsTheta[numPackedCands] = it->theta();
         packedCandsPhi[numPackedCands] = it->phi();
         packedCandsCharge[numPackedCands] = it->charge();
         packedCandsPdgId[numPackedCands] = it->pdgId();
         packedCandsTime[numPackedCands] = it->time();
-        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (it->dxy(beamSpotPoint_));
-        packedCandsDz[numPackedCands] = it->dz();
-        packedCandsDxy[numPackedCands] = it->dxy();
-        packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
-        if (it->hasTrackDetails()) {
-            packedCandsDzError[numPackedCands] = it->dzError();
-            packedCandsDxyError[numPackedCands] = it->dxyError();
-            packedCandsDtime[numPackedCands] = it->dtime();
-            packedCandsTimeError[numPackedCands] = it->timeError();
-            packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
-        }
+
+        packedCandsFromPV[numPackedCands] = it->fromPV();
+        packedCandsPVquality[numPackedCands] = it->pvAssociationQuality();
         packedCandsVx[numPackedCands] = it->vx();
         packedCandsVy[numPackedCands] = it->vy();
         packedCandsVz[numPackedCands] = it->vz();
+        packedCandsVEta[numPackedCands] = it->etaAtVtx();
+        packedCandsVPhi[numPackedCands] = it->phiAtVtx();
+        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (it->dxy(beamSpotPoint_));
+        packedCandsDz[numPackedCands] = it->dz();
+        packedCandsDxy[numPackedCands] = it->dxy();
+        packedCandsDzAssocPV[numPackedCands] = it->dzAssociatedPV();
+        packedCandsVtxChi2Norm[numPackedCands] = it->vertexNormalizedChi2();
+
+        packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
+        packedCandsPtTrk[numPackedCands] = it->ptTrk();
+        packedCandsDzError[numPackedCands] = it->dzError();
+        packedCandsDxyError[numPackedCands] = it->dxyError();
+        packedCandsDtime[numPackedCands] = it->dtime();
+        packedCandsTimeError[numPackedCands] = it->timeError();
+        packedCandsNumberOfHits[numPackedCands] = it->numberOfHits();
+        packedCandsNumberOfPixelHits[numPackedCands] = it->numberOfPixelHits();
+        packedCandsPixelLayersWithMeasurement[numPackedCands] = it->pixelLayersWithMeasurement();
+        packedCandsStripLayersWithMeasurement[numPackedCands] = it->stripLayersWithMeasurement();
+        packedCandsTrackerLayersWithMeasurement[numPackedCands] = it->trackerLayersWithMeasurement();
+
+        packedCandsPseudoTrkPt[numPackedCands] = it->pseudoTrack().pt();
+        packedCandsPseudoTrkPx[numPackedCands] = it->pseudoTrack().px();
+        packedCandsPseudoTrkPy[numPackedCands] = it->pseudoTrack().py();
+        packedCandsPseudoTrkPz[numPackedCands] = it->pseudoTrack().pz();
+        packedCandsPseudoTrkEta[numPackedCands] = it->pseudoTrack().eta();
+        packedCandsPseudoTrkPhi[numPackedCands] = it->pseudoTrack().phi();
+        packedCandsPseudoTrkCharge[numPackedCands] = it->pseudoTrack().charge();
+        packedCandsPseudoTrkVx[numPackedCands] = it->pseudoTrack().vx();
+        packedCandsPseudoTrkVy[numPackedCands] = it->pseudoTrack().vy();
+        packedCandsPseudoTrkVz[numPackedCands] = it->pseudoTrack().vz();
+        packedCandsPseudoTrkChi2Norm[numPackedCands] = it->pseudoTrack().normalizedChi2();
+        packedCandsPseudoTrkNumberOfHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidTrackerHits();
+        packedCandsPseudoTrkNumberOfPixelHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidPixelHits();
+        packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().pixelLayersWithMeasurement();
+        packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().stripLayersWithMeasurement();
+        packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().trackerLayersWithMeasurement();
+        packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
+
         packedCandsIsElectron[numPackedCands] = it->isElectron();
         packedCandsIsJet[numPackedCands] = it->isJet();
         packedCandsIsMuon[numPackedCands] = it->isMuon();
         packedCandsIsPhoton[numPackedCands] = it->isPhoton();
+        packedCandsIsConvertedPhoton[numPackedCands] = it->isConvertedPhoton();
+        packedCandsIsLongLived[numPackedCands] = it->longLived();
 
         numPackedCands++;
     }
@@ -2906,28 +2939,64 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays()
         packedCandsPy[i] = -1.;
         packedCandsPz[i] = -1.;
         packedCandsE[i] = -1.;
+        packedCandsM[i] = -1.;
         packedCandsEta[i] = 9999;
         packedCandsTheta[i] = 9999;
         packedCandsPhi[i] = 9999;
         packedCandsCharge[i] = 0;
         packedCandsPdgId[i] = 0;
-        packedCandsDtime[i] = 0.;
         packedCandsTime[i] = 0.;
-        packedCandsTimeError[i] = 0.;
+
+        packedCandsFromPV[i] = -1.;
+        packedCandsPVquality[i] = -1.;
         packedCandsVx[i] = 0.;
         packedCandsVy[i] = 0.;
         packedCandsVz[i] = 0.;
+        packedCandsVEta[numPackedCands] = 9999;
+        packedCandsVPhi[numPackedCands] = 9999;
         packedCandsBeamSpotCorrectedD0[i] = -9999;
-        packedCandsDz[i] = 0.;
-        packedCandsDxy[i] = 0.;
-        packedCandsDzError[i] = 0.;
-        packedCandsDxyError[i] = 0.;
+        packedCandsDz[i] = 9999;
+        packedCandsDxy[i] = 9999;
+        packedCandsDzAssocPV[i] = 9999;
+        packedCandsVtxChi2Norm[i] = -9999;
+
         packedCandsHasTrackDetails[i] = -1;
+        packedCandsPtTrk[i] = -1.;
+        packedCandsDzError[i] = 9999;
+        packedCandsDxyError[i] = 9999;
+        packedCandsDtime[i] = 9999;
+        packedCandsTimeError[i] = 9999;
+        packedCandsNumberOfHits[i] = -1;
+        packedCandsNumberOfPixelHits[i] = -1;
+        packedCandsPixelLayersWithMeasurement[i] = -1;
+        packedCandsStripLayersWithMeasurement[i] = -1;
+        packedCandsTrackerLayersWithMeasurement[i] = -1;
+
+        packedCandsPseudoTrkPt[i] = -1.;
+        packedCandsPseudoTrkPx[i] = -1.;
+        packedCandsPseudoTrkPy[i] = -1.;
+        packedCandsPseudoTrkPz[i] = -1.;
+        packedCandsPseudoTrkEta[i] = 9999;
+        packedCandsPseudoTrkPhi[i] = 9999;
+        packedCandsPseudoTrkCharge[i] = 0;
+        packedCandsPseudoTrkVx[i] = 0.;
+        packedCandsPseudoTrkVy[i] = 0.;
+        packedCandsPseudoTrkVz[i] = 0.;
+        packedCandsPseudoTrkChi2Norm[i] = -9999;
+        packedCandsPseudoTrkNumberOfHits[i] = -1;
+        packedCandsPseudoTrkNumberOfPixelHits[i] = -1;
+        packedCandsPseudoTrkPixelLayersWithMeasurement[i] = -1;
+        packedCandsPseudoTrkStripLayersWithMeasurement[i] = -1;
+        packedCandsPseudoTrkTrackerLayersWithMeasurement[i] = -1;
         packedCandsHighPurityTrack[i] = -1;
+
         packedCandsIsElectron[i] = -1;
         packedCandsIsJet[i] = -1;
         packedCandsIsMuon[i] =	-1;
         packedCandsIsPhoton[i] = -1;
+        packedCandsIsConvertedPhoton[i] = -1;
+        packedCandsIsLongLived[i] = -1;
+
     }
 }
 
@@ -5009,28 +5078,64 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
     mytree_->Branch("packedCandsPy", &packedCandsPy, "packedCandsPy[numPackedCands]/F");
     mytree_->Branch("packedCandsPz", &packedCandsPz, "packedCandsPz[numPackedCands]/F");
     mytree_->Branch("packedCandsE", &packedCandsE, "packedCandsE[numPackedCands]/F");
+    mytree_->Branch("packedCandsM", &packedCandsM, "packedCandsM[numPackedCands]/F");
     mytree_->Branch("packedCandsEta", &packedCandsEta, "packedCandsEta[numPackedCands]/F");
     mytree_->Branch("packedCandsTheta", &packedCandsTheta, "packedCandsTheta[numPackedCands]/F");
     mytree_->Branch("packedCandsPhi", &packedCandsPhi, "packedCandsPhi[numPackedCands]/F");
     mytree_->Branch("packedCandsCharge", &packedCandsCharge, "packedCandsCharge[numPackedCands]/I");
     mytree_->Branch("packedCandsPdgId", &packedCandsPdgId, "packedCandsPdgId[numPackedCands]/I");
-    mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
-    mytree_->Branch("packedCandsHighPurityTrack", &packedCandsHighPurityTrack, "packedCandsHighPurityTrack[numPackedCands]/I");
-    mytree_->Branch("packedCandsDtime", &packedCandsDtime, "packedCandsDtime[numPackedCands]/F");
     mytree_->Branch("packedCandsTime", &packedCandsTime, "packedCandsTime[numPackedCands]/F");
-    mytree_->Branch("packedCandsTimeError", &packedCandsTimeError, "packedCandsTimeError[numPackedCands]/F");
+
+    mytree_->Branch("packedCandsFromPV", &packedCandsFromPV, "packedCandsFromPV[numPackedCands]/I");
+    mytree_->Branch("packedCandsPVquality", &packedCandsPVquality, "packedCandsPVquality[numPackedCands]/I");
     mytree_->Branch("packedCandsVx", &packedCandsVx, "packedCandsVx[numPackedCands]/F");
     mytree_->Branch("packedCandsVy", &packedCandsVy, "packedCandsVy[numPackedCands]/F");
     mytree_->Branch("packedCandsVz", &packedCandsVz, "packedCandsVz[numPackedCands]/F");
+    mytree_->Branch("packedCandsVEta", &packedCandsVEta, "packedCandsVEta[numPackedCands]/F");
+    mytree_->Branch("packedCandsVPhi", &packedCandsVPhi, "packedCandsVPhi[numPackedCands]/F"); 
     mytree_->Branch("packedCandsBeamSpotCorrectedD0", &packedCandsBeamSpotCorrectedD0, "packedCandsBeamSpotCorrectedD0[numPackedCands]/F");
     mytree_->Branch("packedCandsDz", &packedCandsDz, "packedCandsDz[numPackedCands]/F");
     mytree_->Branch("packedCandsDxy", &packedCandsDxy, "packedCandsDxy[numPackedCands]/F");
+    mytree_->Branch("packedCandsDzAssocPV", &packedCandsDzAssocPV, "packedCandsDzAssocPV[numPackedCands]/F");
+    mytree_->Branch("packedCandsVtxChi2Norm", &packedCandsVtxChi2Norm, "packedCandsVtxChi2Norm[numPackedCands]/F");
+
+
+    mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
+    mytree_->Branch("packedCandsPtTrk", &packedCandsPtTrk, "packedCandsPtTrk[numPackedCands]/F");
     mytree_->Branch("packedCandsDzError", &packedCandsDzError, "packedCandsDzError[numPackedCands]/F");
     mytree_->Branch("packedCandsDxyError", &packedCandsDxyError, "packedCandsDxyError[numPackedCands]/F");
+    mytree_->Branch("packedCandsDtime", &packedCandsDtime, "packedCandsDtime[numPackedCands]/F");
+    mytree_->Branch("packedCandsTimeError", &packedCandsTimeError, "packedCandsTimeError[numPackedCands]/F");
+    mytree_->Branch("packedCandsNumberOfHits", &packedCandsNumberOfHits, "packedCandsNumberOfHits[numPackedCands]/I");
+    mytree_->Branch("packedCandsNumberOfPixelHits", &packedCandsNumberOfPixelHits, "packedCandsNumberOfPixelHits[numPackedCands]/I");
+    mytree_->Branch("packedCandsPixelLayersWithMeasurement", &packedCandsPixelLayersWithMeasurement, "packedCandsPixelLayersWithMeasurement[numPackedCands]/I");
+    mytree_->Branch("packedCandsStripLayersWithMeasurement", &packedCandsStripLayersWithMeasurement, "packedCandsStripLayersWithMeasurement[numPackedCands]/I");
+    mytree_->Branch("packedCandsTrackerLayersWithMeasurement", &packedCandsTrackerLayersWithMeasurement, "packedCandsTrackerLayersWithMeasurement[numPackedCands]/I");
+
+    mytree_->Branch("packedCandsPseudoTrkPt", &packedCandsPseudoTrkPt, "packedCandsPseudoTrkPt[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkPx", &packedCandsPseudoTrkPx, "packedCandsPseudoTrkPx[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkPy", &packedCandsPseudoTrkPy, "packedCandsPseudoTrkPy[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkPz", &packedCandsPseudoTrkPz, "packedCandsPseudoTrkPz[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkEta", &packedCandsPseudoTrkEta, "packedCandsPseudoTrkEta[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkPhi", &packedCandsPseudoTrkPhi, "packedCandsPseudoTrkPhi[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkCharge", &packedCandsPseudoTrkCharge, "packedCandsPseudoTrkCharge[numPackedCands]/I");
+    mytree_->Branch("packedCandsPseudoTrkVx", &packedCandsPseudoTrkVx, "packedCandsPseudoTrkVx[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkVy", &packedCandsPseudoTrkVy, "packedCandsPseudoTrkVy[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkVz", &packedCandsPseudoTrkVz, "packedCandsPseudoTrkVz[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkChi2Norm", &packedCandsPseudoTrkChi2Norm, "packedCandsPseudoTrkChi2Norm[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkNumberOfHits", &packedCandsPseudoTrkNumberOfHits, "packedCandsPseudoTrkNumberOfHits[numPackedCands]/I");
+    mytree_->Branch("packedCandsPseudoTrkNumberOfPixelHits", &packedCandsPseudoTrkNumberOfPixelHits, "packedCandsPseudoTrkNumberOfHits[numPackedCands]/I");
+    mytree_->Branch("packedCandsPseudoTrkPixelLayersWithMeasurement", &packedCandsPseudoTrkPixelLayersWithMeasurement, "packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands]/I");
+    mytree_->Branch("packedCandsPseudoTrkStripLayersWithMeasurement", &packedCandsPseudoTrkStripLayersWithMeasurement, "packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands]/I");
+    mytree_->Branch("packedCandsPseudoTrkTrackerLayersWithMeasurement", &packedCandsPseudoTrkTrackerLayersWithMeasurement, "packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands]/I");
+    mytree_->Branch("packedCandsHighPurityTrack", &packedCandsHighPurityTrack, "packedCandsHighPurityTrack[numPackedCands]/I");
+
     mytree_->Branch("packedCandsIsElectron", &packedCandsIsElectron, "packedCandsIsElectron[numPackedCands]/I");
     mytree_->Branch("packedCandsIsJet", &packedCandsIsJet, "packedCandsIsJet[numPackedCands]/I");
     mytree_->Branch("packedCandsIsMuon", &packedCandsIsMuon, "packedCandsIsMuon[numPackedCands]/I");
     mytree_->Branch("packedCandsIsPhoton", &packedCandsIsPhoton, "packedCandsIsPhoton[numPackedCands]/I");
+    mytree_->Branch("packedCandsIsConvertedPhoton", &packedCandsIsConvertedPhoton, "packedCandsIsConvertedPhoton[numPackedCands]/I");
+    mytree_->Branch("packedCandsIsLongLived", &packedCandsIsLongLived, "packedCandsIsLongLived[numPackedCands]/I");
 
 }
 
