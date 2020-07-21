@@ -1,4 +1,4 @@
-	// -*- C++ -*-
+// -*- C++ -*-
 //
 // Package:    MakeTopologyNtuple
 // Class:      MakeTopologyNtuple
@@ -1834,6 +1834,11 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                 genParE[nGenPar] = it->energy();
                 genParPt[nGenPar] = it->pt();
                 genParId[nGenPar] = it->pdgId();
+                genParVx[nGenPar] = it->vx();
+                genParVy[nGenPar] = it->vy();
+                genParVz[nGenPar] = it->vz();
+
+		if ( it->bestTrack() != nullptr) std::cout << "test: " << it->bestTrack()->vx() << std::endl;
 
                 genParNumMothers[nGenPar] = it->numberOfMothers(); 
                 if (it->numberOfMothers() > 0 ) genParMotherId[nGenPar] =  it->mother()->pdgId(); 
@@ -3374,6 +3379,9 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
         mytree_->Branch("genParE", genParE, "genParE[nGenPar]/F");
         mytree_->Branch("genParPt", genParPt, "genParPt[nGenPar]/F");
         mytree_->Branch("genParId", genParId, "genParId[nGenPar]/I");
+        mytree_->Branch("genParVx", genParVx, "genParVx[nGenPar]/F");
+        mytree_->Branch("genParVy", genParVy, "genParVy[nGenPar]/F");
+        mytree_->Branch("genParVz", genParVz, "genParVz[nGenPar]/F");
         mytree_->Branch("genParNumMothers", genParNumMothers, "genParNumMothers[nGenPar]/I");
         mytree_->Branch("genParMotherId", genParMotherId, "genParMotherId[nGenPar]/I");
         mytree_->Branch("genParMotherIndex", genParMotherIndex, "genParMotherIndex[nGenPar]/I");

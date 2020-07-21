@@ -1063,6 +1063,9 @@ class AnalysisEvent
     Float_t genParE[NGENPARMAX];
     Float_t genParPt[NGENPARMAX];
     Int_t genParId[NGENPARMAX];
+    Int_t genParVx[NGENPARMAX];
+    Int_t genParVy[NGENPARMAX];
+    Int_t genParVz[NGENPARMAX];
     Int_t genParMotherId[NGENPARMAX];
     Int_t genParMotherIndex[NGENPARMAX];
     Int_t genParNumDaughters[NGENPARMAX];
@@ -2074,6 +2077,9 @@ class AnalysisEvent
     TBranch* b_genParE; //!
     TBranch* b_genParPt; //!
     TBranch* b_genParId; //!
+    TBranch* b_genParVx; //!
+    TBranch* b_genParVy; //!
+    TBranch* b_genParVz; //!
     TBranch* b_genParMotherId; //!
     TBranch* b_genParMotherIndex; //!
     TBranch* b_genParNumDaughters; //!
@@ -3221,6 +3227,9 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("genParE", genParE, &b_genParE);
        fChain->SetBranchAddress("genParPt", genParPt, &b_genParPt);
        fChain->SetBranchAddress("genParId", genParId, &b_genParId);
+       fChain->SetBranchAddress("genParVx", genParVx, &b_genParVx);
+       fChain->SetBranchAddress("genParVy", genParVy, &b_genParVy);
+       fChain->SetBranchAddress("genParVz", genParVz, &b_genParVz);
        fChain->SetBranchAddress("genParMotherId", genParMotherId, &b_genParMotherId);
        fChain->SetBranchAddress("genParMotherIndex", genParMotherIndex, &b_genParMotherIndex);
        fChain->SetBranchAddress("genParNumDaughters", genParNumDaughters, &b_genParNumDaughters);
