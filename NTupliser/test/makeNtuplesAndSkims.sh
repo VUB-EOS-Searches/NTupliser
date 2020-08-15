@@ -11,19 +11,27 @@ eval `scramv1 runtime -sh`
 
 export LD_LIBRARY_PATH=`pwd`/lib/:`pwd`/lib64/:${LD_LIBRARY_PATH}
 
-bash nTuples_HZJ.sh 
-bash nTuples_ggH.sh
-bash nTuples_ggHZ.sh
-bash nTuples_ggHZ_inclusive.sh  
+bash nTuples_HZJ_hadronic.sh 
+bash nTuples_HZJ_leptonic.sh 
+
+bash nTuples_ggH_hadronic.sh
+bash nTuples_ggH_leptonic.sh
+
+bash nTuples_ggHZ_hadronic.sh  
+bash nTuples_ggHZ_leptonicic.sh  
 
 rm /vols/cms/adm10/skims2017/HZJ/*/*
 rm /vols/cms/adm10/skims2017/ggH/*/*
 rm /vols/cms/adm10/skims2017/ggHZ/*/*
 
-bash skim_HZJ.sh
-bash skim_ggH.sh
-bash skim_ggHZ.sh
-bash skim_ggHZ_inclusive.sh
+bash skim_HZJ_Shadronic.sh
+bash skim_HZJ_Sleptonic.sh
+
+bash skim_ggH_Shardonic.sh
+bash skim_ggH_Sleptonic.sh
+
+bash skim_ggHZ_Shadronic.sh
+bash skim_ggHZ_Sleptonic.sh
 
 echo "\nEnd of job on " `date` "\n"
 
