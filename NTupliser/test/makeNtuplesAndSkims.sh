@@ -11,14 +11,14 @@ eval `scramv1 runtime -sh`
 
 export LD_LIBRARY_PATH=`pwd`/lib/:`pwd`/lib64/:${LD_LIBRARY_PATH}
 
-bash nTuples_HZJ_hadronic.sh 
-bash nTuples_HZJ_leptonic.sh 
+bash nTuples_HZJ_Shadronic.sh 
+bash nTuples_HZJ_Sleptonic.sh 
 
-bash nTuples_ggH_hadronic.sh
-bash nTuples_ggH_leptonic.sh
+bash nTuples_ggH_Shadronic.sh
+bash nTuples_ggH_Sleptonic.sh
 
-bash nTuples_ggHZ_hadronic.sh  
-bash nTuples_ggHZ_leptonicic.sh  
+bash nTuples_ggHZ_Shadronic.sh  
+bash nTuples_ggHZ_Sleptonicic.sh  
 
 rm /vols/cms/adm10/skims2017/HZJ/*/*
 rm /vols/cms/adm10/skims2017/ggH/*/*
