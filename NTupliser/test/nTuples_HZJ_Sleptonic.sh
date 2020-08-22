@@ -1,3 +1,7 @@
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+
+eval `scramv1 runtime -sh`
+
 cmsRun nTupliserMC_miniAOD_cfg.py inputFiles=file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSS_Sleptonic_Vleptonic_M125_MS55_ctauS1_13TeV/PAT_miniAOD/miniAOD_2017_3p5K.root outputFile=file:/vols/cms/adm10/nTuples_2017/HZJ/NLO_HZJ_HToSS_Sleptonic_Vleptonic_M125_MS55_ctauS1/MC.root
 cmsRun nTupliserMC_miniAOD_cfg.py inputFiles=file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSS_Sleptonic_Vleptonic_M125_MS55_ctauS10_13TeV/PAT_miniAOD/miniAOD_2017_3p5K.root outputFile=file:/vols/cms/adm10/nTuples_2017/HZJ/NLO_HZJ_HToSS_Sleptonic_Vleptonic_M125_MS55_ctauS10/MC.root
 cmsRun nTupliserMC_miniAOD_cfg.py inputFiles=file:/vols/cms/adm10/MC/HZJ/NLO_HZJ_HToSS_Sleptonic_Vleptonic_M125_MS55_ctauS100_13TeV/PAT_miniAOD/miniAOD_2017_3p5K.root outputFile=file:/vols/cms/adm10/nTuples_2017/HZJ/NLO_HZJ_HToSS_Sleptonic_Vleptonic_M125_MS55_ctauS100/MC.root
