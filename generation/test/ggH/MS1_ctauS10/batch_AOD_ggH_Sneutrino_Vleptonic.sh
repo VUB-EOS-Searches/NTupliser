@@ -12,7 +12,7 @@ eval `scramv1 runtime -sh`
 
 export LD_LIBRARY_PATH=`pwd`/lib/:`pwd`/lib64/:${LD_LIBRARY_PATH}
 
-cmsRun step2_RAW2DIGI_RECO_EI_2017.py inputFiles=file:/vols/cms/adm10/MC/ggH/NLO_ggH_HToSS_Sneutrino_Vleptonic_M125_MS1_ctauS10_13TeV/DIGIPREMIX_S2_DATAMIX_L1_DIGI2RAW_HLT/step1_2017_1K.root outputFile=file:/vols/cms/adm10/MC/ggH/NLO_ggH_HToSS_Sneutrino_Vleptonic_M125_MS1_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_1K.root
+cmsRun step2_RAW2DIGI_RECO_EI_2017.py inputFiles=file:/vols/cms/adm10/MC/ggH/NLO_ggH_HToSS_Sneutrino_M125_MS1_ctauS10_13TeV/DIGIPREMIX_S2_DATAMIX_L1_DIGI2RAW_HLT/step1_2017_1K.root outputFile=file:/vols/cms/adm10/MC/ggH/NLO_ggH_HToSS_Sneutrino_M125_MS1_ctauS10_13TeV/RAW2DIGI_RECO_EI/step2_2017_1K.root
 
 echo "\nEnd of job on " `date` "\n"
 

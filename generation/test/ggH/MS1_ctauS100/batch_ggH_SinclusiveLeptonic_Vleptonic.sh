@@ -12,7 +12,7 @@ eval `scramv1 runtime -sh`
 
 export LD_LIBRARY_PATH=`pwd`/lib/:`pwd`/lib64/:${LD_LIBRARY_PATH}
 
-cmsRun NLO_ggHToSS_MH125_SinclusiveLeptonic_Vleptonic_2017.py outputFile=file:/vols/cms/adm10/MC/ggH/NLO_ggH_HToSS_SinclusiveLeptonic_Vleptonic_M125_MS1_ctauS100_13TeV/GEN-SIM/ggH_MS1_ctauS100.root
+cmsRun NLO_ggHToSS_MH125_SinclusiveLeptonic_Vleptonic_2017.py outputFile=file:/vols/cms/adm10/MC/ggH/NLO_ggH_HToSS_SinclusiveLeptonic_M125_MS1_ctauS100_13TeV/GEN-SIM/ggH_MS1_ctauS100.root
 
 echo "\nEnd of job on " `date` "\n"
 
