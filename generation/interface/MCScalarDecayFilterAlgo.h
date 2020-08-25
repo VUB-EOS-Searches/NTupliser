@@ -32,7 +32,7 @@ class MCScalarDecayFilterAlgo {
 
       // ----------memeber function----------------------
       bool hasZAncestors(const reco::GenParticle& gp) const;
-      bool hasScalarAncestors(const reco::GenParticle& gp) const;
+      bool hasScalarAncestors(const reco::GenParticle& gp, const bool positive) const;
 
       // ----------member data ---------------------------
        edm::EDGetTokenT<reco::GenParticleCollection> genParticleToken_;

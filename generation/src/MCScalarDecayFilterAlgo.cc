@@ -31,7 +31,14 @@ bool MCScalarDecayFilterAlgo::filter(const edm::Event& iEvent) const
     iEvent.getByToken(genParticleToken_, genParticles);
 
     // Flags for processes in event
+    // Z decays
     bool ZmuPlus {false}, ZmuMinus{false}, ZmuonDecays {false};
+
+    // Scalar decays
+    bool muPlusSplus {false}, muNegSplus {false}, muPlusSneg {false}, muNegSneg {false}; // muon flags 
+    bool kPlusSplus {false}, kNegSplus {false}, kPlusSneg {false}, kNegSneg {false}; // charged kaon flags
+    bool kShortSplus {false}, kbarShortSplus {false}, kShortSneg {false}, kbarShortSneg {false}; // kShort flags
+    bool piPlusSplus {false}, piNegSplus {false}, piPlusSneg {false}, piNegSneg {false}; // pion flags
 
     for (reco::GenParticleCollection::const_iterator p = genParticles->begin(); p != genParticles->end(); ++p) {
 
@@ -46,11 +53,107 @@ bool MCScalarDecayFilterAlgo::filter(const edm::Event& iEvent) const
 
         if ( ZmuPlus && ZmuMinus ) ZmuonDecays = true;
 
-        // check for S->mumu, S->KK, K->pionpion
+        //// check for S->mumu, S->KK, K->pionpion
 
+        // check for S->mumu
+        if ( p->pdgId() == 13 ) {
+            if ( hasScalarAncestors(*p, true)  ) muPlusSplus = true;
+            if ( hasScalarAncestors(*p, false) ) muPlusSneg  = true;
+        }
+        else if ( p->pdgId() == -13 ) {
+            if ( hasScalarAncestors(*p, true)  ) muNegSplus = true;
+            if ( hasScalarAncestors(*p, false) ) muNegSneg  = true;
+        }
+
+        // check for S->K+K-
+        else if ( p->pdgId() == 321 ) {
+            if ( hasScalarAncestors(*p, true)  ) kPlusSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kPlusSneg  = true;
+        }
+        else if ( p->pdgId() == -321 ) {
+            if ( hasScalarAncestors(*p, true)  ) kNegSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kNegSneg  = true;
+        }
+
+        // check for S->kShort kBarShort
+        else if ( p->pdgId() == 310 ) {
+            if ( hasScalarAncestors(*p, true)  ) kShortSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kShortSneg  = true;
+        }
+        else if ( p->pdgId() == -310 ) {
+            if ( hasScalarAncestors(*p, true)  ) kbarShortSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kbarShortSneg  = true;
+        }
+
+        // check for S->pi+pi-
+        else if ( p->pdgId() == 211 ) {
+            if ( hasScalarAncestors(*p, true)  ) piPlusSplus = true;
+            if ( hasScalarAncestors(*p, false) ) piPlusSneg  = true;
+        }
+        else if ( p->pdgId() == -211 ) {
+            if ( hasScalarAncestors(*p, true)  ) piNegSplus = true;
+            if ( hasScalarAncestors(*p, false) ) piNegSneg  = true;
+        }
+    } // end loop over gen particles in event
+
+    // Combinatorics
+
+    // ggH
+    if (!ZmuonDecays) {
+        // mu+mu- pair
+        if (muPlusSplus && muNegSplus && muPlusSneg && muNegSneg) accepted = true;
+
+        // mu+mu- AND K+K-
+        if (muPlusSplus && muNegSplus && kPlusSneg && kNegSneg) accepted = true;
+        if (muPlusSneg && muNegSneg && kPlusSplus && kNegSplus) accepted = true;
+
+        // mu+mu- AND kShort kbarShort
+        if (muPlusSplus && muNegSplus && kShortSneg && kbarShortSneg) accepted = true;
+        if (muPlusSneg && muNegSneg && kShortSplus && kbarShortSplus) accepted = true;
+
+        // mu+mu- AND pi+pi-
+        if (muPlusSplus && muNegSplus && piPlusSneg && piNegSneg) accepted = true;
+        if (muPlusSneg && muNegSneg && piPlusSplus && piNegSplus) accepted = true;
     }
 
-    if ( ZmuonDecays ) accepted = true;
+    // ggHZ or ZH
+    else {
+        // mu+mu- pair
+        if (muPlusSplus && muNegSplus && muPlusSneg && muNegSneg) accepted = true;
+
+        // mu+mu- AND K+K-
+        if (muPlusSplus && muNegSplus && kPlusSneg && kNegSneg) accepted = true;
+        if (muPlusSneg && muNegSneg &&  kPlusSplus && kNegSplus) accepted = true;
+
+        // mu+mu- AND kShort kbarShort
+        if (muPlusSplus && muNegSplus && kShortSneg && kbarShortSneg) accepted = true;
+        if (muPlusSneg && muNegSneg &&  kShortSplus && kbarShortSplus) accepted = true;
+
+        // mu+mu- AND pi+pi-
+        if (muPlusSplus && muNegSplus && piPlusSneg && piNegSneg) accepted = true;
+        if (muPlusSneg && muNegSneg && piPlusSplus && piNegSplus) accepted = true;
+
+        // K+K- pair
+        if (kPlusSplus && kNegSplus && kPlusSneg && kNegSneg) accepted = true;
+
+        // kShort kbarShort pair
+        if (kShortSplus && kbarShortSplus && kShortSneg && kbarShortSneg) accepted = true;
+
+        // pi+pi- pair
+        if (piPlusSplus && piNegSplus && piPlusSneg && piNegSneg) accepted = true;
+
+        // K+K- AND kShort kbarShort
+        if (kPlusSplus && kNegSplus && kShortSneg && kbarShortSneg) accepted = true;
+        if (kPlusSneg && kNegSneg && kShortSplus && kbarShortSplus) accepted = true;
+
+        // K+K- AND pi+pi-
+        if (kPlusSplus && kNegSplus && piPlusSneg && piNegSneg) accepted = true;
+        if (kPlusSneg && kNegSneg && piPlusSplus && piNegSplus) accepted = true;
+
+        // kShort kbarShort AND pi+pi-
+        if (kShortSplus && kbarShortSplus && piPlusSneg && piNegSneg) accepted = true;
+        if (kShortSneg && kbarShortSneg && piPlusSplus && piNegSplus) accepted = true;
+    }
 
     return accepted;
 }
@@ -60,7 +163,7 @@ bool MCScalarDecayFilterAlgo::hasZAncestors(const reco::GenParticle& gp) const {
     bool hasZancestor {false};
 
     // stop condition : this particle has no mothers
-    if (gp.numberOfMothers() == 0) return hasZancestor;
+    if (gp.numberOfMothers() == 0) return false;
 
     // otherwise continue and check parents
 
@@ -68,27 +171,29 @@ bool MCScalarDecayFilterAlgo::hasZAncestors(const reco::GenParticle& gp) const {
         if ( gp.mother(im)->pdgId() == 23 ) hasZancestor = true;
     }
 
-    if (hasZancestor) return hasZancestor;
+    if (hasZancestor) return true;
     else hasZAncestors(*gp.motherRef(0));
 
     return hasZancestor;
 
 }
 
-bool MCScalarDecayFilterAlgo::hasScalarAncestors(const reco::GenParticle& gp) const {
-/*
+bool MCScalarDecayFilterAlgo::hasScalarAncestors(const reco::GenParticle& gp, const bool positive) const {
+
+    bool hasSancestor {false};
+    const int sign { positive? 1 : -1};
+
     // stop condition : this particle has no mothers
     if (gp.numberOfMothers() == 0) return false;
 
     // otherwise continue and check parents
-    bool hasSancestor {false};
 
     for (uint32_t im = 0; im < gp.numberOfMothers(); im++) {
-        if ( gp.mother(im)->pdgId() == 9000006 ) hasSancestor = true;
+        if ( gp.mother(im)->pdgId() == ( 9000006 * sign ) ) hasSancestor = true;
     }
 
-    if (hasSancestor) return hasSancestor;
-    else hasScalarAncestors(*gp.motherRef(im));
-*/
-    return false;
+    if (hasSancestor) return true;
+    else hasScalarAncestors(*gp.motherRef(0), sign);
+
+    return hasSancestor;
 }
