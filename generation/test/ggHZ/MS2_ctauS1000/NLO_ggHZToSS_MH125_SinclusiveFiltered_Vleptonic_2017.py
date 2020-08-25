@@ -152,6 +152,16 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
     pythiaPylistVerbosity = cms.untracked.int32(1)
 )
 
+process.genParticlesForFilter = cms.EDProducer("GenParticleProducer",
+                                       saveBarCodes = cms.untracked.bool(True),
+                                       src = cms.InputTag("generator", "unsmeared"),
+                                       abortOnUnknownPDGCode = cms.untracked.bool(False)
+                                       )
+
+process.scalarDecayFilter = cms.EDFilter("MCScalarDecayFilter",
+                           filterAlgoPSet = cms.PSet(genParticles = cms.InputTag("genParticlesForFilter"))
+                           )
+
 process.externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/powheg/V2/ggHZ_HanythingJ_NNPDF31_13TeV_M125_Vleptonic/v1/ggHZ_HanythingJ_NNPDF31_13TeV_M125_Vleptonic.tgz'),
 #    args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/powheg/V2/ggHZ_Hanything_NNPDF31_13TeV_125_Vinclusive/v1/ggHZ_slc6_amd64_gcc630_CMSSW_9_3_6_patch2_ggHZ_Hanything_NNPDF31_13TeV_125_Vinclusive.tgz'),
@@ -161,7 +171,7 @@ process.externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')
 )
 
-process.ProductionFilterSequence = cms.Sequence(process.generator)
+process.ProductionFilterSequence = cms.Sequence(process.generator * (process.genParticlesForFilter + process.scalarDecayFilter))
 
 # Path and EndPath definitions
 process.lhe_step = cms.Path(process.externalLHEProducer)
