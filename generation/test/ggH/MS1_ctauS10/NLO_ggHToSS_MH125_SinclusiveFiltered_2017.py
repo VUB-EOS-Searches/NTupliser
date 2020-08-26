@@ -31,8 +31,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 options = VarParsing.VarParsing ('analysis')
 options.parseArguments()
 
-intEvts  =  cms.untracked.int32(1000)
-uintEvts = cms.untracked.uint32(1000)
+intEvts  =  cms.untracked.int32(5000)
+uintEvts = cms.untracked.uint32(5000)
 
 process.maxEvents = cms.untracked.PSet(
     input = intEvts
