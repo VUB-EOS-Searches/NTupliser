@@ -4,7 +4,7 @@ fail_exit() { echo "$@" 1>&2; exit 1; }
 
 echo "Start of job on " `date`
 
-cd /home/hep/adm10/CMSSW_9_4_8/src/NTupliser/generation/test/ggH/MS2_ctauS10/
+cd /home/hep/adm10/CMSSW/CMSSW_9_4_8/src/NTupliser/generation/test/ggH/MS2_ctauS10/
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
