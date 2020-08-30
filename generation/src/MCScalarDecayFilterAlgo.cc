@@ -57,42 +57,42 @@ bool MCScalarDecayFilterAlgo::filter(const edm::Event& iEvent) const
 
         // check for S->mumu
         if ( p->pdgId() == 13 ) {
-            if ( hasScalarAncestors(*p) ) muPlusSplus = true;
-            if ( hasScalarbarAncestors(*p) ) muPlusSneg  = true;
+            if ( hasScalarAncestors(*p, true) ) muPlusSplus = true;
+            if ( hasScalarAncestors(*p, false) ) muPlusSneg  = true;
         }
         else if ( p->pdgId() == -13 ) {
-            if ( hasScalarAncestors(*p) ) muNegSplus = true;
-            if ( hasScalarbarAncestors(*p) ) muNegSneg  = true;
+            if ( hasScalarAncestors(*p, true) ) muNegSplus = true;
+            if ( hasScalarAncestors(*p, false) ) muNegSneg  = true;
         }
 
         // check for S->K+K-
         else if ( p->pdgId() == 321 ) {
-            if ( hasScalarAncestors(*p) ) kPlusSplus = true;
-            if ( hasScalarbarAncestors(*p) ) kPlusSneg  = true;
+            if ( hasScalarAncestors(*p, true) ) kPlusSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kPlusSneg  = true;
         }
         else if ( p->pdgId() == -321 ) {
-            if ( hasScalarAncestors(*p) ) kNegSplus = true;
-            if ( hasScalarbarAncestors(*p) ) kNegSneg  = true;
+            if ( hasScalarAncestors(*p, true) ) kNegSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kNegSneg  = true;
         }
 
         // check for S->kShort kBarShort
         else if ( p->pdgId() == 310 ) {
-            if ( hasScalarAncestors(*p) ) kShortSplus = true;
-            if ( hasScalarbarAncestors(*p) ) kShortSneg  = true;
+            if ( hasScalarAncestors(*p, true) ) kShortSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kShortSneg  = true;
         }
         else if ( p->pdgId() == -310 ) {
-            if ( hasScalarAncestors(*p) ) kbarShortSplus = true;
-            if ( hasScalarbarAncestors(*p) ) kbarShortSneg  = true;
+            if ( hasScalarAncestors(*p, true) ) kbarShortSplus = true;
+            if ( hasScalarAncestors(*p, false) ) kbarShortSneg  = true;
         }
 
         // check for S->pi+pi-
         else if ( p->pdgId() == 211 ) {
-            if ( hasScalarAncestors(*p) ) piPlusSplus = true;
-            if ( hasScalarbarAncestors(*p) ) piPlusSneg  = true;
+            if ( hasScalarAncestors(*p, true) ) piPlusSplus = true;
+            if ( hasScalarAncestors(*p, false) ) piPlusSneg  = true;
         }
         else if ( p->pdgId() == -211 ) {
-            if ( hasScalarAncestors(*p)  ) piNegSplus = true;
-            if ( hasScalarbarAncestors(*p) ) piNegSneg  = true;
+            if ( hasScalarAncestors(*p, true)  ) piNegSplus = true;
+            if ( hasScalarAncestors(*p, false) ) piNegSneg  = true;
         }
     } // end loop over gen particles in event
 
@@ -178,10 +178,12 @@ bool MCScalarDecayFilterAlgo::hasZAncestors(const reco::GenParticle& gp) const {
 
 }
 
-bool MCScalarDecayFilterAlgo::hasScalarAncestors(const reco::GenParticle& gp) const {
+bool MCScalarDecayFilterAlgo::hasScalarAncestors(const reco::GenParticle& gp, const bool scalarSign) const {
 
     bool hasSancestor {false};
     bool qgParent {false};
+
+    const int sign {scalarSign ? 1 : -1};
 
     // stop condition : this particle has no mothers
     if (gp.numberOfMothers() == 0) return false;
@@ -191,36 +193,11 @@ bool MCScalarDecayFilterAlgo::hasScalarAncestors(const reco::GenParticle& gp) co
     for (uint32_t im = 0; im < gp.numberOfMothers(); im++) {
         const int motherId {gp.mother(im)->pdgId()};
 
-        if ( motherId == 9000006 ) hasSancestor = true;
+        if ( motherId == (9000006*sign) ) hasSancestor = true;
         else if ( std::abs(motherId) < 10 || std::abs(motherId) == 21 ) qgParent = true;
     }
 
-   if (!hasSancestor) return hasScalarbarAncestors(*gp.motherRef(0)); // OLD
-   if (!hasSancestor && qgParent) return hasScalarbarAncestors(*gp.motherRef(0)); 
-
-    return hasSancestor;
-}
-
-bool MCScalarDecayFilterAlgo::hasScalarbarAncestors(const reco::GenParticle& gp) const {
-
-    bool hasSancestor {false};
-    bool qgParent {false};
-
-    // stop condition : this particle has no mothers
-    if (gp.numberOfMothers() == 0) return false;
-
-    // otherwise continue and check parents
-
-
-    for (uint32_t im = 0; im < gp.numberOfMothers(); im++) {
-        const int motherId {gp.mother(im)->pdgId()};
-
-        if ( motherId == -9000006 ) hasSancestor = true;
-        else if ( std::abs(motherId) < 10 || std::abs(motherId) == 21 ) qgParent = true;
-    }
-
-//   if (!hasSancestor) return hasScalarbarAncestors(*gp.motherRef(0)); // OLD
-   if (!hasSancestor && qgParent) return hasScalarbarAncestors(*gp.motherRef(0)); 
+   if (!hasSancestor && qgParent) return hasScalarAncestors(*gp.motherRef(0), scalarSign); 
 
     return hasSancestor;
 }
