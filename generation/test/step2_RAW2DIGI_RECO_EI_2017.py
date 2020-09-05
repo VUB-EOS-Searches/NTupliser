@@ -69,6 +69,10 @@ process.AODSIMoutput = cms.OutputModule("PoolOutputModule",
 )
 
 # Additional output definition
+process.AODSIMoutput.outputCommands.append('keep *_generalTracks_*_*'),
+process.AODSIMoutput.outputCommands.append('keep *_displacedTracks_*_*'),
+process.AODSIMoutput.outputCommands.append('keep *_g4SimHits_*_*'),
+process.AODSIMoutput.outputCommands.append('keep *_genParticles_*_*'),
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
