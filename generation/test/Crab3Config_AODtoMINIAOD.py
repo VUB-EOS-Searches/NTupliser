@@ -21,4 +21,4 @@ config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
 config.Data.publication = True
 config.Data.outputDatasetTag = 'CRAB3_MC_TT_TopLeptonicDecay_TZ_2L_Kappa_Zct_RunIISpring16MiniAODv2_161020'
 
-config.Site.storageSite = 'T2_UK_London_Brunel' #T2_UK_London_IC
+config.Site.storageSite = 'T2_BE_IIHE' #T2_UK_London_IC, T2_UK_London_Brunel, T2_BE_IIHE

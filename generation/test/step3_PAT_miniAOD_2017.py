@@ -122,8 +122,8 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
 # Additional output definition
 process.MINIAODSIMoutput.outputCommands.append('keep *_generalTracks_*_*'),
 process.MINIAODSIMoutput.outputCommands.append('keep *_displacedTracks_*_*'),
-process.MINIAODSIMoutput.outputCommands.append('keep *_g4SimHits_*_*'),
-process.MINIAODSIMoutput.outputCommands.append('keep *_genParticles_*_*'),
+#process.MINIAODSIMoutput.outputCommands.append('keep *_g4SimHits_*_*'),
+#process.MINIAODSIMoutput.outputCommands.append('keep *_genParticles_*_*'),
 
 process.mergedTruth = cms.EDProducer("GenPlusSimParticleProducer",
         src           = cms.InputTag("g4SimHits"), # use "famosSimHits" for FAMOS
