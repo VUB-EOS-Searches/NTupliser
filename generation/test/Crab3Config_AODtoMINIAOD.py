@@ -2,23 +2,27 @@ from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 
 config = config()
 
-config.General.requestName = 'ST_TZ_2L_Kappa_Zct_RunIISpring16MiniAODv2_161020'
+config.General.requestName = 'PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200908'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
 
+config.JobType.allowUndistributedCMSSW = True
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'prodAODtoMINIAOD.py'
-config.JobType.maxMemoryMB = 2500
+config.JobType.psetName = 'step3_PAT_miniAOD_2017.py'
+config.JobType.maxMemoryMB = 9500
+config.JobType.numCores = 8
+config.JobType.maxJobRuntimeMin = 1500
 
-config.Data.inputDataset = '/ST_TZ_2L_Kappa_Zct_161006/almorton-CRAB3_MC_ST_TZ_2L_Kappa_Zct_161006-491cc9c0c16244aa3248937bd6af6e2c/USER'
+config.Data.inputDataset = '/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200908/almorton-CRAB3_GEN-SIM_NLO_HZJ_MH125_MS1_ctauS1_2017_200908-2a17ce0ed43aa491dca0c31ef340757b/USER'
 config.Data.inputDBS = 'phys03'
 
 config.Data.splitting = 'FileBased'
-config.Data.unitsPerJob = 10
-config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
+config.Data.unitsPerJob = 1
+config.Data.outLFNDirBase = '/store/user/almorton/MC/PAT_miniAOD/'
 
 config.Data.publication = True
-config.Data.outputDatasetTag = 'CRAB3_MC_TT_TopLeptonicDecay_TZ_2L_Kappa_Zct_RunIISpring16MiniAODv2_161020'
+config.Data.outputDatasetTag = 'CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200908'
 
 config.Site.storageSite = 'T2_BE_IIHE' #T2_UK_London_IC, T2_UK_London_Brunel, T2_BE_IIHE
+#config.Site.blacklist = ['T2_UK_London_Brunel']
