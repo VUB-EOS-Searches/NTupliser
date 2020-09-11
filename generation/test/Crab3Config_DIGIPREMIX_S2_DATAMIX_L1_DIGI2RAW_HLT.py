@@ -1,8 +1,8 @@
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+from CRABClient.UserUtilities import config
 
 config = config()
 
-config.General.requestName = 'DIGI2RAW_HLT_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200908'
+config.General.requestName = 'DIGI2RAW_HLT_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200909'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
@@ -22,7 +22,7 @@ config.Data.unitsPerJob = 1
 config.Data.outLFNDirBase = '/store/user/almorton/MC/DIGI2RAW_HLT/'
 
 config.Data.publication = True
-config.Data.outputDatasetTag = 'CRAB3_DIGI2RAW_HLT_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200908'
+config.Data.outputDatasetTag = 'CRAB3_DIGI2RAW_HLT_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200909'
 
 config.Site.storageSite = 'T2_BE_IIHE' #T2_UK_London_IC, T2_UK_London_Brunel, T2_BE_IIHE
 #config.Site.blacklist = ['T2_UK_London_Brunel']
