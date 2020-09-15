@@ -73,6 +73,16 @@ process.AODSIMoutput.outputCommands.append('keep *_generalTracks_*_*'),
 process.AODSIMoutput.outputCommands.append('keep *_displacedTracks_*_*'),
 process.AODSIMoutput.outputCommands.append('keep *_g4SimHits_*_*'),
 process.AODSIMoutput.outputCommands.append('keep *_genParticles_*_*'),
+process.AODSIMoutput.outputCommands.append('keep *_genParticlesPlus_*_*'),
+
+process.genParticlesPlus = cms.EDProducer("GenPlusSimParticleProducer",
+        src           = cms.InputTag("g4SimHits"), # use "famosSimHits" for FAMOS
+        setStatus     = cms.int32(5),             # set status = 5 for GEANT GPs
+        filter        = cms.vstring("pt > 0.0"),  # just for testing (optional)
+        genParticles   = cms.InputTag("genParticles") # original genParticle list
+)
+
+process.genParticlesPlusStep = cms.Path(process.genParticlesPlus)
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
@@ -86,7 +96,7 @@ process.endjob_step = cms.EndPath(process.endOfProcess)
 process.AODSIMoutput_step = cms.EndPath(process.AODSIMoutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.raw2digi_step,process.reconstruction_step,process.eventinterpretaion_step,process.endjob_step,process.AODSIMoutput_step)
+process.schedule = cms.Schedule(process.raw2digi_step,process.reconstruction_step,process.eventinterpretaion_step,process.genParticlesPlusStep,process.endjob_step,process.AODSIMoutput_step)
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
