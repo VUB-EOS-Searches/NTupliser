@@ -128,6 +128,9 @@ process.MINIAODSIMoutput.outputCommands.append('keep *_prunedGenParticlesPlus_*_
 
 process.prunedGenParticlesPlus = cms.EDProducer("GenParticlePruner",
     src = cms.InputTag("genParticlesPlus"),
+    select = cms.vstring(
+	"keep *",
+   )
 )
 
 process.prunedGenParticlesPlusStep = cms.Path(process.prunedGenParticlesPlus)
