@@ -2,13 +2,27 @@
 from collections import namedtuple
 from datetime import datetime
 
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+from CRABClient.UserUtilities import config
 
 Dataset = namedtuple("Dataset", "process dataset")
 
 ## 2017 Datasets
+
+# HToSS
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1",       "")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10",      "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS100",     "")
+dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000",     "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1",       "")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10",      "")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100",     "")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000",    "")
+
+###############
+
 ## tZq
-dataset = Dataset("tZq", "/tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v2/MINIAODSIM")
+#dataset = Dataset("tZq", "/tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v2/MINIAODSIM")
 ## tZq single lepton
 # dataset = Dataset("tZq_Zhad_Wlept", "/tZq_Zhad_Wlept_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
 ## tHq
@@ -108,19 +122,23 @@ time = datetime.now().strftime("%Y%m%d%H%M%S")
 
 config = config()
 
-config.General.requestName = '{}__{}'.format(dataset.process, time)
+config.General.requestName = '{}_{}'.format(dataset.process, time)
 config.General.workArea = 'crab_projects'
 
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = 'nTupliserMC_miniAOD_cfg.py'
 
 config.Data.inputDataset = dataset.dataset
-config.Data.inputDBS = 'global'
+config.Data.inputDBS = 'phys03' ## private production MC
+#config.Data.inputDBS = 'global' ## normal centrally generated MC
+
 config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 1
-config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
+config.Data.outLFNDirBase = '/store/user/almorton/MC/nTuples/'
 
 config.Data.publication = False
-config.Data.outputDatasetTag = "CRAB3_MC_nTupilisation__{}__{}".format(dataset.process, time)
+config.Data.outputDatasetTag = "CRAB3_MC_nTupilisation_{}_{}".format(dataset.process, time)
 
-config.Site.storageSite = 'T2_UK_London_Brunel'
+config.Site.storageSite = 'T2_BE_IIHE' #T2_UK_London_IC, T2_UK_London_Brunel, T2_BE_IIHE
+#config.Site.blacklist = ['T2_UK_London_Brunel']
+

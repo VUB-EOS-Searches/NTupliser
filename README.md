@@ -1,31 +1,30 @@
-brunel-nTuples
+VUB-EOS-Searches-nTuples
 ==============
-
-ntupliser for brunel group
-
-the famous ntupliser passed down from one generation of brunel phd student to
-the next. all our marks left indelibly on it, if no other reason than that the
-next guy has no idea what we did.
-
-enjoy, future students.
-
 ***
 
-The CMSSW_9_4_8 branch contains code from CMSSW_8_0_25 branch which is modified
+The CMSSW_9_4_10 branch contains code from CMSSW_9_4_8 branch which is modified
 to work for Run 2 miniAODv2 94X data and MC. 
 
 This is currently a work in progress left to be completed by the next generation.
 
-Added since last version (8_0_27):
-- Muon ID/Iso/etc bools
-- Electron VIDs (see below under to be fixed)
-- DeepCSV and DeepCMVA added to bTagger list
 
 To be fixed:
 
 - Check DeepCSV and DeepCMVA b-taggers actually work and include them in the skimmer's AnalysisEvent.h
 
 ## Additional setup info:
+
+Updated ecalBadCalibReducedMINIAODFilter that needs to be rereun on miniAOD (done by nTupliser before making nTuples)
+```bash
+git cms-addpkg RecoMET/METFilters
+```
+
+DeepJet DeepFlavour setup
+```bash
+git cms-addpkg RecoBTag/TensorFlow
+git cherry-pick 94ceae257f846998c357fcad408986cc8a039152
+```bash
+
 
 NOTE!!!! YOU DO NOT HAVE TO DO THIS!!!
 Only if you want to recreate the EGM regression/smearing corrections that are already in the re-miniAODv2
