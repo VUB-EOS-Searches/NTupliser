@@ -160,6 +160,11 @@ process.makeTopologyNtupleMiniAOD.metPFToken = cms.InputTag("slimmedMETs")
 process.makeTopologyNtupleMiniAOD.rhoToken = cms.InputTag("fixedGridRhoFastjetAll")                                            
 process.makeTopologyNtupleMiniAOD.conversionsToken = cms.InputTag("reducedEgamma", "reducedConversions")
 
+#private signal MC has extra gen info in a new collection
+process.makeTopologyNtupleMiniAOD.genParticles = cms.InputTag("prunedGenParticlesPlus")
+process.makeTopologyNtupleMiniAOD.genSimParticles = cms.InputTag("prunedGenParticlesPlus")
+
+
 ## Source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(options.inputFiles)
