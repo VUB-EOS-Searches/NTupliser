@@ -9,15 +9,23 @@ Dataset = namedtuple("Dataset", "process dataset")
 ## 2017 Datasets
 
 # HToSS
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1",       "")
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10",      "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS100",     "")
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000",     "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1",         "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_ext1",    "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10",        "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_ext1",   "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS100",       "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS100_ext1",  "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS100_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS100_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000",      "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_ext1", "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1000_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
 
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1",       "")
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10",      "")
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100",     "")
-#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000",    "")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1",         "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1_ext1",    "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10",        "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10_ext1",   "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS10_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100",       "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER	")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100_ext1",  "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS100_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000",      "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000_2017_200908/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000_2017_200911-9c06ca8e5e3f9259854f9a6d6dd2630b/USER	")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000_ext1", "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000_2017_ext1_200914/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS2_ctauS1000_2017_ext1_200918-23f87f5615a6835682f606e5f9e057d3/USER")
 
 ###############
 
@@ -70,7 +78,7 @@ Dataset = namedtuple("Dataset", "process dataset")
 # dataset = Dataset("WZ_2l2q", "/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
 ## WZ (lnu2q)
 # dataset = Dataset("WZ_lnu2q", "/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM")
-# dataset = Dataset("WZ_l3nu", "/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM")
+# dataset = Dataset("WZ_l3nu",  "/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8_v2/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
 ## ZZ (4l)
 # dataset = Dataset("ZZ_4l", "/ZZTo4L_13TeV_powheg_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM")
 ## ZZ (2l2nu)
@@ -152,13 +160,13 @@ Dataset = namedtuple("Dataset", "process dataset")
 # dataset = Dataset("DYJetsToLL_Pt-400To650", "/DYJetsToLL_Pt-400To650_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
 # dataset = Dataset("DYJetsToLL_Pt-650ToInf", "/DYJetsToLL_Pt-650ToInf_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
 
-# Wγ?
+# WG?
 # dataset = Dataset("WG_lnug", "/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
-# Zγ?
+# ZG?
 # dataset = Dataset("ZG_llg","/ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM")
 
 # QCD MuEnrichedPt15
-dataset = Dataset("QCD_Pt-20toInf_MuEnrichedPt15", "/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
+#dataset = Dataset("QCD_Pt-20toInf_MuEnrichedPt15", "/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
 
 # QCD MuEnrichedPt5
 # dataset = Dataset("QCD_Pt-15to20_MuEnrichedPt5", "/QCD_Pt-15to20_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM")
@@ -185,8 +193,8 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = 'nTupliserMC_miniAOD_cfg.py'
 
 config.Data.inputDataset = dataset.dataset
-config.Data.inputDBS = 'phys03' ## private production MC
-#config.Data.inputDBS = 'global' ## normal centrally generated MC
+#config.Data.inputDBS = 'phys03' ## private production MC
+config.Data.inputDBS = 'global' ## normal centrally generated MC
 
 config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 1
