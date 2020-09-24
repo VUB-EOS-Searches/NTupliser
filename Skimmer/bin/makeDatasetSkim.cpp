@@ -5,6 +5,7 @@
 #include <TFile.h>
 #include <TH1I.h>
 #include <TTree.h>
+#include <TLorentzVector.h>
 #include <array>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
@@ -82,13 +83,10 @@ int main(int argc, char* argv[])
             }
 
             const std::string numName{std::to_string(fileNum)};
-            const std::string numNamePlus{std::to_string(fileNum + 2)};
+//            const std::string numNamePlus{std::to_string(fileNum + 2)};
 //            const std::string dataDir{"/vols/cms/adm10/"};
-//            const std::string outFilePath{dataDir + "skimFile" + numName
-//                                          + ".root"};
 
-            const std::string outFilePath{datasetName + "/skimFile" + numName
-                                          + ".root"};
+            const std::string outFilePath{datasetName + "/skimFile" + numName + ".root"};
 
             if (fs::is_regular_file(outFilePath))
             { // don't overwrite existing skim files, except for the last two
@@ -106,8 +104,8 @@ int main(int argc, char* argv[])
             TChain datasetChain{"makeTopologyNtupleMiniAOD/tree"};
             datasetChain.Add(path.c_str());
 
-            // std::cout << path;
-            // TFile inFile(path.c_str());
+             std::cout << path << std::endl;
+//             TFile inFile(path.c_str());
 
             TFile outFile{outFilePath.c_str(), "RECREATE"};
             outFile.SetCompressionSettings(
@@ -116,7 +114,7 @@ int main(int argc, char* argv[])
 
             outTree->SetAutoSave(-std::numeric_limits<Long64_t>::max());
 
-            // std::cout << outFilePath << std::endl;
+//            std::cout << outFilePath << std::endl;
 
             const long long int numberOfEvents{datasetChain.GetEntries()};
             boost::progress_display progress(
@@ -151,44 +149,30 @@ int main(int argc, char* argv[])
                 // clang-format on
 
                 // valid packedPFCands tracks cuts
-                bool hasTrackDetails {false};
-                for (int j{0}; j < event.numPackedCands; j++) if (event.packedCandsHasTrackDetails[j] && event.packedCandsPdgId[j] == 211) hasTrackDetails = true;
-/*
 
                 // Lepton cuts
-                int numLeps{0};
+//                int numLeps{0};
 
-                constexpr double MIN_ELE_PATPT{9};
-                constexpr double MAX_ELE_ETA{2.7};
-                constexpr double MAX_ELE_RELISO{0.5};
-                constexpr double MIN_MUON_PATPT{9};
+                constexpr double MIN_MUON_PATPT{9.};
                 constexpr double MAX_MUON_ETA{2.8};
-                constexpr double MAX_MUON_RELISO{0.5};
-                constexpr int MIN_LEPTONS{0};
+                constexpr double MAX_INVZMASS{15.0};
+//                constexpr int MIN_LEPTONS{2};
+                bool passMuonCut {false};
 
-                for (int j{0}; j < event.numElePF2PAT; j++)
-                {
-                    if (event.elePF2PATPT[j] < MIN_ELE_PATPT
-                        || std::abs(event.elePF2PATEta[j]) > MAX_ELE_ETA
-                        || event.elePF2PATComRelIsoRho[j] > MAX_ELE_RELISO)
-                    {
-                        continue;
+                for (int j{0}; j < event.numMuonPF2PAT; j++) {
+                    if (event.muonPF2PATPt[j] < MIN_MUON_PATPT || std::abs(event.muonPF2PATEta[j]) > MAX_MUON_ETA) continue;
+//                    numLeps++;
+                    for (int k {j+1}; k < event.numMuonPF2PAT; k++) {
+                        if (event.muonPF2PATPt[k] < MIN_MUON_PATPT || std::abs(event.muonPF2PATEta[k]) > MAX_MUON_ETA) continue;
+                        TLorentzVector muon1{event.muonPF2PATPX[j], event.muonPF2PATPY[j], event.muonPF2PATPZ[j], event.muonPF2PATE[j]};
+                        TLorentzVector muon2{event.muonPF2PATPX[k], event.muonPF2PATPY[k], event.muonPF2PATPZ[k], event.muonPF2PATE[k]};
+                        double invMass { (muon1 + muon2).M() };
+                        if ( invMass <= MAX_INVZMASS ) passMuonCut = true;
                     }
-                    numLeps++;
                 }
-                for (int j{0}; j < event.numMuonPF2PAT; j++)
-                {
-                    if (event.muonPF2PATPt[j] < MIN_MUON_PATPT
-                        || std::abs(event.muonPF2PATEta[j]) > MAX_MUON_ETA
-                        || event.muonPF2PATComRelIsodBeta[j] > MAX_MUON_RELISO)
-                    {
-                        continue;
-                    }
-                    numLeps++;
-                }
-*/
+
 //                if (numLeps >= MIN_LEPTONS)  outTree->Fill();
-                  if (hasTrackDetails) outTree->Fill();	
+                if ( passMuonCut ) outTree->Fill();
             }
 
             if (isMC)
