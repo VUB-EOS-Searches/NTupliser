@@ -804,6 +804,7 @@ class AnalysisEvent
     Int_t HLT_Photon60_HoverELoose_v9;
 */
     // 2016 MET Triggers
+/*
     Int_t HLT_MET200_v1;
     Int_t HLT_MET200_v2;
     Int_t HLT_MET200_v3;
@@ -850,8 +851,9 @@ class AnalysisEvent
     Int_t HLT_PFHT300_PFMET110_v4;
     Int_t HLT_PFHT300_PFMET110_v5;
     Int_t HLT_PFHT300_PFMET110_v6;
-
+*/
     // 2017 MET triggers
+/*
     Int_t HLT_MET105_IsoTrk50_v1;
     Int_t HLT_MET105_IsoTrk50_v3;
     Int_t HLT_MET105_IsoTrk50_v4;
@@ -866,6 +868,7 @@ class AnalysisEvent
     Int_t HLT_MET120_IsoTrk50_v6;
     Int_t HLT_MET120_IsoTrk50_v7;
     Int_t HLT_MET120_IsoTrk50_v8;
+*/
     Int_t HLT_HT430_DisplacedDijet40_DisplacedTrack_v10;
     Int_t HLT_HT430_DisplacedDijet40_DisplacedTrack_v11;
     Int_t HLT_HT430_DisplacedDijet40_DisplacedTrack_v5;
@@ -902,6 +905,7 @@ class AnalysisEvent
     Int_t HLT_HT750_DisplacedDijet80_Inclusive_v6;
     Int_t HLT_HT750_DisplacedDijet80_Inclusive_v7;
     Int_t HLT_HT750_DisplacedDijet80_Inclusive_v9;
+/*
     Int_t HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v1;
     Int_t HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v2;
     Int_t HLT_PFMET120_PFMHT120_IDTight_L1ETMnoHF_v10;
@@ -1034,7 +1038,7 @@ class AnalysisEvent
     Int_t HLT_PFHT800_PFMET85_PFMHT85_IDTight_v7;
     Int_t HLT_PFHT800_PFMET85_PFMHT85_IDTight_v8;
     Int_t HLT_PFHT800_PFMET85_PFMHT85_IDTight_v9;
-
+*/
     // MET Filters
     // 2016
     Int_t Flag_ecalLaserCorrFilter;
@@ -1054,6 +1058,7 @@ class AnalysisEvent
     Int_t Flag_EcalDeadCellTriggerPrimitiveFilter;
     Int_t Flag_goodVertices;
     Int_t Flag_eeBadScFilter;
+    Int_t ecalBadCalibReducedMINIAODFilter;
 
     // Gen info
     static constexpr size_t NGENPARMAX{1000};
@@ -1825,6 +1830,7 @@ class AnalysisEvent
     TBranch* b_HLT_Photon50_HoverELoose_v9;
     TBranch* b_HLT_Photon60_HoverELoose_v9;
 */
+/*
     TBranch* b_HLT_MET200_v1;
     TBranch* b_HLT_MET200_v2;
     TBranch* b_HLT_MET200_v3;
@@ -1886,6 +1892,7 @@ class AnalysisEvent
     TBranch* b_HLT_MET120_IsoTrk50_v6;
     TBranch* b_HLT_MET120_IsoTrk50_v7;
     TBranch* b_HLT_MET120_IsoTrk50_v8;
+*/
     TBranch* b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v10;
     TBranch* b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v11;
     TBranch* b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v5;
@@ -1922,6 +1929,7 @@ class AnalysisEvent
     TBranch* b_HLT_HT750_DisplacedDijet80_Inclusive_v6;
     TBranch* b_HLT_HT750_DisplacedDijet80_Inclusive_v7;
     TBranch* b_HLT_HT750_DisplacedDijet80_Inclusive_v9;
+/*
     TBranch* b_HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v1;
     TBranch* b_HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v2;
     TBranch* b_HLT_PFMET120_PFMHT120_IDTight_L1ETMnoHF_v10;
@@ -2054,6 +2062,7 @@ class AnalysisEvent
     TBranch* b_HLT_PFHT800_PFMET85_PFMHT85_IDTight_v7;
     TBranch* b_HLT_PFHT800_PFMET85_PFMHT85_IDTight_v8;
     TBranch* b_HLT_PFHT800_PFMET85_PFMHT85_IDTight_v9;
+*/
 
     TBranch* b_Flag_HBHENoiseFilter;
     TBranch* b_Flag_HBHENoiseIsoFilter;
@@ -2070,6 +2079,7 @@ class AnalysisEvent
     TBranch* b_Flag_BadPFMuonFilter;
     TBranch* b_Flag_BadChargedCandidateFilter;
     TBranch* b_Flag_ecalBadCalibFilter;
+    TBranch* b_ecalBadCalibReducedMINIAODFilter;
 
     TBranch* b_nGenPar; //!
     TBranch* b_genParEta; //!
@@ -2963,8 +2973,10 @@ AnalysisEvent::AnalysisEvent(bool isMC,
 
 
    //MET trigger branches
+
    if (is2016)
    {
+/*
        fChain->SetBranchAddress("HLT_MET200_v1", &HLT_MET200_v1, &b_HLT_MET200_v1);
        fChain->SetBranchAddress("HLT_MET200_v2", &HLT_MET200_v2, &b_HLT_MET200_v2);
        fChain->SetBranchAddress("HLT_MET200_v3", &HLT_MET200_v3, &b_HLT_MET200_v3);
@@ -3011,9 +3023,11 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("HLT_PFHT300_PFMET110_v4", &HLT_PFHT300_PFMET110_v4, &b_HLT_PFHT300_PFMET110_v4);
        fChain->SetBranchAddress("HLT_PFHT300_PFMET110_v5", &HLT_PFHT300_PFMET110_v5, &b_HLT_PFHT300_PFMET110_v5);
        fChain->SetBranchAddress("HLT_PFHT300_PFMET110_v6", &HLT_PFHT300_PFMET110_v6, &b_HLT_PFHT300_PFMET110_v6);
+*/
    }
    else
    { // 2017
+/*
        fChain->SetBranchAddress("HLT_MET105_IsoTrk50_v1", &HLT_MET105_IsoTrk50_v1, &b_HLT_MET105_IsoTrk50_v1);
        fChain->SetBranchAddress("HLT_MET105_IsoTrk50_v3", &HLT_MET105_IsoTrk50_v3, &b_HLT_MET105_IsoTrk50_v3);
        fChain->SetBranchAddress("HLT_MET105_IsoTrk50_v4", &HLT_MET105_IsoTrk50_v4, &b_HLT_MET105_IsoTrk50_v4);
@@ -3028,6 +3042,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("HLT_MET120_IsoTrk50_v6", &HLT_MET120_IsoTrk50_v6, &b_HLT_MET120_IsoTrk50_v6);
        fChain->SetBranchAddress("HLT_MET120_IsoTrk50_v7", &HLT_MET120_IsoTrk50_v7, &b_HLT_MET120_IsoTrk50_v7);
        fChain->SetBranchAddress("HLT_MET120_IsoTrk50_v8", &HLT_MET120_IsoTrk50_v8, &b_HLT_MET120_IsoTrk50_v8);
+*/
        fChain->SetBranchAddress("HLT_HT430_DisplacedDijet40_DisplacedTrack_v10", &HLT_HT430_DisplacedDijet40_DisplacedTrack_v10, &b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v10);
        fChain->SetBranchAddress("HLT_HT430_DisplacedDijet40_DisplacedTrack_v11", &HLT_HT430_DisplacedDijet40_DisplacedTrack_v11, &b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v11);
        fChain->SetBranchAddress("HLT_HT430_DisplacedDijet40_DisplacedTrack_v5", &HLT_HT430_DisplacedDijet40_DisplacedTrack_v5, &b_HLT_HT430_DisplacedDijet40_DisplacedTrack_v5);
@@ -3064,6 +3079,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("HLT_HT750_DisplacedDijet80_Inclusive_v6", &HLT_HT750_DisplacedDijet80_Inclusive_v6, &b_HLT_HT750_DisplacedDijet80_Inclusive_v6);
        fChain->SetBranchAddress("HLT_HT750_DisplacedDijet80_Inclusive_v7", &HLT_HT750_DisplacedDijet80_Inclusive_v7, &b_HLT_HT750_DisplacedDijet80_Inclusive_v7);
        fChain->SetBranchAddress("HLT_HT750_DisplacedDijet80_Inclusive_v9", &HLT_HT750_DisplacedDijet80_Inclusive_v9, &b_HLT_HT750_DisplacedDijet80_Inclusive_v9);
+/*
        fChain->SetBranchAddress("HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v1", &HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v1, &b_HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v1);
        fChain->SetBranchAddress("HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v2", &HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v2, &b_HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v2);
        fChain->SetBranchAddress("HLT_PFMET120_PFMHT120_IDTight_L1ETMnoHF_v10", &HLT_PFMET120_PFMHT120_IDTight_L1ETMnoHF_v10, &b_HLT_PFMET120_PFMHT120_IDTight_L1ETMnoHF_v10);
@@ -3196,6 +3212,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("HLT_PFHT800_PFMET85_PFMHT85_IDTight_v7", &HLT_PFHT800_PFMET85_PFMHT85_IDTight_v7, &b_HLT_PFHT800_PFMET85_PFMHT85_IDTight_v7);
        fChain->SetBranchAddress("HLT_PFHT800_PFMET85_PFMHT85_IDTight_v8", &HLT_PFHT800_PFMET85_PFMHT85_IDTight_v8, &b_HLT_PFHT800_PFMET85_PFMHT85_IDTight_v8);
        fChain->SetBranchAddress("HLT_PFHT800_PFMET85_PFMHT85_IDTight_v9", &HLT_PFHT800_PFMET85_PFMHT85_IDTight_v9, &b_HLT_PFHT800_PFMET85_PFMHT85_IDTight_v9);
+*/
    }
    //MET filter branches
    if (is2016)
@@ -3212,6 +3229,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("Flag_BadPFMuonFilter", &Flag_BadPFMuonFilter, &b_Flag_BadPFMuonFilter);
        fChain->SetBranchAddress("Flag_BadChargedCandidateFilter", &Flag_BadChargedCandidateFilter, &b_Flag_BadChargedCandidateFilter);
        fChain->SetBranchAddress("Flag_ecalBadCalibFilter", &Flag_ecalBadCalibFilter, &b_Flag_ecalBadCalibFilter);
+       fChain->SetBranchAddress("ecalBadCalibReducedMINIAODFilter", &ecalBadCalibReducedMINIAODFilter, &b_ecalBadCalibReducedMINIAODFilter);
    }
    fChain->SetBranchAddress("Flag_goodVertices", &Flag_goodVertices, &b_Flag_goodVertices);
    fChain->SetBranchAddress("Flag_globalTightHalo2016Filter", &Flag_globalTightHalo2016Filter, &b_Flag_globalTightHalo2016Filter);
