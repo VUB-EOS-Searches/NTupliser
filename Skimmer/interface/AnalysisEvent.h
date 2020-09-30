@@ -720,6 +720,10 @@ class AnalysisEvent
     Int_t HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v2;
     Int_t HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v3;
     Int_t HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v4;
+
+    Int_t HLT_DoubleL2Mu50_v2;
+    Int_t HLT_DoubleMu43NoFiltersNoVtx_v3;
+    Int_t HLT_DoubleMu48NoFiltersNoVtx_v3
 /*
     Int_t HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1;
     Int_t HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2;
@@ -1076,6 +1080,8 @@ class AnalysisEvent
     Int_t genParNumDaughters[NGENPARMAX];
     Int_t genParDaughterId1[NGENPARMAX];
     Int_t genParDaughterId2[NGENPARMAX];
+    Int_t genParDaughter1Index[NGENPARMAX];
+    Int_t genParDaughter2Index[NGENPARMAX];
     Int_t genParStatus[NGENPARMAX];
     Int_t genParCharge[NGENPARMAX];
     Int_t eventRun;
@@ -1754,6 +1760,11 @@ class AnalysisEvent
     TBranch* b_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v2;
     TBranch* b_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v3;
     TBranch* b_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v4;
+
+    TBranch* b_HLT_DoubleL2Mu50_v2;
+    TBranch* b_HLT_DoubleMu43NoFiltersNoVtx_v3;
+    TBranch* b_HLT_DoubleMu48NoFiltersNoVtx_v3
+
 /*
     TBranch* b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1;
     TBranch* b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2;
@@ -2095,6 +2106,8 @@ class AnalysisEvent
     TBranch* b_genParNumDaughters; //!
     TBranch* b_genParDaughterId1; //!
     TBranch* b_genParDaughterId2; //!
+    TBranch* b_genParDaughter1Index; //!
+    TBranch* b_genParDaughter2Index; //!
     TBranch* b_genParStatus; //!
     TBranch* b_genParCharge; //!
     TBranch* b_eventRun; //!
@@ -2883,6 +2896,11 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v2", &HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v2, &b_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v2);
        fChain->SetBranchAddress("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v3", &HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v3, &b_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v3);
        fChain->SetBranchAddress("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v4", &HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v4, &b_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v4);
+
+       fChain->SetBranchAddress("HLT_DoubleL2Mu50_v2", &HLT_DoubleL2Mu50_v2, &b_HLT_DoubleL2Mu50_v2);
+       fChain->SetBranchAddress("HLT_DoubleMu43NoFiltersNoVtx_v3", &HLT_DoubleMu43NoFiltersNoVtx_v3, &b_HLT_DoubleMu43NoFiltersNoVtx_v3);
+       fChain->SetBranchAddress("HLT_DoubleMu48NoFiltersNoVtx_v3", &HLT_DoubleMu48NoFiltersNoVtx_v3, &b_HLT_DoubleMu48NoFiltersNoVtx_v3);
+
 /*
        fChain->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1);
        fChain->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2);
@@ -3254,6 +3272,8 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("genParStatus", genParStatus, &b_genParStatus);
        fChain->SetBranchAddress("genParDaughterId1", genParDaughterId1, &b_genParDaughterId1);
        fChain->SetBranchAddress("genParDaughterId2", genParDaughterId2, &b_genParDaughterId2);
+       fChain->SetBranchAddress("genParDaughter1Index", genParDaughter1Index, &b_genParDaughter1Index);
+       fChain->SetBranchAddress("genParDaughter2Index", genParDaughter2Index, &b_genParDaughter2Index);
        fChain->SetBranchAddress("genParCharge", genParCharge, &b_genParCharge);
    }
    fChain->SetBranchAddress("eventRun", &eventRun, &b_eventRun);

@@ -960,6 +960,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int genParNumDaughters[NGENPARMAX]{};
     int genParDaughterId1[NGENPARMAX]{};
     int genParDaughterId2[NGENPARMAX]{};
+    int genParDaughter1Index[NGENPARMAX]{};
+    int genParDaughter2Index[NGENPARMAX]{};
     int genParCharge[NGENPARMAX]{};
     // PDF info
     float genPDFScale{};

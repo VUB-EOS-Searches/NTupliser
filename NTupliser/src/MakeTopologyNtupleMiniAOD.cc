@@ -1843,19 +1843,41 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
                 genParNumMothers[nGenPar] = it->numberOfMothers(); 
                 if (it->numberOfMothers() > 0 ) genParMotherId[nGenPar] =  it->mother()->pdgId(); 
                 else genParMotherId[nGenPar] = 0; // guards against seg fault if particle has no mother
-                int idx = -1;
-                for (reco::GenParticleCollection::const_iterator mit = genParticles->begin(); mit != genParticles->end(); ++mit) {
-                    if(it->mother() == &(*mit)) {
-                        idx = std::distance(genParticles->begin(), mit);
-                        break;
+                int idx {1};
+                if (it->numberOfMothers() > 0 ) {
+                    for (reco::GenParticleCollection::const_iterator mit = genParticles->begin(); mit != genParticles->end(); ++mit) {
+                        if(it->mother() == &(*mit)) {
+                            idx = std::distance(genParticles->begin(), mit);
+                            break;
+                        }
                     }
                 }
                 genParMotherIndex[nGenPar] = idx;
                 genParNumDaughters[nGenPar] = it->numberOfDaughters(); 
+
                 genParDaughterId1[nGenPar] = 0;
                 genParDaughterId2[nGenPar] = 0;
                 if (it->numberOfDaughters() > 0) genParDaughterId1[nGenPar] = it->daughter(0)->pdgId();
                 if (it->numberOfDaughters() > 1) genParDaughterId2[nGenPar] = it->daughter(1)->pdgId();
+                int idx_d1 {-1}, idx_d2 {-1};
+                if (it->numberOfDaughters() > 0) {
+                    for (reco::GenParticleCollection::const_iterator mit = genParticles->begin(); mit != genParticles->end(); ++mit) {
+                        if(it->daughter(0) == &(*mit)) {
+                            idx_d1 = std::distance(genParticles->begin(), mit);
+                            break;
+                        }
+                    }
+                }
+                if (it->numberOfDaughters() > 1) {
+                    for (reco::GenParticleCollection::const_iterator mit = genParticles->begin(); mit != genParticles->end(); ++mit) {
+                        if(it->daughter(0) == &(*mit)) {
+                            idx_d2 = std::distance(genParticles->begin(), mit);
+                            break;
+                        }
+                    }
+                }
+                genParDaughter1Index[nGenPar] = idx_d1;
+                genParDaughter2Index[nGenPar] = idx_d2;
 
                 genParStatus[nGenPar] = it->status(); 
                 genParCharge[nGenPar] = it->charge();
@@ -3388,6 +3410,8 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
         mytree_->Branch("genParNumDaughters", genParNumDaughters, "genParNumDaughters[nGenPar]/I");
         mytree_->Branch("genParDaughterId1", genParDaughterId1, "genParDaughterId1[nGenPar]/I");
         mytree_->Branch("genParDaughterId2", genParDaughterId2, "genParDaughterId2[nGenPar]/I");
+        mytree_->Branch("genParDaughter1Index", genParDaughter1Index, "genParDaughter1Index[nGenPar]/I");
+        mytree_->Branch("genParDaughter2Index", genParDaughter2Index, "genParDaughter2Index[nGenPar]/I");
         mytree_->Branch("genParStatus",genParStatus, "genParStatus[nGenPar]/I");
         mytree_->Branch("genParCharge", genParCharge, "genParCharge[nGenPar]/I");
     }
