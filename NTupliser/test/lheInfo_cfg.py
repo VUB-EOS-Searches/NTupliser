@@ -19,8 +19,6 @@ process.source = cms.Source("PoolSource",
 #        'file:/vols/cms/adm10/MC/NLO_HToSSTobbbb_MH125_MS2_ctauS10_13TeV/PAT_miniAOD/miniAOD_2017_10K.root'
     fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
-
-    )
 )
 
 process.lheInfo = cms.EDProducer('lheInfo')
