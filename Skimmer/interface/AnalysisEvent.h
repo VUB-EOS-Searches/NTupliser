@@ -723,7 +723,7 @@ class AnalysisEvent
 
     Int_t HLT_DoubleL2Mu50_v2;
     Int_t HLT_DoubleMu43NoFiltersNoVtx_v3;
-    Int_t HLT_DoubleMu48NoFiltersNoVtx_v3
+    Int_t HLT_DoubleMu48NoFiltersNoVtx_v3;
 /*
     Int_t HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1;
     Int_t HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v2;
@@ -1763,7 +1763,7 @@ class AnalysisEvent
 
     TBranch* b_HLT_DoubleL2Mu50_v2;
     TBranch* b_HLT_DoubleMu43NoFiltersNoVtx_v3;
-    TBranch* b_HLT_DoubleMu48NoFiltersNoVtx_v3
+    TBranch* b_HLT_DoubleMu48NoFiltersNoVtx_v3;
 
 /*
     TBranch* b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v1;
