@@ -1062,7 +1062,6 @@ class AnalysisEvent
     Int_t Flag_EcalDeadCellTriggerPrimitiveFilter;
     Int_t Flag_goodVertices;
     Int_t Flag_eeBadScFilter;
-    Int_t ecalBadCalibReducedMINIAODFilter;
 
     // Gen info
     static constexpr size_t NGENPARMAX{1000};
@@ -2090,7 +2089,6 @@ class AnalysisEvent
     TBranch* b_Flag_BadPFMuonFilter;
     TBranch* b_Flag_BadChargedCandidateFilter;
     TBranch* b_Flag_ecalBadCalibFilter;
-    TBranch* b_ecalBadCalibReducedMINIAODFilter;
 
     TBranch* b_nGenPar; //!
     TBranch* b_genParEta; //!
@@ -3247,7 +3245,6 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("Flag_BadPFMuonFilter", &Flag_BadPFMuonFilter, &b_Flag_BadPFMuonFilter);
        fChain->SetBranchAddress("Flag_BadChargedCandidateFilter", &Flag_BadChargedCandidateFilter, &b_Flag_BadChargedCandidateFilter);
        fChain->SetBranchAddress("Flag_ecalBadCalibFilter", &Flag_ecalBadCalibFilter, &b_Flag_ecalBadCalibFilter);
-       fChain->SetBranchAddress("ecalBadCalibReducedMINIAODFilter", &ecalBadCalibReducedMINIAODFilter, &b_ecalBadCalibReducedMINIAODFilter);
    }
    fChain->SetBranchAddress("Flag_goodVertices", &Flag_goodVertices, &b_Flag_goodVertices);
    fChain->SetBranchAddress("Flag_globalTightHalo2016Filter", &Flag_globalTightHalo2016Filter, &b_Flag_globalTightHalo2016Filter);
