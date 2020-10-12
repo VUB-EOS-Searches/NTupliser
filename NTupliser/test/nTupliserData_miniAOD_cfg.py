@@ -286,4 +286,3 @@ process.p = cms.Path(
 process.schedule = cms.Schedule( process.p )
 
 process.outpath = cms.EndPath( process.out )
-

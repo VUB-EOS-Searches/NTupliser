@@ -185,8 +185,8 @@ process.makeTopologyNtupleMiniAOD.rhoToken = cms.InputTag("fixedGridRhoFastjetAl
 process.makeTopologyNtupleMiniAOD.conversionsToken = cms.InputTag("reducedEgamma", "reducedConversions")
 
 #private signal MC has extra gen info in a new collection
-process.makeTopologyNtupleMiniAOD.genParticles = cms.InputTag("prunedGenParticlesPlus")
-process.makeTopologyNtupleMiniAOD.genSimParticles = cms.InputTag("prunedGenParticlesPlus")
+#process.makeTopologyNtupleMiniAOD.genParticles = cms.InputTag("prunedGenParticlesPlus")
+#process.makeTopologyNtupleMiniAOD.genSimParticles = cms.InputTag("prunedGenParticlesPlus")
 
 
 ## Source
@@ -195,7 +195,7 @@ process.source = cms.Source("PoolSource",
 )
 
 ## Maximal Number of Events
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 
 #process.source.fileNames = [
 #        'file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/PAT_miniAOD/miniAOD_2017_500.root'
@@ -241,5 +241,3 @@ process.p = cms.Path(
 process.schedule = cms.Schedule( process.p )
 
 process.outpath = cms.EndPath( process.out )
-
-
