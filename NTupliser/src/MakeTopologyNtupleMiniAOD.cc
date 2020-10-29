@@ -1149,7 +1149,9 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             muonSortedTkLysWithMeasurements[ID][numMuo[ID] - 1] = muo.track()->hitPattern().trackerLayersWithMeasurement();
             muonSortedGlbTkNormChi2[ID][numMuo[ID] - 1] = muo.globalTrack()->normalizedChi2();
             muonSortedDBPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dxy(vertexPoint_);
+            muonSortedDBPVError[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dxyError();
             muonSortedDZPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dz(vertexPoint_);
+            muonSortedDZPVError[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dzError();
             muonSortedVldPixHits[ID][numMuo[ID] - 1] = muo.innerTrack()->hitPattern().numberOfValidPixelHits();
             muonSortedMatchedStations[ID][numMuo[ID] - 1] = muo.numberOfMatchedStations();
         }
@@ -2637,7 +2639,9 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID)
     muonSortedTkLysWithMeasurements[ID].clear();
     muonSortedGlbTkNormChi2[ID].clear();
     muonSortedDBPV[ID].clear();
+    muonSortedDBPVError[ID].clear();
     muonSortedDZPV[ID].clear();
+    muonSortedDZPVError[ID].clear();
     muonSortedVldPixHits[ID].clear();
     muonSortedMatchedStations[ID].clear();
 
@@ -4249,7 +4253,9 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
     muonSortedTkLysWithMeasurements[ID] = tempVecI;
     muonSortedGlbTkNormChi2[ID] = tempVecF;
     muonSortedDBPV[ID] = tempVecF;
+    muonSortedDBPVError[ID] = tempVecF;
     muonSortedDZPV[ID] = tempVecF;
+    muonSortedDZPVError[ID] = tempVecF;
     muonSortedVldPixHits[ID] = tempVecI;
     muonSortedMatchedStations[ID] = tempVecI;
 
@@ -4409,12 +4415,10 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
     mytree_->Branch((prefix + "GlbTkNormChi2").c_str(),
                     &muonSortedGlbTkNormChi2[ID][0],
                     (prefix + "GlbTkNormChi2[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "DBPV").c_str(),
-                    &muonSortedDBPV[ID][0],
-                    (prefix + "DBPV[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "DZPV").c_str(),
-                    &muonSortedDZPV[ID][0],
-                    (prefix + "DZPV[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "DBPV").c_str(), &muonSortedDBPV[ID][0], (prefix + "DBPV[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "DBPVError").c_str(), &muonSortedDBPVError[ID][0], (prefix + "DBPVError[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "DZPV").c_str(), &muonSortedDZPV[ID][0], (prefix + "DZPV[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "DZPVError").c_str(), &muonSortedDZPVError[ID][0], (prefix + "DZPVError[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "VldPixHits").c_str(),
                     &muonSortedVldPixHits[ID][0],
                     (prefix + "VldPixHits[numMuon" + name + "]/F").c_str());

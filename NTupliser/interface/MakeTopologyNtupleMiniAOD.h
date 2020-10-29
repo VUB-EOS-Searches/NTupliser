@@ -708,7 +708,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> muonSortedTkLysWithMeasurements;
     std::map<std::string, std::vector<float>> muonSortedGlbTkNormChi2;
     std::map<std::string, std::vector<float>> muonSortedDBPV;
+    std::map<std::string, std::vector<float>> muonSortedDBPVError;
     std::map<std::string, std::vector<float>> muonSortedDZPV;
+    std::map<std::string, std::vector<float>> muonSortedDZPVError;
     std::map<std::string, std::vector<int>> muonSortedVldPixHits;
     std::map<std::string, std::vector<int>> muonSortedMatchedStations;
 
