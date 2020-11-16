@@ -15,7 +15,6 @@
   <use name="TrackingTools/Records"/>
   <use name="CommonTools/UtilAlgos"/>
   <use name="FWCore/ServiceRegistry"/>
-  <use name="CommonTools/BaseParticlePropagator"/>
   <use name="TrackingTools/GeomPropagators"/>
   <use name="DataFormats/HepMCCandidate"/>
   <use name="DataFormats/JetReco"/>
@@ -29,7 +28,3 @@
   <use name="pythia8"/>
 
 <flags EDM_PLUGIN="1"/>
-<export>
-   <lib name="1"/>
-</export>
-
