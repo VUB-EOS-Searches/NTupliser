@@ -2327,7 +2327,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 //    std::cout << "numPackedTracks: " << numPackedTracks << std::endl;
 
     for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); it++) {
-        if ( !it->hasTrackDetails() && it->pdgId() != 211 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
+        if ( !it->hasTrackDetails() && it->pdgId() != 211 && it->pdgId() != 13 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
         if ( it->charge() == 0 ) continue; // NO neutral objects
         if ( it->pt() < 0.5 ) continue;
 
