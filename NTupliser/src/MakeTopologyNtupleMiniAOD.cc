@@ -2341,13 +2341,13 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 //        packedCandsPhi[numPackedCands] = it->phi();
         packedCandsCharge[numPackedCands] = it->charge();
         packedCandsPdgId[numPackedCands] = it->pdgId();
-//        packedCandsTime[numPackedCands] = it->time();
+        packedCandsTime[numPackedCands] = it->time();
 
 //        packedCandsFromPV[numPackedCands] = it->fromPV();
 //        packedCandsPVquality[numPackedCands] = it->pvAssociationQuality();
-//        packedCandsVx[numPackedCands] = it->vx();
-//        packedCandsVy[numPackedCands] = it->vy();
-//        packedCandsVz[numPackedCands] = it->vz();
+        packedCandsVx[numPackedCands] = it->vx();
+        packedCandsVy[numPackedCands] = it->vy();
+        packedCandsVz[numPackedCands] = it->vz();
 //        packedCandsVEta[numPackedCands] = it->etaAtVtx();
 //        packedCandsVPhi[numPackedCands] = it->phiAtVtx();
 //        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (it->dxy(beamSpotPoint_));
@@ -2360,7 +2360,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
         if ( it->hasTrackDetails() ) {
             packedCandsDzError[numPackedCands] = it->dzError();
             packedCandsDxyError[numPackedCands] = it->dxyError();
-//            packedCandsTimeError[numPackedCands] = it->timeError();
+            packedCandsTimeError[numPackedCands] = it->timeError();
 
 //            packedCandsPseudoTrkPt[numPackedCands] = it->pseudoTrack().pt();
             packedCandsPseudoTrkPx[numPackedCands] = it->pseudoTrack().px();
@@ -3004,12 +3004,12 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
 //        packedCandsPhi[i] = 9999;
         packedCandsCharge[i] = 0;
         packedCandsPdgId[i] = 0;
-//        packedCandsTime[i] = 0.;
+        packedCandsTime[i] = 0.;
 //        packedCandsFromPV[i] = -1.;
 //        packedCandsPVquality[i] = -1.;
-//        packedCandsVx[i] = 0.;
-//        packedCandsVy[i] = 0.;
-//        packedCandsVz[i] = 0.;
+        packedCandsVx[i] = 0.;
+        packedCandsVy[i] = 0.;
+        packedCandsVz[i] = 0.;
 //        packedCandsVEta[numPackedCands] = 9999;
 //        packedCandsVPhi[numPackedCands] = 9999;
 //        packedCandsBeamSpotCorrectedD0[i] = -9999;
@@ -3020,7 +3020,7 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
         packedCandsHasTrackDetails[i] = -1;
         packedCandsDzError[i] = 9999;
         packedCandsDxyError[i] = 9999;
-//        packedCandsTimeError[i] = 9999;
+        packedCandsTimeError[i] = 9999;
 //        packedCandsPseudoTrkPt[i] = -1.;
         packedCandsPseudoTrkPx[i] = -1.;
         packedCandsPseudoTrkPy[i] = -1.;
@@ -3070,8 +3070,8 @@ void MakeTopologyNtupleMiniAOD::cleararrays() {
     clearelectronarrays("Calo");
     clearmuonarrays("Calo");
     clearMetArrays("Calo");
-    clearTauArrays("Calo");
-    clearPhotonArrays("Calo");
+//    clearTauArrays("Calo");
+//    clearPhotonArrays("Calo");
 
     clearjetarrays("PF");
     clearelectronarrays("PF");
@@ -3087,7 +3087,7 @@ void MakeTopologyNtupleMiniAOD::cleararrays() {
 
     clearMCarrays();
 //    clearGeneralTracksArrays();
-    clearIsolatedTracksArrays();
+//    clearIsolatedTracksArrays();
     clearPackedCandsArrays();
 
     mhtSignif = -1;
@@ -3170,7 +3170,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     fillBeamSpot(iEvent, iSetup);
 
 //    fillGeneralTracks(iEvent, iSetup);
-    fillIsolatedTracks(iEvent, iSetup);
+//    fillIsolatedTracks(iEvent, iSetup);
     fillPackedCands(iEvent, iSetup);
 
     // std::cout << "done with trigger and beam spot" << std::endl;
@@ -3182,7 +3182,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     // fillMuons(iEvent, iSetup, muoLabel_, "Calo");
     fillMuons(iEvent, iSetup, patMuonsToken_, "PF");
     fillElectrons(iEvent, iSetup, patElectronsToken_, "PF", eleLabel_);
-    fillPhotons(iEvent, iSetup, patPhotonsToken_, "PF", phoLabel_);
+ //   fillPhotons(iEvent, iSetup, patPhotonsToken_, "PF", phoLabel_);
 //    fillPhotons(iEvent, iSetup, patOOTphotonsToken_, "OOT", ootPhoLabel_);
 
     // fillJets(iEvent, iSetup, jetLabel_, "Calo");
@@ -3260,8 +3260,8 @@ void MakeTopologyNtupleMiniAOD::bookBranches() {
     bookJetBranches("PF", "PF2PAT");
     bookPFJetBranches("PF", "PF2PAT");
     bookMETBranches("PF", "PF2PAT");
-    bookTauBranches("PF", "PF2PAT");
-    bookPhotonBranches("PF", "PF2PAT");
+//    bookTauBranches("PF", "PF2PAT");
+//    bookPhotonBranches("PF", "PF2PAT");
 //    bookPhotonBranches("OOT", "OOT_PF2PAT");
 
     // bookJetBranches("AK5PF", "AK5PF");
@@ -3270,7 +3270,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches() {
     // bookMETBranches("JPT", "TC");
 
 //    bookGeneralTracksBranches();
-    bookIsolatedTracksBranches();
+//    bookIsolatedTracksBranches();
     bookPackedCandsBranches();
     if (runMCInfo_) {
         bookMCBranches();
@@ -5044,12 +5044,12 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches() {
 //    mytree_->Branch("packedCandsPhi", &packedCandsPhi, "packedCandsPhi[numPackedCands]/F");
     mytree_->Branch("packedCandsCharge", &packedCandsCharge, "packedCandsCharge[numPackedCands]/I");
     mytree_->Branch("packedCandsPdgId", &packedCandsPdgId, "packedCandsPdgId[numPackedCands]/I");
-//    mytree_->Branch("packedCandsTime", &packedCandsTime, "packedCandsTime[numPackedCands]/F");
+    mytree_->Branch("packedCandsTime", &packedCandsTime, "packedCandsTime[numPackedCands]/F");
 //    mytree_->Branch("packedCandsFromPV", &packedCandsFromPV, "packedCandsFromPV[numPackedCands]/I");
 //    mytree_->Branch("packedCandsPVquality", &packedCandsPVquality, "packedCandsPVquality[numPackedCands]/I");
-//    mytree_->Branch("packedCandsVx", &packedCandsVx, "packedCandsVx[numPackedCands]/F");
-//    mytree_->Branch("packedCandsVy", &packedCandsVy, "packedCandsVy[numPackedCands]/F");
-//    mytree_->Branch("packedCandsVz", &packedCandsVz, "packedCandsVz[numPackedCands]/F");
+    mytree_->Branch("packedCandsVx", &packedCandsVx, "packedCandsVx[numPackedCands]/F");
+    mytree_->Branch("packedCandsVy", &packedCandsVy, "packedCandsVy[numPackedCands]/F");
+    mytree_->Branch("packedCandsVz", &packedCandsVz, "packedCandsVz[numPackedCands]/F");
 //    mytree_->Branch("packedCandsVEta", &packedCandsVEta, "packedCandsVEta[numPackedCands]/F");
 //    mytree_->Branch("packedCandsVPhi", &packedCandsVPhi, "packedCandsVPhi[numPackedCands]/F"); 
 //    mytree_->Branch("packedCandsBeamSpotCorrectedD0", &packedCandsBeamSpotCorrectedD0, "packedCandsBeamSpotCorrectedD0[numPackedCands]/F");
@@ -5060,7 +5060,7 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches() {
     mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
     mytree_->Branch("packedCandsDzError", &packedCandsDzError, "packedCandsDzError[numPackedCands]/F");
     mytree_->Branch("packedCandsDxyError", &packedCandsDxyError, "packedCandsDxyError[numPackedCands]/F");
-//    mytree_->Branch("packedCandsTimeError", &packedCandsTimeError, "packedCandsTimeError[numPackedCands]/F");
+    mytree_->Branch("packedCandsTimeError", &packedCandsTimeError, "packedCandsTimeError[numPackedCands]/F");
 //    mytree_->Branch("packedCandsPseudoTrkPt", &packedCandsPseudoTrkPt, "packedCandsPseudoTrkPt[numPackedCands]/F");
     mytree_->Branch("packedCandsPseudoTrkPx", &packedCandsPseudoTrkPx, "packedCandsPseudoTrkPx[numPackedCands]/F");
     mytree_->Branch("packedCandsPseudoTrkPy", &packedCandsPseudoTrkPy, "packedCandsPseudoTrkPy[numPackedCands]/F");
