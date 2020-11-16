@@ -188,6 +188,9 @@ process.makeTopologyNtupleMiniAOD.conversionsToken = cms.InputTag("reducedEgamma
 #process.makeTopologyNtupleMiniAOD.genParticles = cms.InputTag("prunedGenParticlesPlus")
 #process.makeTopologyNtupleMiniAOD.genSimParticles = cms.InputTag("prunedGenParticlesPlus")
 
+#does miniAOD have general tracks saved from AOD stored? ### ONLY EVER USED FOR DEBUGGING
+process.makeTopologyNtupleMiniAOD.hasGeneralTracks = cms.bool(False)
+process.makeTopologyNtupleMiniAOD.generalTracksToken = cms.InputTag("generalTracks")
 
 ## Source
 process.source = cms.Source("PoolSource",
@@ -195,7 +198,7 @@ process.source = cms.Source("PoolSource",
 )
 
 ## Maximal Number of Events
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(4000) )
 
 #process.source.fileNames = [
 #        'file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/PAT_miniAOD/miniAOD_2017_500.root'

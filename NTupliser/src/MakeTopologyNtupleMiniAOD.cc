@@ -134,22 +134,22 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , packedCandToken_{consumes<std::vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("packedCandToken"))}
     , isolatedTrackToken_{consumes<std::vector<pat::IsolatedTrack>>(iConfig.getParameter<edm::InputTag>("isolatedTrackToken"))}
     , conversionsToken_{consumes<std::vector<reco::Conversion>>(iConfig.getParameter<edm::InputTag>("conversionsToken"))}
-    , eleLabel_{mayConsume<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronTag"))}
-    , phoLabel_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photonTag"))}
-    , ootPhoLabel_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("ootPhotonTag"))}
+    , eleLabel_{consumes<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronTag"))}
+    , phoLabel_{consumes<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photonTag"))}
+    , ootPhoLabel_{consumes<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("ootPhotonTag"))}
     , muoLabel_{iConfig.getParameter<edm::InputTag>("muonTag")}
     , jetLabel_{iConfig.getParameter<edm::InputTag>("jetLabel")}
     , genJetsToken_{consumes<reco::GenJetCollection>(iConfig.getParameter<edm::InputTag>("genJetToken"))}
     , tauLabel_{iConfig.getParameter<edm::InputTag>("tauTag")}
     , metLabel_{iConfig.getParameter<edm::InputTag>("metTag")}
-    , patPhotonsToken_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photonPFToken"))}
-    , patOOTphotonsToken_{mayConsume<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("ootPhotonPFToken"))}
-    , patElectronsToken_{mayConsume<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronPFToken"))}
+    , patPhotonsToken_{consumes<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photonPFToken"))}
+    , patOOTphotonsToken_{consumes<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("ootPhotonPFToken"))}
+    , patElectronsToken_{consumes<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronPFToken"))}
     , tauPFTag_{iConfig.getParameter<edm::InputTag>("tauPFTag")}
-    , patMuonsToken_{mayConsume<pat::MuonCollection>(iConfig.getParameter<edm::InputTag>("muonPFToken"))}
+    , patMuonsToken_{consumes<pat::MuonCollection>(iConfig.getParameter<edm::InputTag>("muonPFToken"))}
     , patJetsToken_{consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("jetPFToken"))}
     , jetPFRecoTag_{iConfig.getParameter<edm::InputTag>("jetPFRecoTag")}
-    , patMetToken_{mayConsume<pat::METCollection>(iConfig.getParameter<edm::InputTag>("metPFToken"))}
+    , patMetToken_{consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("metPFToken"))}
     // , jetJPTTag_(iConfig.getParameter<edm::InputTag>("jetJPTTag"))
     // , metJPTTag_(iConfig.getParameter<edm::InputTag>("metJPTTag"))
     , trigToken_{consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerToken"))}
@@ -167,17 +167,19 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , lambdaToken_{consumes<reco::VertexCompositePtrCandidateCollection>(iConfig.getParameter<edm::InputTag>("lambdaToken"))}
     , rhoToken_{consumes<double>(iConfig.getParameter<edm::InputTag>("rhoToken"))}
     , effectiveAreaInfo_{(iConfig.getParameter<edm::FileInPath>("effAreasConfigFile")).fullPath()}
-    , pileupToken_{mayConsume<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupToken"))}
+    , pileupToken_{consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupToken"))}
+    , hasGeneralTracks_{iConfig.getParameter<bool>("hasGeneralTracks")}
+    , generalTracksToken_{mayConsume<reco::TrackCollection>(iConfig.getParameter<edm::InputTag>("generalTracksToken"))}
     , is2016rereco_{iConfig.getParameter<bool>("is2016rereco")}
     , isttbar_{iConfig.getParameter<bool>("isttBar")}
     , ttGenEvent_{iConfig.getParameter<edm::InputTag>("ttGenEvent")}
-    , externalLHEToken_{consumes<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("externalLHEToken"))}
+    , externalLHEToken_{mayConsume<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("externalLHEToken"))}
     , pdfIdStart_{iConfig.getParameter<int>("pdfIdStart")}
     , pdfIdEnd_{iConfig.getParameter<int>("pdfIdEnd")}
     , alphaIdStart_{iConfig.getParameter<int>("alphaIdStart")}
     , alphaIdEnd_{iConfig.getParameter<int>("alphaIdEnd")}
-    , pdfInfoToken_{mayConsume<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("pdfInfoFixingToken"))}
-    , generatorToken_{mayConsume<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("generatorToken"))}
+    , pdfInfoToken_{consumes<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("pdfInfoFixingToken"))}
+    , generatorToken_{consumes<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("generatorToken"))}
     , runMCInfo_{iConfig.getParameter<bool>("runMCInfo")}
     , runPUReWeight_{iConfig.getParameter<bool>("runPUReWeight")}
     , doCuts_{iConfig.getParameter<bool>("doCuts")}
@@ -1576,17 +1578,11 @@ void MakeTopologyNtupleMiniAOD::fillBTagInfo(const pat::Jet& jet,
     }
 }
 
-void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
-                                           const edm::EventSetup& iSetup)
-{
-    if (!runMCInfo_)
-    {
-        return;
-    }
-    if (ran_mcloop_)
-    {
-        return;
-    }
+void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
+    if (!runMCInfo_) return;
+    if (ran_mcloop_) return;
+
     ran_mcloop_ = true;
     bool found_b{false};
     int W_hadronic{0};
@@ -1598,17 +1594,10 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
     edm::Handle<LHEEventProduct> EventHandle;
     edm::Handle<GenEventInfoProduct> genEventInfo;
 
-    if (isMCatNLO_)
-    {
-        iEvent.getByToken(pdfInfoToken_, genEventInfo);
-    }
-    else
-    {
-        iEvent.getByToken(generatorToken_, genEventInfo);
-    }
+    if (isMCatNLO_) iEvent.getByToken(pdfInfoToken_, genEventInfo);
+    else iEvent.getByToken(generatorToken_, genEventInfo);
 
-    if (isLHEflag_)
-    {
+    if (isLHEflag_) {
         iEvent.getByToken(externalLHEToken_, EventHandle);
 
         origWeightForNorm_ = EventHandle->originalXWGTUP();
@@ -1623,8 +1612,7 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
         weight_muF2_ = rescale_weight(EventHandle->weights()[3].wgt); // muF = 2 | muR = 1
         weight_muR0p5_ = rescale_weight(EventHandle->weights()[2].wgt); // muF = 1 | muR = 0.5
         weight_muR2_ = rescale_weight(EventHandle->weights()[1].wgt); // muF = 1 | muR = 2
-        weight_muF0p5muR0p5_ =
-            rescale_weight(EventHandle->weights()[8].wgt); // muF = 0.5 | muR = 0.5
+        weight_muF0p5muR0p5_ = rescale_weight(EventHandle->weights()[8].wgt); // muF = 0.5 | muR = 0.5
         weight_muF2muR2_ = rescale_weight(EventHandle->weights()[4].wgt); // muF = 2 | muR = 2
 
         int initialIndex{pdfIdStart_};
@@ -1633,24 +1621,18 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent,
         double pdfSum{0.0};
         double pdfSum2{0.0};
 
-        for (int i{initialIndex}; i != finalIndex; i++)
-        {
-            for (unsigned int w{0}; w != EventHandle->weights().size(); ++w)
-            {
-                if (EventHandle->weights()[w].id == std::to_string(i))
-                {
+        for (int i{initialIndex}; i != finalIndex; i++) {
+            for (unsigned int w{0}; w != EventHandle->weights().size(); ++w) {
+                if (EventHandle->weights()[w].id == std::to_string(i)) {
                     pdfSum += rescale_weight(EventHandle->weights()[w].wgt);
                 }
             }
         }
 
         double meanObs{(pdfSum) / (double(N))};
-        for (int i{initialIndex}; i != finalIndex; i++)
-        {
-            for (unsigned int w{0}; w != EventHandle->weights().size(); ++w)
-            {
-                if (EventHandle->weights()[w].id == std::to_string(i))
-                {
+        for (int i{initialIndex}; i != finalIndex; i++) {
+            for (unsigned int w{0}; w != EventHandle->weights().size(); ++w) {
+                if (EventHandle->weights()[w].id == std::to_string(i)) {
                     pdfSum2 += (rescale_weight(EventHandle->weights()[w].wgt) - meanObs)
                                * (rescale_weight(EventHandle->weights()[w].wgt) - meanObs);
                 }
@@ -2162,10 +2144,7 @@ void MakeTopologyNtupleMiniAOD::fillJets(
         100,
         false); // index of jets in the gen jet collection - if it's true it
                 // means it's already matched and so shouldn't be used again
-    for (size_t ijet{0};
-         ijet < etJetSorted.size() && numJet[ID] < numeric_cast<int>(NJETSMAX);
-         ++ijet)
-    {
+    for (size_t ijet{0}; ijet < etJetSorted.size() && numJet[ID] < numeric_cast<int>(NJETSMAX); ++ijet) {
         size_t jjet{etJetSorted[ijet]};
 
         const pat::Jet& jet{jets[jjet]};
@@ -2262,90 +2241,38 @@ void MakeTopologyNtupleMiniAOD::fillJets(
 
 /////////////////////////////////////
 
-void MakeTopologyNtupleMiniAOD::fillPackedCands(
-    const edm::Event& iEvent, const edm::EventSetup& iSetup)
-{
-    if (ran_tracks_)
-    {
-        return;
-    }
+void MakeTopologyNtupleMiniAOD::fillGeneralTracks(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
+    if (!hasGeneralTracks_) return;
+    if (ran_tracks_) return;
     ran_tracks_ = true;
 
-    edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
-    iEvent.getByToken(packedCandToken_, packedCands);
+    edm::Handle<reco::TrackCollection> generalTracks;
+    iEvent.getByToken(generalTracksToken_, generalTracks);
 
-    numPackedCands = 0;
-
-//    uint numPackedTracks = 0;
-//    for (auto it{packedCands->begin()}; it != packedCands->end(); it++ ) if ( it->hasTrackDetails() && !it->isMuon() && it->pdgId() == 211 ) numPackedTracks++;
-//    std::cout << "numPackedTracks: " << numPackedTracks << std::endl;
-
-    for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX);
-         it++)
-    {
-        if ( !it->hasTrackDetails() && it->pdgId() != 211 ) continue;
-//        packedCandsPt[numPackedCands] = it->pt();
-        packedCandsPx[numPackedCands] = it->px();
-        packedCandsPy[numPackedCands] = it->py();
-        packedCandsPz[numPackedCands] = it->pz();
-        packedCandsE[numPackedCands] = it->energy();
-//        packedCandsEta[numPackedCands] = it->eta();
-//        packedCandsTheta[numPackedCands] = it->theta();
-//        packedCandsPhi[numPackedCands] = it->phi();
-        packedCandsCharge[numPackedCands] = it->charge();
-        packedCandsPdgId[numPackedCands] = it->pdgId();
-//        packedCandsTime[numPackedCands] = it->time();
-
-//        packedCandsFromPV[numPackedCands] = it->fromPV();
-//        packedCandsPVquality[numPackedCands] = it->pvAssociationQuality();
-//        packedCandsVx[numPackedCands] = it->vx();
-//        packedCandsVy[numPackedCands] = it->vy();
-//        packedCandsVz[numPackedCands] = it->vz();
-//        packedCandsVEta[numPackedCands] = it->etaAtVtx();
-//        packedCandsVPhi[numPackedCands] = it->phiAtVtx();
-//        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (it->dxy(beamSpotPoint_));
-        packedCandsDz[numPackedCands] = it->dz();
-        packedCandsDxy[numPackedCands] = it->dxy();
-//        packedCandsDzAssocPV[numPackedCands] = it->dzAssociatedPV();
-//        packedCandsVtxChi2Norm[numPackedCands] = it->vertexNormalizedChi2();
-
-        packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
-        if ( it->hasTrackDetails() ) {
-//            packedCandsDzError[numPackedCands] = it->dzError();
-//            packedCandsDxyError[numPackedCands] = it->dxyError();
-//            packedCandsTimeError[numPackedCands] = it->timeError();
-
-//            packedCandsPseudoTrkPt[numPackedCands] = it->pseudoTrack().pt();
-            packedCandsPseudoTrkPx[numPackedCands] = it->pseudoTrack().px();
-            packedCandsPseudoTrkPy[numPackedCands] = it->pseudoTrack().py();
-            packedCandsPseudoTrkPz[numPackedCands] = it->pseudoTrack().pz();
-//            packedCandsPseudoTrkEta[numPackedCands] = it->pseudoTrack().eta();
-//            packedCandsPseudoTrkPhi[numPackedCands] = it->pseudoTrack().phi();
-            packedCandsPseudoTrkCharge[numPackedCands] = it->pseudoTrack().charge();
-            packedCandsPseudoTrkVx[numPackedCands] = it->pseudoTrack().vx();
-            packedCandsPseudoTrkVy[numPackedCands] = it->pseudoTrack().vy();
-            packedCandsPseudoTrkVz[numPackedCands] = it->pseudoTrack().vz();
-//            packedCandsPseudoTrkChi2Norm[numPackedCands] = it->pseudoTrack().normalizedChi2();
-//            packedCandsPseudoTrkNumberOfHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidTrackerHits();
-//            packedCandsPseudoTrkNumberOfPixelHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidPixelHits();
-//            packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().pixelLayersWithMeasurement();
-//            packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().stripLayersWithMeasurement();
-//            packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().trackerLayersWithMeasurement();
-            packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
-        }
-        numPackedCands++;
+    numGeneralTracks=0;
+    for (reco::TrackCollection::const_iterator it=generalTracks->begin(); it!=generalTracks->end() && numGeneralTracks < (int)NTRACKSMAX; it++){
+      generalTracksPt[numGeneralTracks]=it->pt();
+      generalTracksPx[numGeneralTracks]=it->px();
+      generalTracksPy[numGeneralTracks]=it->py();
+      generalTracksPz[numGeneralTracks]=it->pz();
+      generalTracksEta[numGeneralTracks]=it->eta();
+      generalTracksTheta[numGeneralTracks]=it->theta();
+      generalTracksPhi[numGeneralTracks]=it->phi();
+      generalTracksCharge[numGeneralTracks]=it->charge();    
+      generalTracksVx[numGeneralTracks]=it->vx();
+      generalTracksVy[numGeneralTracks]=it->vy();
+      generalTracksVz[numGeneralTracks]=it->vz();
+      generalTracksBeamSpotCorrectedD0[numGeneralTracks]=-1.*(it->dxy(beamSpotPoint_));
+      numGeneralTracks++;
     }
+
 }
 
 /////////////////////////////////////
 
-void MakeTopologyNtupleMiniAOD::fillIsolatedTracks(
-    const edm::Event& iEvent, const edm::EventSetup& iSetup)
-{
-    if (ran_isotracks_)
-    {
-        return;
-    }
+void MakeTopologyNtupleMiniAOD::fillIsolatedTracks(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+    if (ran_isotracks_) return;
     ran_isotracks_ = true;
 
     edm::Handle<std::vector<pat::IsolatedTrack>> isoTracks;
@@ -2385,16 +2312,87 @@ void MakeTopologyNtupleMiniAOD::fillIsolatedTracks(
 }
 
 /////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::clearTauArrays(const std::string& ID)
-{
+
+void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+    if (ran_packedCands_) return;
+    ran_packedCands_ = true;
+
+    edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
+    iEvent.getByToken(packedCandToken_, packedCands);
+
+    numPackedCands = 0;
+
+//    uint numPackedTracks = 0;
+//    for (auto it{packedCands->begin()}; it != packedCands->end(); it++ ) if ( it->hasTrackDetails() && !it->isMuon() && it->pdgId() == 211 ) numPackedTracks++;
+//    std::cout << "numPackedTracks: " << numPackedTracks << std::endl;
+
+    for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); it++) {
+        if ( !it->hasTrackDetails() && it->pdgId() != 211 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
+        if ( it->charge() == 0 ) continue; // NO neutral objects
+        if ( it->pt() < 0.5 ) continue;
+
+//        packedCandsPt[numPackedCands] = it->pt();
+        packedCandsPx[numPackedCands] = it->px();
+        packedCandsPy[numPackedCands] = it->py();
+        packedCandsPz[numPackedCands] = it->pz();
+        packedCandsE[numPackedCands] = it->energy();
+//        packedCandsEta[numPackedCands] = it->eta();
+//        packedCandsTheta[numPackedCands] = it->theta();
+//        packedCandsPhi[numPackedCands] = it->phi();
+        packedCandsCharge[numPackedCands] = it->charge();
+        packedCandsPdgId[numPackedCands] = it->pdgId();
+//        packedCandsTime[numPackedCands] = it->time();
+
+//        packedCandsFromPV[numPackedCands] = it->fromPV();
+//        packedCandsPVquality[numPackedCands] = it->pvAssociationQuality();
+//        packedCandsVx[numPackedCands] = it->vx();
+//        packedCandsVy[numPackedCands] = it->vy();
+//        packedCandsVz[numPackedCands] = it->vz();
+//        packedCandsVEta[numPackedCands] = it->etaAtVtx();
+//        packedCandsVPhi[numPackedCands] = it->phiAtVtx();
+//        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (it->dxy(beamSpotPoint_));
+        packedCandsDz[numPackedCands] = it->dz();
+        packedCandsDxy[numPackedCands] = it->dxy();
+//        packedCandsDzAssocPV[numPackedCands] = it->dzAssociatedPV();
+//        packedCandsVtxChi2Norm[numPackedCands] = it->vertexNormalizedChi2();
+
+        packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
+        if ( it->hasTrackDetails() ) {
+            packedCandsDzError[numPackedCands] = it->dzError();
+            packedCandsDxyError[numPackedCands] = it->dxyError();
+//            packedCandsTimeError[numPackedCands] = it->timeError();
+
+//            packedCandsPseudoTrkPt[numPackedCands] = it->pseudoTrack().pt();
+            packedCandsPseudoTrkPx[numPackedCands] = it->pseudoTrack().px();
+            packedCandsPseudoTrkPy[numPackedCands] = it->pseudoTrack().py();
+            packedCandsPseudoTrkPz[numPackedCands] = it->pseudoTrack().pz();
+//            packedCandsPseudoTrkEta[numPackedCands] = it->pseudoTrack().eta();
+//            packedCandsPseudoTrkPhi[numPackedCands] = it->pseudoTrack().phi();
+            packedCandsPseudoTrkCharge[numPackedCands] = it->pseudoTrack().charge();
+            packedCandsPseudoTrkVx[numPackedCands] = it->pseudoTrack().vx();
+            packedCandsPseudoTrkVy[numPackedCands] = it->pseudoTrack().vy();
+            packedCandsPseudoTrkVz[numPackedCands] = it->pseudoTrack().vz();
+//            packedCandsPseudoTrkChi2Norm[numPackedCands] = it->pseudoTrack().normalizedChi2();
+//            packedCandsPseudoTrkNumberOfHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidTrackerHits();
+//            packedCandsPseudoTrkNumberOfPixelHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidPixelHits();
+//            packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().pixelLayersWithMeasurement();
+//            packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().stripLayersWithMeasurement();
+//            packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().trackerLayersWithMeasurement();
+            packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
+        }
+        numPackedCands++;
+    }
+}
+
+/////////////////////////////////////
+void MakeTopologyNtupleMiniAOD::clearTauArrays(const std::string& ID){
     numTaus[ID] = 0;
     tau_e[ID].clear();
     tau_phi[ID].clear();
     tau_eta[ID].clear();
     tau_pt[ID].clear();
 }
-void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID)
-{
+void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID){
     numPho[ID] = 0;
 
     photonEts.clear(); // just used for sorting
@@ -2458,8 +2456,7 @@ void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID)
     genPhotonSortedIsJet[ID].clear();
 
 }
-void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID)
-{
+void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID){
     numEle[ID] = 0;
 
     nzcandidates[ID] = 0;
@@ -2582,8 +2579,7 @@ void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID)
     genElectronSortedHardProcess[ID].clear();
 }
 
-void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID)
-{
+void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     // std::cout << "clearmuonarrays CHECK" << std::endl;
     numMuo[ID] = 0;
     muonEts.clear(); // just used for sorting
@@ -2674,8 +2670,7 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID)
     genMuonSortedHardProcess[ID].clear();
 }
 
-void MakeTopologyNtupleMiniAOD::clearMetArrays(const std::string& ID)
-{
+void MakeTopologyNtupleMiniAOD::clearMetArrays(const std::string& ID){
     // std::cout << "clearMetArrays CHECK" << std::endl;
     metE[ID] = -99999.0;
     metEt[ID] = -99999.0;
@@ -2711,8 +2706,7 @@ void MakeTopologyNtupleMiniAOD::clearMetArrays(const std::string& ID)
     genMetPz[ID] = -99999.0;
 }
 /////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::clearMCarrays()
-{
+void MakeTopologyNtupleMiniAOD::clearMCarrays(){
     // electronTruthEts.clear(); // just used for sorting
     // std::cout << "clearMCarrays CHECK" << std::endl;
     nT = 0;
@@ -2786,8 +2780,7 @@ void MakeTopologyNtupleMiniAOD::clearMCarrays()
 }
 
 /////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
-{
+void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID){
     // std::cout << "clearjetarrays CHECK" << std::endl;
     numJet[ID] = 0;
     correctedJetEts.clear();
@@ -2829,8 +2822,7 @@ void MakeTopologyNtupleMiniAOD::clearjetarrays(const std::string& ID)
     jetSortedNConstituents[ID].clear();
     bidParamsDiscCut_[ID] = -1.0;
 
-    for (const auto& iBtag : bTagList_)
-    {
+    for (const auto& iBtag : bTagList_) {
         bTagRes[iBtag][ID].clear();
     }
 
@@ -2940,69 +2932,32 @@ void MakeTopologyNtupleMiniAOD::clearSVarrays() {
 }
 
 /////////////////////////////////////
+void MakeTopologyNtupleMiniAOD::clearGeneralTracksArrays() {
+    // std::cout << "clearGeneralTracksarrays CHECK" << std::endl;
+    numGeneralTracks = 0;
 
-void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays()
-{
-    // std::cout << "clearPackedCandsArrays CHECK" << std::endl;
-    numPackedCands = 0;
-
-    for (size_t i{0}; i < NISOTRACKSMAX; i++)
-    {
-//        packedCandsPt[i] = -1.;
-        packedCandsPx[i] = -1.;
-        packedCandsPy[i] = -1.;
-        packedCandsPz[i] = -1.;
-        packedCandsE[i] = -1.;
-//        packedCandsEta[i] = 9999;
-//        packedCandsTheta[i] = 9999;
-//        packedCandsPhi[i] = 9999;
-        packedCandsCharge[i] = 0;
-        packedCandsPdgId[i] = 0;
-//        packedCandsTime[i] = 0.;
-//        packedCandsFromPV[i] = -1.;
-//        packedCandsPVquality[i] = -1.;
-//        packedCandsVx[i] = 0.;
-//        packedCandsVy[i] = 0.;
-//        packedCandsVz[i] = 0.;
-//        packedCandsVEta[numPackedCands] = 9999;
-//        packedCandsVPhi[numPackedCands] = 9999;
-//        packedCandsBeamSpotCorrectedD0[i] = -9999;
-        packedCandsDz[i] = 9999;
-        packedCandsDxy[i] = 9999;
-//        packedCandsDzAssocPV[i] = 9999;
-//        packedCandsVtxChi2Norm[i] = -9999;
-        packedCandsHasTrackDetails[i] = -1;
-//        packedCandsDzError[i] = 9999;
-//        packedCandsDxyError[i] = 9999;
-//        packedCandsTimeError[i] = 9999;
-//        packedCandsPseudoTrkPt[i] = -1.;
-        packedCandsPseudoTrkPx[i] = -1.;
-        packedCandsPseudoTrkPy[i] = -1.;
-        packedCandsPseudoTrkPz[i] = -1.;
-//        packedCandsPseudoTrkEta[i] = 9999;
-//        packedCandsPseudoTrkPhi[i] = 9999;
-        packedCandsPseudoTrkCharge[i] = 0;
-        packedCandsPseudoTrkVx[i] = 0.;
-        packedCandsPseudoTrkVy[i] = 0.;
-        packedCandsPseudoTrkVz[i] = 0.;
-//        packedCandsPseudoTrkChi2Norm[i] = -9999;
-//        packedCandsPseudoTrkNumberOfHits[i] = -1;
-//        packedCandsPseudoTrkNumberOfPixelHits[i] = -1;
-//        packedCandsPseudoTrkPixelLayersWithMeasurement[i] = -1;
-//        packedCandsPseudoTrkStripLayersWithMeasurement[i] = -1;
-//        packedCandsPseudoTrkTrackerLayersWithMeasurement[i] = -1;
-        packedCandsHighPurityTrack[i] = -1;
+    for (size_t i{0}; i < NTRACKSMAX; i++) {
+      generalTracksPt[i] = -1.;
+      generalTracksPx[i] = -1.;
+      generalTracksPy[i] = -1.;
+      generalTracksPz[i] = -1.;
+      generalTracksEta[i] = 9999.;
+      generalTracksTheta[i] = 9999.;
+      generalTracksPhi[i] = 9999.;
+      generalTracksCharge[i] = 0.;
+      generalTracksVx[i] = -1.;
+      generalTracksVy[i] = -1.;
+      generalTracksVz[i] = -1.;
+      generalTracksBeamSpotCorrectedD0[i] = -9999.;
     }
 }
 
 /////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::clearIsolatedTracksarrays()
-{
+void MakeTopologyNtupleMiniAOD::clearIsolatedTracksArrays() {
     // std::cout << "clearIsolatedTracksarrays CHECK" << std::endl;
     numIsolatedTracks = 0;
 
-    for (size_t i{0}; i < NISOTRACKSMAX; i++)
-    {
+    for (size_t i{0}; i < NISOTRACKSMAX; i++) {
         isoTracksPt[i] = -1.;
         isoTracksPx[i] = -1.;
         isoTracksPy[i] = -1.;
@@ -3032,33 +2987,82 @@ void MakeTopologyNtupleMiniAOD::clearIsolatedTracksarrays()
 }
 
 /////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::cleararrays()
-{
+
+void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
+    // std::cout << "clearPackedCandsArrays CHECK" << std::endl;
+    numPackedCands = 0;
+
+    for (size_t i{0}; i < NISOTRACKSMAX; i++)
+    {
+//        packedCandsPt[i] = -1.;
+        packedCandsPx[i] = -1.;
+        packedCandsPy[i] = -1.;
+        packedCandsPz[i] = -1.;
+        packedCandsE[i] = -1.;
+//        packedCandsEta[i] = 9999;
+//        packedCandsTheta[i] = 9999;
+//        packedCandsPhi[i] = 9999;
+        packedCandsCharge[i] = 0;
+        packedCandsPdgId[i] = 0;
+//        packedCandsTime[i] = 0.;
+//        packedCandsFromPV[i] = -1.;
+//        packedCandsPVquality[i] = -1.;
+//        packedCandsVx[i] = 0.;
+//        packedCandsVy[i] = 0.;
+//        packedCandsVz[i] = 0.;
+//        packedCandsVEta[numPackedCands] = 9999;
+//        packedCandsVPhi[numPackedCands] = 9999;
+//        packedCandsBeamSpotCorrectedD0[i] = -9999;
+        packedCandsDz[i] = 9999;
+        packedCandsDxy[i] = 9999;
+//        packedCandsDzAssocPV[i] = 9999;
+//        packedCandsVtxChi2Norm[i] = -9999;
+        packedCandsHasTrackDetails[i] = -1;
+        packedCandsDzError[i] = 9999;
+        packedCandsDxyError[i] = 9999;
+//        packedCandsTimeError[i] = 9999;
+//        packedCandsPseudoTrkPt[i] = -1.;
+        packedCandsPseudoTrkPx[i] = -1.;
+        packedCandsPseudoTrkPy[i] = -1.;
+        packedCandsPseudoTrkPz[i] = -1.;
+//        packedCandsPseudoTrkEta[i] = 9999;
+//        packedCandsPseudoTrkPhi[i] = 9999;
+        packedCandsPseudoTrkCharge[i] = 0;
+        packedCandsPseudoTrkVx[i] = 0.;
+        packedCandsPseudoTrkVy[i] = 0.;
+        packedCandsPseudoTrkVz[i] = 0.;
+//        packedCandsPseudoTrkChi2Norm[i] = -9999;
+//        packedCandsPseudoTrkNumberOfHits[i] = -1;
+//        packedCandsPseudoTrkNumberOfPixelHits[i] = -1;
+//        packedCandsPseudoTrkPixelLayersWithMeasurement[i] = -1;
+//        packedCandsPseudoTrkStripLayersWithMeasurement[i] = -1;
+//        packedCandsPseudoTrkTrackerLayersWithMeasurement[i] = -1;
+        packedCandsHighPurityTrack[i] = -1;
+    }
+}
+
+/////////////////////////////////////
+void MakeTopologyNtupleMiniAOD::cleararrays() {
     // reset the bookkeeping bools;
     // std::cout << "cleararrays CHECK" << std::endl;
     // std::cout << "before FALSE: " << ran_postloop_ << std::endl;
-    ran_jetloop_ = ran_eleloop_ = ran_muonloop_ = ran_PV_ = ran_BS_ = ran_tracks_ = ran_isotracks_ =
-        ran_mcloop_ = ran_postloop_ = ran_photonTau_ = false;
+    ran_jetloop_ = ran_eleloop_ = ran_muonloop_ = ran_PV_ = ran_BS_ = ran_tracks_ = ran_isotracks_ = ran_packedCands_ = ran_mcloop_ = ran_postloop_ = ran_photonTau_ = false;
     // std::cout << "psot FALSE: " << ran_postloop_ << std::endl;
 
     clearPVarrays();
     clearSVarrays();
 
-    for (size_t iTrig{0}; iTrig < triggerList_.size(); iTrig++)
-    {
+    for (size_t iTrig{0}; iTrig < triggerList_.size(); iTrig++) { 
         triggerRes[iTrig] = -99;
     }
-    for (size_t iMetFilter{0}; iMetFilter < metFilterList_.size(); iMetFilter++)
-    {
+    for (size_t iMetFilter{0}; iMetFilter < metFilterList_.size(); iMetFilter++) {
         metFilterRes[iMetFilter] = -99;
     }
 
-    for (int& HLT_fakeTriggerValue : HLT_fakeTriggerValues)
-    {
+    for (int& HLT_fakeTriggerValue : HLT_fakeTriggerValues) {
         HLT_fakeTriggerValue = -99;
     }
-    for (size_t ii{0}; ii < 200; ii++)
-    {
+    for (size_t ii{0}; ii < 200; ii++)  {
         TriggerBits[ii] = -99;
     }
 
@@ -3082,8 +3086,9 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
     clearMetArrays("JPT");
 
     clearMCarrays();
+//    clearGeneralTracksArrays();
+    clearIsolatedTracksArrays();
     clearPackedCandsArrays();
-    clearIsolatedTracksarrays();
 
     mhtSignif = -1;
     mhtPx = -9999.;
@@ -3122,16 +3127,13 @@ void MakeTopologyNtupleMiniAOD::cleararrays()
 }
 
 // ------------ method called to for each event  ------------
-void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
-                                        const edm::EventSetup& iSetup)
-{
+void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     using namespace edm;
     // std::cout << iEvent.id().run() << " " << iEvent.luminosityBlock() << " "
     //           << iEvent.id().event()
     //           << std::endl; // Run pile-up reweighting here
     numVert = 0;
-    if (runPUReWeight_)
-    {
+    if (runPUReWeight_) {
         edm::Handle<std::vector<PileupSummaryInfo>> pileupSummaryInfo_;
         iEvent.getByToken(
             pileupToken_,
@@ -3141,14 +3143,10 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
         std::vector<PileupSummaryInfo>::const_iterator PVI;
 
         float Tnpv{-1};
-        for (PVI = pileupSummaryInfo_->begin();
-             PVI != pileupSummaryInfo_->end();
-             PVI++)
-        {
+        for (PVI = pileupSummaryInfo_->begin(); PVI != pileupSummaryInfo_->end(); PVI++) {
             int BX{PVI->getBunchCrossing()};
 
-            if (BX == 0)
-            {
+            if (BX == 0) {
                 Tnpv = pileupSummaryInfo_->begin()->getTrueNumInteractions();
                 continue;
             }
@@ -3171,8 +3169,9 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     fillTriggerData(iEvent);
     fillBeamSpot(iEvent, iSetup);
 
-    fillPackedCands(iEvent, iSetup);
+//    fillGeneralTracks(iEvent, iSetup);
     fillIsolatedTracks(iEvent, iSetup);
+    fillPackedCands(iEvent, iSetup);
 
     // std::cout << "done with trigger and beam spot" << std::endl;
 
@@ -3213,55 +3212,29 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     // in different selections for the different channels, but for now just
     // double electron.
 
-    if (!doCuts_)
-    {
+    if (!doCuts_) {
         mytree_->Fill(); // If not doing cuts, fill up EVERYTHING
     }
-    else
-    { // If doing cuts, ensure that we have at least x leptons which meet
-      // minimum sensible criteria
+    else  { // If doing cuts, ensure that we have at least x leptons which meet minimum sensible criteria
 
         int numLeps{0};
         numLeps = numEle["PF"] + numMuo["PF"];
 
-        for (int j{0}; j < numEle["PF"]; j++)
-        {
-            if (electronSortedPt["PF"][0] < elePtCut_)
-            {
-                continue;
-            }
-            if (std::abs(electronSortedEta["PF"][0]) > eleEtaCut_)
-            {
-                continue;
-            }
-            if (electronSortedComRelIsoRho["PF"][0] > eleIsoCut_)
-            {
-                continue;
-            }
+        for (int j{0}; j < numEle["PF"]; j++) {
+            if (electronSortedPt["PF"][0] < elePtCut_) continue;
+            if (std::abs(electronSortedEta["PF"][0]) > eleEtaCut_) continue;
+            if (electronSortedComRelIsoRho["PF"][0] > eleIsoCut_) continue;
             numLeps++;
         }
 
-        for (int j{0}; j < numMuo["PF"]; j++)
-        {
-            if (muonSortedPt["PF"][0] < muoPtCut_)
-            {
-                continue;
-            }
-            if (std::abs(muonSortedEta["PF"][0]) > muoEtaCut_)
-            {
-                continue;
-            }
-            if (muonSortedComRelIsodBeta["PF"][0] > muoIsoCut_)
-            {
-                continue;
-            }
+        for (int j{0}; j < numMuo["PF"]; j++) {
+            if (muonSortedPt["PF"][0] < muoPtCut_) continue;
+            if (std::abs(muonSortedEta["PF"][0]) > muoEtaCut_) continue;
+            if (muonSortedComRelIsodBeta["PF"][0] > muoIsoCut_) continue;
             numLeps++;
         }
 
-        if (numLeps >= minLeptons_)
-        {
-            mytree_->Fill();
-        }
+        if (numLeps >= minLeptons_) mytree_->Fill();
     }
 
     // fill debugging histograms.
@@ -3269,8 +3242,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent,
     histocontainer_["tightMuons"]->Fill(numMuo["PF"]);
 }
 
-void MakeTopologyNtupleMiniAOD::bookBranches()
-{
+void MakeTopologyNtupleMiniAOD::bookBranches() {
     // std::cout << "bookBranches CHECK" << std::endl;
     TTree::SetMaxTreeSize(std::numeric_limits<Long64_t>::max());
     mytree_ = new TTree("tree", "tree");
@@ -3297,10 +3269,10 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     // bookJetBranches("JPT", "JPT");
     // bookMETBranches("JPT", "TC");
 
-    bookPackedCandsBranches();
+//    bookGeneralTracksBranches();
     bookIsolatedTracksBranches();
-    if (runMCInfo_)
-    {
+    bookPackedCandsBranches();
+    if (runMCInfo_) {
         bookMCBranches();
     }
 
@@ -3354,12 +3326,10 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     mytree_->Branch("isrConLo", &isrConLo, "isrConLo/D");
     mytree_->Branch("fsrConLo", &fsrConLo, "fsrConLo/D");
 
-    while (HLT_fakeTriggerValues.size() < fakeTrigLabelList_.size())
-    {
+    while (HLT_fakeTriggerValues.size() < fakeTrigLabelList_.size()) {
         HLT_fakeTriggerValues.emplace_back(-99);
     }
-    for (size_t ii{0}; ii < fakeTrigLabelList_.size(); ii++)
-    {
+    for (size_t ii{0}; ii < fakeTrigLabelList_.size(); ii++) {
         TString name{"HLTFake_"};
         name += fakeTrigLabelList_[ii];
         name.ReplaceAll(" ", "");
@@ -3372,33 +3342,24 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     // Dynamic trigger list
     // for (auto iTrig = triggerList_.begin(); iTrig != triggerList_.end();
     //      iTrig++)
-    while (triggerRes.size() < triggerList_.size())
-    {
+    while (triggerRes.size() < triggerList_.size()) {
         triggerRes.emplace_back(-99);
     }
-    while (metFilterRes.size() < metFilterList_.size())
-    {
+    while (metFilterRes.size() < metFilterList_.size()) {
         metFilterRes.emplace_back(-99);
     }
-    for (size_t iTrig{0}; iTrig < triggerList_.size(); iTrig++)
-    {
+    for (size_t iTrig{0}; iTrig < triggerList_.size(); iTrig++) {
 //        std::cout << "Booking trigger branch: " << triggerList_[iTrig] << std::endl;
-        mytree_->Branch(triggerList_[iTrig].c_str(),
-                        &triggerRes[iTrig],
-                        (triggerList_[iTrig] + "/I").c_str());
+        mytree_->Branch(triggerList_[iTrig].c_str(), &triggerRes[iTrig], (triggerList_[iTrig] + "/I").c_str());
     }
-    for (size_t iMetFilter{0}; iMetFilter < metFilterList_.size(); iMetFilter++)
-    {
+    for (size_t iMetFilter{0}; iMetFilter < metFilterList_.size(); iMetFilter++) {
 //        std::cout << "Booking MET filter branch: " << metFilterList_[iMetFilter] << std::endl;
-        mytree_->Branch(metFilterList_[iMetFilter].c_str(),
-                        &metFilterRes[iMetFilter],
-                        (metFilterList_[iMetFilter] + "/I").c_str());
+        mytree_->Branch(metFilterList_[iMetFilter].c_str(), &metFilterRes[iMetFilter], (metFilterList_[iMetFilter] + "/I").c_str());
     }
 
     // generator level information
     //  mytree_->Branch("myProcess", &genMyProcId, "myProcess/I");
-    if (runMCInfo_)
-    {
+    if (runMCInfo_) {
         mytree_->Branch("nGenPar", &nGenPar, "nGenPar/I");
         mytree_->Branch("genParEta", genParEta, "genParEta[nGenPar]/F");
         mytree_->Branch("genParPhi", genParPhi, "genParPhi[nGenPar]/F");
@@ -3425,9 +3386,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches()
     mytree_->Branch("eventLumiblock", &evtlumiblock, "eventLumiblock/F");
 }
 
-void MakeTopologyNtupleMiniAOD::bookTauBranches(const std::string& ID,
-                                                const std::string& name)
-{
+void MakeTopologyNtupleMiniAOD::bookTauBranches(const std::string& ID, const std::string& name){
     numTaus[ID] = 0;
 
     std::vector<float> tempVecF(NTAUSMAX);
@@ -3436,29 +3395,17 @@ void MakeTopologyNtupleMiniAOD::bookTauBranches(const std::string& ID,
     tau_eta[ID] = tempVecF;
     tau_pt[ID] = tempVecF;
 
-    mytree_->Branch(("numTau" + name).c_str(),
-                    &numTaus[ID],
-                    ("numTau" + name + "/I").c_str());
+    mytree_->Branch(("numTau" + name).c_str(), &numTaus[ID], ("numTau" + name + "/I").c_str());
 
     std::string prefix{"tau" + name};
-    mytree_->Branch((prefix + "E").c_str(),
-                    &tau_e[ID][0],
-                    (prefix + "E[numTau" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Pt").c_str(),
-                    &tau_pt[ID][0],
-                    (prefix + "Pt[numTau" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Phi").c_str(),
-                    &tau_phi[ID][0],
-                    (prefix + "Phi[numTau" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Eta").c_str(),
-                    &tau_eta[ID][0],
-                    (prefix + "Eta[numTau" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "E").c_str(), &tau_e[ID][0], (prefix + "E[numTau" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Pt").c_str(), &tau_pt[ID][0], (prefix + "Pt[numTau" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Phi").c_str(), &tau_phi[ID][0], (prefix + "Phi[numTau" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Eta").c_str(), &tau_eta[ID][0], (prefix + "Eta[numTau" + name + "]/F").c_str());
 }
 
 // book photon branches:
-void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
-                                                   const std::string& name)
-{
+void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID, const std::string& name) {
     // Initialise maps so ROOT wont panic
     std::vector<float> tempVecF(NPHOTONSMAX);
     std::vector<int> tempVecI(NPHOTONSMAX);
@@ -3705,9 +3652,7 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID,
 }
 
 // book electron branches:
-void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID,
-                                                     const std::string& name)
-{
+void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID, const std::string& name) {
     // Initialise maps so ROOT wont panic
     std::vector<float> tempVecF(NELECTRONSMAX);
     std::vector<int> tempVecI(NELECTRONSMAX);
@@ -5039,59 +4984,24 @@ void MakeTopologyNtupleMiniAOD::bookJetBranches(const std::string& ID,
     mytree_->Branch("fixedGridRhoFastjetAll", &fixedGridRhoFastjetAll[ID], "fixedGridRhoFastjetAll]/F");
 
 }
-
-void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches()
-{
-    // std::cout << "bookPackedCandsBranches CHECK" << std::endl;
-    mytree_->Branch("numPackedCands", &numPackedCands, "numPackedCands/I");
-//    mytree_->Branch("packedCandsPt", &packedCandsPt, "packedCandsPt[numPackedCands]/F");
-    mytree_->Branch("packedCandsPx", &packedCandsPx, "packedCandsPx[numPackedCands]/F");
-    mytree_->Branch("packedCandsPy", &packedCandsPy, "packedCandsPy[numPackedCands]/F");
-    mytree_->Branch("packedCandsPz", &packedCandsPz, "packedCandsPz[numPackedCands]/F");
-    mytree_->Branch("packedCandsE", &packedCandsE, "packedCandsE[numPackedCands]/F");
-//    mytree_->Branch("packedCandsEta", &packedCandsEta, "packedCandsEta[numPackedCands]/F");
-//    mytree_->Branch("packedCandsTheta", &packedCandsTheta, "packedCandsTheta[numPackedCands]/F");
-//    mytree_->Branch("packedCandsPhi", &packedCandsPhi, "packedCandsPhi[numPackedCands]/F");
-    mytree_->Branch("packedCandsCharge", &packedCandsCharge, "packedCandsCharge[numPackedCands]/I");
-    mytree_->Branch("packedCandsPdgId", &packedCandsPdgId, "packedCandsPdgId[numPackedCands]/I");
-//    mytree_->Branch("packedCandsTime", &packedCandsTime, "packedCandsTime[numPackedCands]/F");
-//    mytree_->Branch("packedCandsFromPV", &packedCandsFromPV, "packedCandsFromPV[numPackedCands]/I");
-//    mytree_->Branch("packedCandsPVquality", &packedCandsPVquality, "packedCandsPVquality[numPackedCands]/I");
-//    mytree_->Branch("packedCandsVx", &packedCandsVx, "packedCandsVx[numPackedCands]/F");
-//    mytree_->Branch("packedCandsVy", &packedCandsVy, "packedCandsVy[numPackedCands]/F");
-//    mytree_->Branch("packedCandsVz", &packedCandsVz, "packedCandsVz[numPackedCands]/F");
-//    mytree_->Branch("packedCandsVEta", &packedCandsVEta, "packedCandsVEta[numPackedCands]/F");
-//    mytree_->Branch("packedCandsVPhi", &packedCandsVPhi, "packedCandsVPhi[numPackedCands]/F"); 
-//    mytree_->Branch("packedCandsBeamSpotCorrectedD0", &packedCandsBeamSpotCorrectedD0, "packedCandsBeamSpotCorrectedD0[numPackedCands]/F");
-    mytree_->Branch("packedCandsDz", &packedCandsDz, "packedCandsDz[numPackedCands]/F");
-    mytree_->Branch("packedCandsDxy", &packedCandsDxy, "packedCandsDxy[numPackedCands]/F");
-//    mytree_->Branch("packedCandsDzAssocPV", &packedCandsDzAssocPV, "packedCandsDzAssocPV[numPackedCands]/F");
-//    mytree_->Branch("packedCandsVtxChi2Norm", &packedCandsVtxChi2Norm, "packedCandsVtxChi2Norm[numPackedCands]/F");
-    mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
-//    mytree_->Branch("packedCandsDzError", &packedCandsDzError, "packedCandsDzError[numPackedCands]/F");
-//    mytree_->Branch("packedCandsDxyError", &packedCandsDxyError, "packedCandsDxyError[numPackedCands]/F");
-//    mytree_->Branch("packedCandsTimeError", &packedCandsTimeError, "packedCandsTimeError[numPackedCands]/F");
-//    mytree_->Branch("packedCandsPseudoTrkPt", &packedCandsPseudoTrkPt, "packedCandsPseudoTrkPt[numPackedCands]/F");
-    mytree_->Branch("packedCandsPseudoTrkPx", &packedCandsPseudoTrkPx, "packedCandsPseudoTrkPx[numPackedCands]/F");
-    mytree_->Branch("packedCandsPseudoTrkPy", &packedCandsPseudoTrkPy, "packedCandsPseudoTrkPy[numPackedCands]/F");
-    mytree_->Branch("packedCandsPseudoTrkPz", &packedCandsPseudoTrkPz, "packedCandsPseudoTrkPz[numPackedCands]/F");
-//    mytree_->Branch("packedCandsPseudoTrkEta", &packedCandsPseudoTrkEta, "packedCandsPseudoTrkEta[numPackedCands]/F");
-//    mytree_->Branch("packedCandsPseudoTrkPhi", &packedCandsPseudoTrkPhi, "packedCandsPseudoTrkPhi[numPackedCands]/F");
-    mytree_->Branch("packedCandsPseudoTrkCharge", &packedCandsPseudoTrkCharge, "packedCandsPseudoTrkCharge[numPackedCands]/I");
-    mytree_->Branch("packedCandsPseudoTrkVx", &packedCandsPseudoTrkVx, "packedCandsPseudoTrkVx[numPackedCands]/F");
-    mytree_->Branch("packedCandsPseudoTrkVy", &packedCandsPseudoTrkVy, "packedCandsPseudoTrkVy[numPackedCands]/F");
-    mytree_->Branch("packedCandsPseudoTrkVz", &packedCandsPseudoTrkVz, "packedCandsPseudoTrkVz[numPackedCands]/F");
-//    mytree_->Branch("packedCandsPseudoTrkChi2Norm", &packedCandsPseudoTrkChi2Norm, "packedCandsPseudoTrkChi2Norm[numPackedCands]/F");
-//    mytree_->Branch("packedCandsPseudoTrkNumberOfHits", &packedCandsPseudoTrkNumberOfHits, "packedCandsPseudoTrkNumberOfHits[numPackedCands]/I");
-//    mytree_->Branch("packedCandsPseudoTrkNumberOfPixelHits", &packedCandsPseudoTrkNumberOfPixelHits, "packedCandsPseudoTrkNumberOfHits[numPackedCands]/I");
-//    mytree_->Branch("packedCandsPseudoTrkPixelLayersWithMeasurement", &packedCandsPseudoTrkPixelLayersWithMeasurement, "packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands]/I");
-//    mytree_->Branch("packedCandsPseudoTrkStripLayersWithMeasurement", &packedCandsPseudoTrkStripLayersWithMeasurement, "packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands]/I");
-//    mytree_->Branch("packedCandsPseudoTrkTrackerLayersWithMeasurement", &packedCandsPseudoTrkTrackerLayersWithMeasurement, "packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands]/I");
-    mytree_->Branch("packedCandsHighPurityTrack", &packedCandsHighPurityTrack, "packedCandsHighPurityTrack[numPackedCands]/I");
+void MakeTopologyNtupleMiniAOD::bookGeneralTracksBranches() {
+    // std::cout << "bookGeneralTracksBranches CHECK" << std::endl;
+    mytree_->Branch("numGeneralTracks", &numGeneralTracks, "numGeneralTracks/I");
+    mytree_->Branch("generalTracksPt", &generalTracksPt, "generalTracksPt[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPx", &generalTracksPx, "generalTracksPx[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPy", &generalTracksPy, "generalTracksPy[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPz", &generalTracksPz, "generalTracksPz[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksEta", &generalTracksEta, "generalTracksEta[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksTheta", &generalTracksTheta, "generalTracksTheta[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksPhi", &generalTracksPhi, "generalTracksPhi[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksCharge", &generalTracksCharge, "generalTracksCharge[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksVx", &generalTracksVx, "generalTracksVx[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksVy", &generalTracksVy, "generalTracksVy[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksVz", &generalTracksVz, "generalTracksVz[numGeneralTracks]/F");
+    mytree_->Branch("generalTracksBeamSpotCorrectedD0", &generalTracksBeamSpotCorrectedD0, "generalTracksBeamSpotCorrectedD0[numGeneralTracks]/F");
 }
 
-void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
-{
+void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches() {
     // std::cout << "bookIsolatedTrackBranches CHECK" << std::endl;
     mytree_->Branch("numIsolatedTracks", &numIsolatedTracks, "numIsolatedTracks/I");
     mytree_->Branch("isoTracksPt", &isoTracksPt, "isoTracksPt[numIsolatedTracks]/F");
@@ -5121,7 +5031,56 @@ void MakeTopologyNtupleMiniAOD::bookIsolatedTracksBranches()
     mytree_->Branch("isoTracksDeltaPhi", &isoTracksDeltaPhi, "isoTracksDeltaPhi[numIsolatedTracks]/F");
 }
 
-void MakeTopologyNtupleMiniAOD::bookPVbranches(){
+void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches() {
+    // std::cout << "bookPackedCandsBranches CHECK" << std::endl;
+    mytree_->Branch("numPackedCands", &numPackedCands, "numPackedCands/I");
+//    mytree_->Branch("packedCandsPt", &packedCandsPt, "packedCandsPt[numPackedCands]/F");
+    mytree_->Branch("packedCandsPx", &packedCandsPx, "packedCandsPx[numPackedCands]/F");
+    mytree_->Branch("packedCandsPy", &packedCandsPy, "packedCandsPy[numPackedCands]/F");
+    mytree_->Branch("packedCandsPz", &packedCandsPz, "packedCandsPz[numPackedCands]/F");
+    mytree_->Branch("packedCandsE", &packedCandsE, "packedCandsE[numPackedCands]/F");
+//    mytree_->Branch("packedCandsEta", &packedCandsEta, "packedCandsEta[numPackedCands]/F");
+//    mytree_->Branch("packedCandsTheta", &packedCandsTheta, "packedCandsTheta[numPackedCands]/F");
+//    mytree_->Branch("packedCandsPhi", &packedCandsPhi, "packedCandsPhi[numPackedCands]/F");
+    mytree_->Branch("packedCandsCharge", &packedCandsCharge, "packedCandsCharge[numPackedCands]/I");
+    mytree_->Branch("packedCandsPdgId", &packedCandsPdgId, "packedCandsPdgId[numPackedCands]/I");
+//    mytree_->Branch("packedCandsTime", &packedCandsTime, "packedCandsTime[numPackedCands]/F");
+//    mytree_->Branch("packedCandsFromPV", &packedCandsFromPV, "packedCandsFromPV[numPackedCands]/I");
+//    mytree_->Branch("packedCandsPVquality", &packedCandsPVquality, "packedCandsPVquality[numPackedCands]/I");
+//    mytree_->Branch("packedCandsVx", &packedCandsVx, "packedCandsVx[numPackedCands]/F");
+//    mytree_->Branch("packedCandsVy", &packedCandsVy, "packedCandsVy[numPackedCands]/F");
+//    mytree_->Branch("packedCandsVz", &packedCandsVz, "packedCandsVz[numPackedCands]/F");
+//    mytree_->Branch("packedCandsVEta", &packedCandsVEta, "packedCandsVEta[numPackedCands]/F");
+//    mytree_->Branch("packedCandsVPhi", &packedCandsVPhi, "packedCandsVPhi[numPackedCands]/F"); 
+//    mytree_->Branch("packedCandsBeamSpotCorrectedD0", &packedCandsBeamSpotCorrectedD0, "packedCandsBeamSpotCorrectedD0[numPackedCands]/F");
+    mytree_->Branch("packedCandsDz", &packedCandsDz, "packedCandsDz[numPackedCands]/F");
+    mytree_->Branch("packedCandsDxy", &packedCandsDxy, "packedCandsDxy[numPackedCands]/F");
+//    mytree_->Branch("packedCandsDzAssocPV", &packedCandsDzAssocPV, "packedCandsDzAssocPV[numPackedCands]/F");
+//    mytree_->Branch("packedCandsVtxChi2Norm", &packedCandsVtxChi2Norm, "packedCandsVtxChi2Norm[numPackedCands]/F");
+    mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
+    mytree_->Branch("packedCandsDzError", &packedCandsDzError, "packedCandsDzError[numPackedCands]/F");
+    mytree_->Branch("packedCandsDxyError", &packedCandsDxyError, "packedCandsDxyError[numPackedCands]/F");
+//    mytree_->Branch("packedCandsTimeError", &packedCandsTimeError, "packedCandsTimeError[numPackedCands]/F");
+//    mytree_->Branch("packedCandsPseudoTrkPt", &packedCandsPseudoTrkPt, "packedCandsPseudoTrkPt[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkPx", &packedCandsPseudoTrkPx, "packedCandsPseudoTrkPx[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkPy", &packedCandsPseudoTrkPy, "packedCandsPseudoTrkPy[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkPz", &packedCandsPseudoTrkPz, "packedCandsPseudoTrkPz[numPackedCands]/F");
+//    mytree_->Branch("packedCandsPseudoTrkEta", &packedCandsPseudoTrkEta, "packedCandsPseudoTrkEta[numPackedCands]/F");
+//    mytree_->Branch("packedCandsPseudoTrkPhi", &packedCandsPseudoTrkPhi, "packedCandsPseudoTrkPhi[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkCharge", &packedCandsPseudoTrkCharge, "packedCandsPseudoTrkCharge[numPackedCands]/I");
+    mytree_->Branch("packedCandsPseudoTrkVx", &packedCandsPseudoTrkVx, "packedCandsPseudoTrkVx[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkVy", &packedCandsPseudoTrkVy, "packedCandsPseudoTrkVy[numPackedCands]/F");
+    mytree_->Branch("packedCandsPseudoTrkVz", &packedCandsPseudoTrkVz, "packedCandsPseudoTrkVz[numPackedCands]/F");
+//    mytree_->Branch("packedCandsPseudoTrkChi2Norm", &packedCandsPseudoTrkChi2Norm, "packedCandsPseudoTrkChi2Norm[numPackedCands]/F");
+//    mytree_->Branch("packedCandsPseudoTrkNumberOfHits", &packedCandsPseudoTrkNumberOfHits, "packedCandsPseudoTrkNumberOfHits[numPackedCands]/I");
+//    mytree_->Branch("packedCandsPseudoTrkNumberOfPixelHits", &packedCandsPseudoTrkNumberOfPixelHits, "packedCandsPseudoTrkNumberOfHits[numPackedCands]/I");
+//    mytree_->Branch("packedCandsPseudoTrkPixelLayersWithMeasurement", &packedCandsPseudoTrkPixelLayersWithMeasurement, "packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands]/I");
+//    mytree_->Branch("packedCandsPseudoTrkStripLayersWithMeasurement", &packedCandsPseudoTrkStripLayersWithMeasurement, "packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands]/I");
+//    mytree_->Branch("packedCandsPseudoTrkTrackerLayersWithMeasurement", &packedCandsPseudoTrkTrackerLayersWithMeasurement, "packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands]/I");
+    mytree_->Branch("packedCandsHighPurityTrack", &packedCandsHighPurityTrack, "packedCandsHighPurityTrack[numPackedCands]/I");
+}
+
+void MakeTopologyNtupleMiniAOD::bookPVbranches() {
     mytree_->Branch("numPVs", &numPVs, "numPVs/I");
     mytree_->Branch("pvX", &pvX, "pvX[numPVs]/F");
     mytree_->Branch("pvY", &pvY, "pvY[numPVs]/F");
@@ -5137,7 +5096,7 @@ void MakeTopologyNtupleMiniAOD::bookPVbranches(){
     mytree_->Branch("pvNtracksW05", &pvNtracksW05, "pvNtracksW05[numPVs]/I");
 
 }
-void MakeTopologyNtupleMiniAOD::bookSVbranches(){
+void MakeTopologyNtupleMiniAOD::bookSVbranches() {
     mytree_->Branch("numSVs", &numSVs, "numSVs/I");
     mytree_->Branch("svPt", &svPt, "svPt[numSVs]/F");
     mytree_->Branch("svPx", &svPx, "svPx[numSVs]/F");

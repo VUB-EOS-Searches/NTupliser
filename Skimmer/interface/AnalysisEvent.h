@@ -422,7 +422,7 @@ class AnalysisEvent
     Int_t genPhoOOT_PF2PATIsJet[NOOTPHOTONSMAX];
 */
 
-    static constexpr size_t NPACKEDCANDSMAX{700};
+    static constexpr size_t NPACKEDCANDSMAX{1000};
     Int_t numPackedCands;
 //    Float_t packedCandsPt[NPACKEDCANDSMAX];
     Float_t packedCandsPx[NPACKEDCANDSMAX];
@@ -448,8 +448,8 @@ class AnalysisEvent
 //    Float_t packedCandsDzAssocPV[NPACKEDCANDSMAX];
 //    Float_t packedCandsVtxChi2Norm[NPACKEDCANDSMAX];
     Int_t packedCandsHasTrackDetails[NPACKEDCANDSMAX];
-//    Float_t packedCandsDzError[NPACKEDCANDSMAX];
-//    Float_t packedCandsDxyError[NPACKEDCANDSMAX];
+    Float_t packedCandsDzError[NPACKEDCANDSMAX];
+    Float_t packedCandsDxyError[NPACKEDCANDSMAX];
 //    Float_t packedCandsTimeError[NPACKEDCANDSMAX];
 //    Float_t packedCandsPseudoTrkPt[NPACKEDCANDSMAX];
     Float_t packedCandsPseudoTrkPx[NPACKEDCANDSMAX];
@@ -1498,8 +1498,8 @@ class AnalysisEvent
 //    TBranch* b_packedCandsDzAssocPV; //!
 //    TBranch* b_packedCandsVtxChi2Norm; //!
     TBranch* b_packedCandsHasTrackDetails; //!
-//    TBranch* b_packedCandsDzError; //!
-//    TBranch* b_packedCandsDxyError; //!
+    TBranch* b_packedCandsDzError; //!
+    TBranch* b_packedCandsDxyError; //!
 //    TBranch* b_packedCandsTimeError; //!
 //    TBranch* b_packedCandsPseudoTrkPt; //!
     TBranch* b_packedCandsPseudoTrkPx; //!
@@ -2624,8 +2624,8 @@ AnalysisEvent::AnalysisEvent(bool isMC,
 //   fChain->SetBranchAddress("packedCandsDzAssocPV", packedCandsDzAssocPV, &b_packedCandsDzAssocPV);
 //   fChain->SetBranchAddress("packedCandsVtxChi2Norm", packedCandsVtxChi2Norm, &b_packedCandsVtxChi2Norm);
    fChain->SetBranchAddress("packedCandsHasTrackDetails", packedCandsHasTrackDetails, &b_packedCandsHasTrackDetails);
-//   fChain->SetBranchAddress("packedCandsDzError", packedCandsDzError, &b_packedCandsDzError);
-//   fChain->SetBranchAddress("packedCandsDxyError", packedCandsDxyError, &b_packedCandsDxyError);
+   fChain->SetBranchAddress("packedCandsDzError", packedCandsDzError, &b_packedCandsDzError);
+   fChain->SetBranchAddress("packedCandsDxyError", packedCandsDxyError, &b_packedCandsDxyError);
 //   fChain->SetBranchAddress("packedCandsTimeError", packedCandsTimeError, &b_packedCandsTimeError);
 //   fChain->SetBranchAddress("packedCandsPseudoTrkPt", packedCandsPseudoTrkPt, &b_packedCandsPseudoTrkPt);
    fChain->SetBranchAddress("packedCandsPseudoTrkPx", packedCandsPseudoTrkPx, &b_packedCandsPseudoTrkPx);
