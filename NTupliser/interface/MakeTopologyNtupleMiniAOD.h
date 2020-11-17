@@ -204,6 +204,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void fillSummaryVariables(void); // should only be called after all other functions.
     void fillGeneralTracks(const edm::Event&, const edm::EventSetup&);
     void fillIsolatedTracks(const edm::Event&, const edm::EventSetup&);
+//    void fillLostTracksCands(const edm::Event&, const edm::EventSetup&);
     void fillPackedCands(const edm::Event&, const edm::EventSetup&);
 
     // Helper functions
@@ -235,6 +236,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void bookMCBranches(void); // called by bookBranches, makes MC branches.
     void bookGeneralTracksBranches(void); // called by bookBranches, makes generalTracks branches.
     void bookIsolatedTracksBranches(void); // called by bookBranches, makes isolatedTracks branches.
+//    void bookLostTracksBranches(void); // called by bookBranches, makes lostTracks branches.
     void bookPackedCandsBranches(void); // called by bookBranches, makes packedCands branches.
     void bookPVbranches(void); // called by bookBranches, makes PV branches.
     void bookSVbranches(void); // called by bookBranches, makes SV branches.
@@ -329,6 +331,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void clearMCarrays(void); // clearing MC info
     void clearGeneralTracksArrays(void); // clearing generalTracks info, used by cleararrays
     void clearIsolatedTracksArrays(void); // clearing isolatedTracks info, used by cleararrays
+//    void clearLostTracksArrays(void); // clearing lostTracks info, used by cleararrays
     void clearPackedCandsArrays(void); // clearing packedCands info, used by cleararrays
 
     std::vector<float> electronEts; // just used for sorting
