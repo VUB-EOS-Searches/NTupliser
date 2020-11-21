@@ -17,8 +17,6 @@
 #include <string>
 #include <vector>
 
-//#define NO_LHE
-
 using namespace std::string_literals;
 namespace fs = boost::filesystem;
 
@@ -28,23 +26,21 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> inDirs;
     std::string datasetName;
-    bool isMC;
-    bool hasLHE;
-    bool is2016;
+    bool isMC {false};
+    bool hasLHE {false};
+    bool is2016 {false};
+    bool disableCuts {false};
 
     // Define command-line flags
     namespace po = boost::program_options;
     po::options_description desc("Options");
     desc.add_options()("help,h", "Print this message.")(
-        "inDirs,i",
-        po::value<std::vector<std::string>>(&inDirs)->multitoken()->required(),
-        "Directories in which to look for crab output.")(
-        "datasetName,o",
-        po::value<std::string>(&datasetName)->required(),
-        "Output dataset name.")(
+        "inDirs,i", po::value<std::vector<std::string>>(&inDirs)->multitoken()->required(), "Directories in which to look for crab output.")(
+        "datasetName,o", po::value<std::string>(&datasetName)->required(), "Output dataset name.")(
         "LHE", po::bool_switch(&hasLHE), "Set for data with LHE weights.")(
         "2016", po::bool_switch(&is2016), "Set for 2016 data.")(
-        "MC", po::bool_switch(&isMC), "Set for MC data.");
+        "MC", po::bool_switch(&isMC), "Set for MC data.")(
+        "disableCuts, d", po::bool_switch(&disableCuts), "Set for MC data.");
     po::variables_map vm;
 
     // Parse arguments
@@ -148,41 +144,35 @@ int main(int argc, char* argv[])
                 }
                 // clang-format on
 
-                // valid packedPFCands tracks cuts
+                if (disableCuts) outTree->Fill();
 
-                // Lepton cuts
-//                int numLeps{0};
+                else {
+		  // Lepton cuts
+		  constexpr double MIN_MUON1_PATPT{15.};
+		  constexpr double MIN_MUON2_PATPT{6.};
+		  constexpr double MAX_MUON_ETA{2.8};
+		  constexpr double MAX_INVZMASS{10.0};
+		  bool passMuonCut {false};
 
-//                constexpr double MIN_MUON_PATPT{9.};
-                constexpr double MIN_MUON1_PATPT{15.};
-                constexpr double MIN_MUON2_PATPT{6.};
-                constexpr double MAX_MUON_ETA{2.8};
-                constexpr double MAX_INVZMASS{10.0};
-//                constexpr int MIN_LEPTONS{2};
-                bool passMuonCut {false};
-
-                for (int j{0}; j < event.numMuonPF2PAT; j++) {
-//                    if (event.muonPF2PATPt[j] < MIN_MUON_PATPT || std::abs(event.muonPF2PATEta[j]) > MAX_MUON_ETA) continue;
+		  for (int j{0}; j < event.numMuonPF2PAT; j++) {
                     if (std::abs(event.muonPF2PATEta[j]) > MAX_MUON_ETA) continue;
-//                    numLeps++;
                     for (int k {j+1}; k < event.numMuonPF2PAT; k++) {
-//                        if (event.muonPF2PATPt[k] < MIN_MUON_PATPT || std::abs(event.muonPF2PATEta[k]) > MAX_MUON_ETA) continue;
-                        if (std::abs(event.muonPF2PATEta[k]) > MAX_MUON_ETA) continue;
-                        TLorentzVector muon1{event.muonPF2PATPX[j], event.muonPF2PATPY[j], event.muonPF2PATPZ[j], event.muonPF2PATE[j]};
-                        TLorentzVector muon2{event.muonPF2PATPX[k], event.muonPF2PATPY[k], event.muonPF2PATPZ[k], event.muonPF2PATE[k]};
-                        double invMass { (muon1 + muon2).M() };
-                        if ( muon1.Pt() > muon2.Pt() ) {
-                            if ( muon1.Pt() < MIN_MUON1_PATPT || muon2.Pt() < MIN_MUON2_PATPT ) continue;
-                        }
-                        else {
-                            if ( muon2.Pt() < MIN_MUON1_PATPT || muon1.Pt() < MIN_MUON2_PATPT ) continue;
-                        }
-                        if ( invMass <= MAX_INVZMASS ) passMuonCut = true;
+		      if (std::abs(event.muonPF2PATEta[k]) > MAX_MUON_ETA) continue;
+		      TLorentzVector muon1{event.muonPF2PATPX[j], event.muonPF2PATPY[j], event.muonPF2PATPZ[j], event.muonPF2PATE[j]};
+		      TLorentzVector muon2{event.muonPF2PATPX[k], event.muonPF2PATPY[k], event.muonPF2PATPZ[k], event.muonPF2PATE[k]};
+		      double invMass { (muon1 + muon2).M() };
+		      if ( muon1.Pt() > muon2.Pt() ) {
+			if ( muon1.Pt() < MIN_MUON1_PATPT || muon2.Pt() < MIN_MUON2_PATPT ) continue;
+		      }
+		      else {
+			if ( muon2.Pt() < MIN_MUON1_PATPT || muon1.Pt() < MIN_MUON2_PATPT ) continue;
+		      }
+		      if ( invMass <= MAX_INVZMASS ) passMuonCut = true;
                     }
-                }
+		  }
 
-//                if (numLeps >= MIN_LEPTONS)  outTree->Fill();
                 if ( passMuonCut ) outTree->Fill();
+                }
             }
 
             if (isMC)
