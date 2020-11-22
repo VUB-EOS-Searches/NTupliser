@@ -98,10 +98,15 @@
 #include "TH2D.h"
 #include "TLorentzVector.h"
 #include "TTree.h"
+#include "TrackingTools/PatternTools/interface/ClosestApproachInRPhi.h"
 #include "TrackingTools/IPTools/interface/IPTools.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrack.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/TrajectoryState/interface/TrajectoryStateTransform.h"
+#include "RecoVertex/VertexPrimitives/interface/TransientVertex.h"
+#include "RecoVertex/KalmanVertexFit/interface/KalmanVertexFitter.h"
+#include "RecoVertex/AdaptiveVertexFit/interface/AdaptiveVertexFitter.h"
 
 #include <boost/container/vector.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -336,7 +341,8 @@ void MakeTopologyNtupleMiniAOD::fillPV(const edm::Event& iEvent, const edm::Even
             pvChi2[numPVs] = it->chi2();
             pvNtracks[numPVs] = int(it->tracksSize());
             pvNtracksW05[numPVs] = it->nTracks(0.5);
-
+            pvTime[numPVs] = it->t();
+            pvTimeError[numPVs] = it->tError();
             numPVs++;
         }
     }
@@ -1027,6 +1033,10 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
     iEvent.getByToken(muIn_, muonHandle);
     const pat::MuonCollection& muons = *muonHandle;
 
+    edm::ESHandle<MagneticField> magneticFieldHandle;
+    iSetup.get<IdealMagneticFieldRecord>().get(magneticFieldHandle);
+    const MagneticField* theMagneticField = magneticFieldHandle.product();
+
     //fillBeamSpot(iEvent, iSetup);
     //fillIsolatedTracks(iEvent, iSetup);
     //fillLostTracksCands(iEvent, iSetup);
@@ -1045,18 +1055,18 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         muonEts.emplace_back(et);
     }
 
-    // std::cout << __LINE__ << " : " << __FILE__ << " : nMuons = " <<
-    // muons.size()
-    //           << std::endl;
-    //
-    // std::cout << iEvent.id().event() << " " << muons.size() << std::endl;
-
     if (muonEts.size() == 0)
     { // prevents a crash, the IndexSorter does not know what to do with
       // zero-size vectors
         return;
     }
     std::vector<size_t> etMuonSorted{IndexSorter<std::vector<float>>(muonEts, true)()};
+
+    // vectors to store muon track refs and indices for later
+    std::vector< int > muonTkIndices;
+    std::vector< reco::TrackRef > trackRefs;
+    std::vector< reco::TransientTrack > transTracks;
+
 
     numMuo[ID] = 0;
     // muons:
@@ -1113,22 +1123,26 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         muonSortedGlobalID[ID][numMuo[ID] - 1] = muo.isGlobalMuon();
         muonSortedTrackID[ID][numMuo[ID] - 1] = muo.isTrackerMuon();
 
-        if (muo.isTrackerMuon() || muo.isGlobalMuon())
-        {
+        if (muo.isTrackerMuon() || muo.isGlobalMuon()) { // required to be a global or tracker muon - i.e. has inner tracker info
             muonValidFraction[ID][numMuo[ID] - 1] = muo.innerTrack()->validFraction();
             muonChi2LocalPosition[ID][numMuo[ID] - 1] = muo.combinedQuality().chi2LocalPosition;
             muonTrkKick[ID][numMuo[ID] - 1] = muo.combinedQuality().trkKink;
             muonSegmentCompatibility[ID][numMuo[ID] - 1] = muon::segmentCompatibility(muo);
+
+            // Store muon track refs for post muon loop tracking analysis
+            muonTkIndices.push_back( numMuo[ID] - 1 );
+            trackRefs.push_back( muo.innerTrack() );
+            reco::TransientTrack tmpTransient( *(muo.innerTrack()), theMagneticField);
+            transTracks.push_back( std::move( tmpTransient ) );
         }
 
         //----------------------------------------------------------------------------
-        if (muo.isTrackerMuon() && muo.isGlobalMuon())
-        {
+        if (muo.isTrackerMuon() && muo.isGlobalMuon()) {
             muonSortedChi2[ID][numMuo[ID] - 1] = muo.combinedMuon()->chi2(); // chi2 of the combined muon
             //----------------------------------------------------------------------------
             muonSortedD0[ID][numMuo[ID] - 1] = muo.combinedMuon()->d0(); // impact parameter
-            muonSortedDBBeamSpotCorrectedTrackD0[ID][numMuo[ID] - 1] = muo.dB();
             muonSortedDBInnerTrackD0[ID][numMuo[ID] - 1] = -1. * (muo.innerTrack()->dxy(beamSpotPoint_));
+            muonSortedDBBeamSpotCorrectedTrackD0[ID][numMuo[ID] - 1] = muo.dB();
             muonSortedBeamSpotCorrectedD0[ID][numMuo[ID] - 1] = -1. * (muo.combinedMuon()->dxy(beamSpotPoint_));
             muonSortedNDOF[ID][numMuo[ID] - 1] = muo.combinedMuon()->ndof(); // n_d.o.f
             muonSortedTrackNHits[ID][numMuo[ID] - 1] = muo.track()->numberOfValidHits(); // number of valid hits in Tracker - same as muo.bestTrack()->hitPattern().numberOfValidHits()
@@ -1140,17 +1154,17 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             muonSortedVertZ[ID][numMuo[ID] - 1] = muo.vertex().Z();
 
             // Save track infomation
-            muonSortedBestTkPt[ID][numMuo[ID] - 1] = muo.bestTrack()->pt();
-            muonSortedBestTkPx[ID][numMuo[ID] - 1] = muo.bestTrack()->px();
-            muonSortedBestTkPy[ID][numMuo[ID] - 1] = muo.bestTrack()->py();
-            muonSortedBestTkPz[ID][numMuo[ID] - 1] = muo.bestTrack()->pz();
-            muonSortedBestTkEta[ID][numMuo[ID] - 1] = muo.bestTrack()->eta();
-            muonSortedBestTkPhi[ID][numMuo[ID] - 1] = muo.bestTrack()->phi();
+            muonSortedInnerTkPt[ID][numMuo[ID] - 1] = muo.bestTrack()->pt();
+            muonSortedInnerTkPx[ID][numMuo[ID] - 1] = muo.bestTrack()->px();
+            muonSortedInnerTkPy[ID][numMuo[ID] - 1] = muo.bestTrack()->py();
+            muonSortedInnerTkPz[ID][numMuo[ID] - 1] = muo.bestTrack()->pz();
+            muonSortedInnerTkEta[ID][numMuo[ID] - 1] = muo.bestTrack()->eta();
+            muonSortedInnerTkPhi[ID][numMuo[ID] - 1] = muo.bestTrack()->phi();
 
             // Just some extra stuff.
             muonSortedTkLysWithMeasurements[ID][numMuo[ID] - 1] = muo.track()->hitPattern().trackerLayersWithMeasurement();
             muonSortedGlbTkNormChi2[ID][numMuo[ID] - 1] = muo.globalTrack()->normalizedChi2();
-            muonSortedBestTkNormChi2[ID][numMuo[ID] - 1] = muo.bestTrack()->normalizedChi2();
+            muonSortedInnerTkNormChi2[ID][numMuo[ID] - 1] = muo.bestTrack()->normalizedChi2();
             muonSortedDBPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dxy(vertexPoint_);
             muonSortedDBPVError[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dxyError();
             muonSortedDZPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dz(vertexPoint_);
@@ -1194,13 +1208,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         //                     - 0.5 * muo.puChargedHadronIso()))
         //     / muo.pt();
         // New Method
-        muonSortedComRelIsodBeta[ID][numMuo[ID] - 1] =
-            (muo.pfIsolationR04().sumChargedHadronPt
-             + std::max(0.0,
-                        muo.pfIsolationR04().sumNeutralHadronEt
-                            + muo.pfIsolationR04().sumPhotonEt
-                            - 0.5 * muo.pfIsolationR04().sumPUPt))
-            / muo.pt();
+        muonSortedComRelIsodBeta[ID][numMuo[ID] - 1] = (muo.pfIsolationR04().sumChargedHadronPt + std::max(0.0, muo.pfIsolationR04().sumNeutralHadronEt + muo.pfIsolationR04().sumPhotonEt - 0.5 * muo.pfIsolationR04().sumPUPt)) / muo.pt();
         muonSortedComRelIso[ID][numMuo[ID] - 1] /= muonSortedPt[ID][numMuo[ID] - 1];
         muonSortedNumChambers[ID][numMuo[ID] - 1] = muo.numberOfChambers();
         muonSortedNumMatches[ID][numMuo[ID] - 1] = muo.numberOfMatches();
@@ -1216,8 +1224,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         muonSortedPackedCandsIndex[ID][numMuo[ID] -1] = sourceCandPtrIndex;
 
         // if (muo.genParticleRef().ref().isValid())
-        if (!muo.genParticleRef().isNull())
-        {
+        if (!muo.genParticleRef().isNull()) {
             genMuonSortedPt[ID][numMuo[ID] - 1] = muo.genLepton()->pt();
             genMuonSortedEt[ID][numMuo[ID] - 1] = muo.genLepton()->et();
             genMuonSortedEta[ID][numMuo[ID] - 1] = muo.genLepton()->eta();
@@ -1236,14 +1243,183 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
                 muo.genLepton()->isPromptFinalState();
             genMuonSortedHardProcess[ID][numMuo[ID] - 1] =
                 muo.genLepton()->isHardProcess();
+        } // End gen muon loop
+
+    }
+
+    numMuonTracks[ID] = 0;
+
+    // loop over muon tracks
+    for (unsigned int trdx1 = 0; trdx1 < trackRefs.size() && numMuonTracks[ID] < numeric_cast<int>(NMUONTKPAIRMAX); ++trdx1) {
+        for (unsigned int trdx2 = trdx1 + 1; trdx2 < trackRefs.size() && numMuonTracks[ID] < numeric_cast<int>(NMUONTKPAIRMAX); ++trdx2) {
+
+            reco::TrackRef trackRef1;
+            reco::TrackRef trackRef2;
+            reco::TransientTrack* transTkPtr1 = nullptr;
+            reco::TransientTrack* transTkPtr2 = nullptr;
+
+            trackRef1 = trackRefs[trdx1];
+            trackRef2 = trackRefs[trdx2];
+            transTkPtr1 = &transTracks[trdx1];
+            transTkPtr2 = &transTracks[trdx2];
+
+           // measure distance between tracks at their closest approach
+
+           //these two variables are needed to 'pin' the temporary value returned to the stack
+           // in order to keep both States from pointing to destructed objects
+           auto const& impact1 = transTkPtr1->impactPointTSCP();
+           auto const& impact2 = transTkPtr2->impactPointTSCP();
+           if (!impact1.isValid() || !impact2.isValid()) continue;
+           FreeTrajectoryState const& state1 = impact1.theState();
+           FreeTrajectoryState const& state2 = impact2.theState();
+
+           ClosestApproachInRPhi cApp;
+           cApp.calculate(state1, state2);
+           if (!cApp.status()) continue;
+
+           float dca = std::abs(cApp.distance());
+
+           // the POCA should at least be in the sensitive volume
+           GlobalPoint cxPt = cApp.crossingPoint();
+           if ((cxPt.x() * cxPt.x() + cxPt.y() * cxPt.y()) > 120. * 120. || std::abs(cxPt.z()) > 300.) continue;
+
+           TrajectoryStateClosestToPoint const& TSCP1 = transTkPtr1->trajectoryStateClosestToPoint(cxPt);
+           TrajectoryStateClosestToPoint const& TSCP2 = transTkPtr2->trajectoryStateClosestToPoint(cxPt);
+           if (!TSCP1.isValid() || !TSCP2.isValid()) continue;
+
+           // Fill the vector of TransientTracks to send to KVF
+           std::vector<reco::TransientTrack> tmpTransTracks;
+           tmpTransTracks.reserve(2);
+           tmpTransTracks.push_back(*transTkPtr1);
+           tmpTransTracks.push_back(*transTkPtr2);
+
+           // create the vertex fitter object and vertex the tracks
+           KalmanVertexFitter theKalmanFitter(true); // KalmanVertexFitter(bool useSmoothing = false);
+           TransientVertex theRecoVertex  = theKalmanFitter.vertex(tmpTransTracks);
+           if (!theRecoVertex.isValid()) continue;
+
+           // do stuff with new vertices
+
+           reco::Vertex theVtx = theRecoVertex;
+           GlobalPoint vtxPos(theVtx.x(), theVtx.y(), theVtx.z());
+
+           // 2D decay significance
+           ROOT::Math::SMatrix<double, 3, 3, ROOT::Math::MatRepSym<double, 3>> totalCov = vertexPrimary_->covariance() + theVtx.covariance();
+           ROOT::Math::SVector<double, 3>  distVecXY(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), 0.);
+           double distMagXY = ROOT::Math::Mag(distVecXY);
+           double sigmaDistMagXY = sqrt(ROOT::Math::Similarity(totalCov, distVecXY)) / distMagXY;
+
+           // 3D decay significance
+           ROOT::Math::SVector<double, 3>  distVecXYZ(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), vtxPos.z() - vertexPrimary_->position().z());
+           double distMagXYZ = ROOT::Math::Mag(distVecXYZ);
+           double sigmaDistMagXYZ = sqrt(ROOT::Math::Similarity(totalCov, distVecXYZ)) / distMagXYZ;
+
+           // do stuff with refit tracks
+
+           std::unique_ptr<TrajectoryStateClosestToPoint> traj1;
+           std::unique_ptr<TrajectoryStateClosestToPoint> traj2;
+           std::vector<reco::TransientTrack> theRefTracks = theRecoVertex.refittedTracks();
+
+           if ( theRefTracks.size() > 1 ) {
+               reco::TransientTrack* transTk1 = nullptr;
+               reco::TransientTrack* transTk2 = nullptr;
+
+               transTk1 = &theRefTracks[0];
+               transTk2 = &theRefTracks[1];
+
+               if (transTk1 == nullptr || transTk2 == nullptr) continue;
+               traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTk1->trajectoryStateClosestToPoint(vtxPos));
+               traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTk2->trajectoryStateClosestToPoint(vtxPos));
+           }
+
+           else {
+               traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr1->trajectoryStateClosestToPoint(vtxPos));
+               traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr2->trajectoryStateClosestToPoint(vtxPos));
+           }
+
+           if (traj1.get() == nullptr || traj2.get() == nullptr || !traj1->isValid() || !traj2->isValid()) continue;
+
+           GlobalVector P1(traj1->momentum());
+           GlobalVector P2(traj2->momentum());
+           GlobalVector totalP(P1 + P2);
+
+           // 2D pointing angle
+           double dx = theVtx.x() - vertexPrimary_->position().x();
+           double dy = theVtx.y() - vertexPrimary_->position().y();
+           double px = totalP.x();
+           double py = totalP.y();
+           double angleXY = (dx * px + dy * py) / (sqrt(dx * dx + dy * dy) * sqrt(px * px + py * py));
+
+           // 3D pointing angle
+           double dz = theVtx.z() - vertexPrimary_->position().z();
+           double pz = totalP.z();
+           double angleXYZ = (dx * px + dy * py + dz * pz) / (sqrt(dx * dx + dy * dy + dz * dz) * sqrt(px * px + py * py + pz * pz));
+
+           reco::Particle::Point vtx(theVtx.x(), theVtx.y(), theVtx.z());
+           const reco::Vertex::CovarianceMatrix vtxCov(theVtx.covariance());
+
+           numMuonTracks[ID]++;
+
+           muonTkPairSortedIndex1[ID][numMuonTracks[ID] - 1] = muonTkIndices[trdx1];
+           muonTkPairSortedIndex2[ID][numMuonTracks[ID] - 1] = muonTkIndices[trdx2];
+
+           muonTkPairSortedTkVtxPx[ID][numMuonTracks[ID] - 1] = px;
+           muonTkPairSortedTkVtxPy[ID][numMuonTracks[ID] - 1] = py;
+           muonTkPairSortedTkVtxPz[ID][numMuonTracks[ID] - 1] = pz;
+           muonTkPairSortedTkVx[ID][numMuonTracks[ID] - 1] = theVtx.x();
+           muonTkPairSortedTkVy[ID][numMuonTracks[ID] - 1] = theVtx.y();
+           muonTkPairSortedTkVz[ID][numMuonTracks[ID] - 1] = theVtx.z();
+           muonTkPairSortedTkVxError[ID][numMuonTracks[ID] - 1] = theVtx.xError();
+           muonTkPairSortedTkVyError[ID][numMuonTracks[ID] - 1] = theVtx.yError();
+           muonTkPairSortedTkVzError[ID][numMuonTracks[ID] - 1] = theVtx.zError();
+           muonTkPairSortedTkVtxChi2[ID][numMuonTracks[ID] - 1] = theVtx.chi2();
+           muonTkPairSortedTkVtxNdof[ID][numMuonTracks[ID] - 1] = theVtx.ndof();
+           muonTkPairSortedTkVtxTime[ID][numMuonTracks[ID] - 1] = theVtx.t();
+           muonTkPairSortedTkVtxTimeError[ID][numMuonTracks[ID] - 1] = theVtx.tError();
+           muonTkPairSortedTkVtxAngleXY[ID][numMuonTracks[ID] - 1] = angleXY;
+           muonTkPairSortedTkVtxDistMagXY[ID][numMuonTracks[ID] - 1] = distMagXY;
+           muonTkPairSortedTkVtxDistMagXYSigma[ID][numMuonTracks[ID] - 1] = sigmaDistMagXY;
+           muonTkPairSortedTkVtxAngleXYZ[ID][numMuonTracks[ID] - 1] = angleXYZ; 
+           muonTkPairSortedTkVtxDistMagXYZ[ID][numMuonTracks[ID] - 1] = distMagXYZ;
+           muonTkPairSortedTkVtxDistMagXYZSigma[ID][numMuonTracks[ID] - 1] = sigmaDistMagXYZ;
+
+           muonTkPairSortedTk1Pt[ID][numMuonTracks[ID] - 1] = traj1->pt();
+           muonTkPairSortedTk1Px[ID][numMuonTracks[ID] - 1] = P1.x();
+           muonTkPairSortedTk1Py[ID][numMuonTracks[ID] - 1] = P1.y();
+           muonTkPairSortedTk1Pz[ID][numMuonTracks[ID] - 1] = P1.z();
+           muonTkPairSortedTk1Eta[ID][numMuonTracks[ID] - 1] = P1.eta();
+           muonTkPairSortedTk1Phi[ID][numMuonTracks[ID] - 1] = P1.phi();
+           muonTkPairSortedTk1Charge[ID][numMuonTracks[ID] - 1] = traj1->charge();
+           float tk1Chi2{0.}, tk1Ndof{0.};
+           if ( theRefTracks.size() > 1 ) {
+               tk1Chi2 = theRefTracks[0].chi2();
+               tk1Ndof = theRefTracks[0].ndof();
+           }
+           muonTkPairSortedTk1Chi2[ID][numMuonTracks[ID] - 1] = tk1Chi2;
+           muonTkPairSortedTk1Ndof[ID][numMuonTracks[ID] - 1] = tk1Ndof;
+
+           muonTkPairSortedTk2Pt[ID][numMuonTracks[ID] - 1] = traj2->pt();
+           muonTkPairSortedTk2Px[ID][numMuonTracks[ID] - 1] = P2.x();
+           muonTkPairSortedTk2Py[ID][numMuonTracks[ID] - 1] = P2.y();
+           muonTkPairSortedTk2Pz[ID][numMuonTracks[ID] - 1] = P2.z();
+           muonTkPairSortedTk2Eta[ID][numMuonTracks[ID] - 1] = P2.eta();
+           muonTkPairSortedTk2Phi[ID][numMuonTracks[ID] - 1] = P2.phi();
+           muonTkPairSortedTk2Charge[ID][numMuonTracks[ID] - 1] = traj2->charge();
+           float tk2Chi2{0.}, tk2Ndof{0.};
+           if ( theRefTracks.size() > 1 ) {
+               tk2Chi2 = theRefTracks[1].chi2();
+               tk2Ndof = theRefTracks[1].ndof();
+           }
+           muonTkPairSortedTk2Chi2[ID][numMuonTracks[ID] - 1] = tk2Chi2;
+           muonTkPairSortedTk2Ndof[ID][numMuonTracks[ID] - 1] = tk2Ndof;
+
+           muonTkPairSortedTkVtxDcaPreFit[ID][numMuonTracks[ID] - 1] = dca;
         }
     }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::fillMuonTrackPairs(const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::MuonCollection> muIn_, const std::string& ID) {
-}
-/////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillOtherJetInfo(const pat::Jet& jet,
                                                  const size_t jetindex,
                                                  const std::string& ID,
@@ -2643,16 +2819,16 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     muonSortedVertY[ID].clear();
     muonSortedVertZ[ID].clear();
 
-    muonSortedBestTkPt[ID].clear();
-    muonSortedBestTkPx[ID].clear();
-    muonSortedBestTkPy[ID].clear();
-    muonSortedBestTkPz[ID].clear();
-    muonSortedBestTkEta[ID].clear();
-    muonSortedBestTkPhi[ID].clear();
+    muonSortedInnerTkPt[ID].clear();
+    muonSortedInnerTkPx[ID].clear();
+    muonSortedInnerTkPy[ID].clear();
+    muonSortedInnerTkPz[ID].clear();
+    muonSortedInnerTkEta[ID].clear();
+    muonSortedInnerTkPhi[ID].clear();
 
     muonSortedTkLysWithMeasurements[ID].clear();
     muonSortedGlbTkNormChi2[ID].clear();
-    muonSortedBestTkNormChi2[ID].clear();
+    muonSortedInnerTkNormChi2[ID].clear();
     muonSortedDBPV[ID].clear();
     muonSortedDBPVError[ID].clear();
     muonSortedDZPV[ID].clear();
@@ -2690,6 +2866,49 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     genMuonSortedPromptDecayed[ID].clear();
     genMuonSortedPromptFinalState[ID].clear();
     genMuonSortedHardProcess[ID].clear();
+
+    numMuonTracks[ID] = 0;
+    muonTkPairSortedIndex1[ID].clear(); 
+    muonTkPairSortedIndex2[ID].clear();
+    muonTkPairSortedTkVtxPx[ID].clear();
+    muonTkPairSortedTkVtxPy[ID].clear();
+    muonTkPairSortedTkVtxPz[ID].clear();
+    muonTkPairSortedTkVx[ID].clear();
+    muonTkPairSortedTkVy[ID].clear();                   
+    muonTkPairSortedTkVz[ID].clear();
+    muonTkPairSortedTkVxError[ID].clear();
+    muonTkPairSortedTkVyError[ID].clear();
+    muonTkPairSortedTkVzError[ID].clear();
+    muonTkPairSortedTkVtxChi2[ID].clear();
+    muonTkPairSortedTkVtxNdof[ID].clear();
+    muonTkPairSortedTkVtxTime[ID].clear();
+    muonTkPairSortedTkVtxTimeError[ID].clear();
+    muonTkPairSortedTkVtxAngleXY[ID].clear();
+    muonTkPairSortedTkVtxDistMagXY[ID].clear();
+    muonTkPairSortedTkVtxDistMagXYSigma[ID].clear();
+    muonTkPairSortedTkVtxAngleXYZ[ID].clear();
+    muonTkPairSortedTkVtxDistMagXYZ[ID].clear();
+    muonTkPairSortedTkVtxDistMagXYZSigma[ID].clear();
+    muonTkPairSortedTk1Pt[ID].clear();
+    muonTkPairSortedTk1Px[ID].clear();
+    muonTkPairSortedTk1Py[ID].clear();
+    muonTkPairSortedTk1Pz[ID].clear();
+    muonTkPairSortedTk1Eta[ID].clear();
+    muonTkPairSortedTk1Phi[ID].clear();
+    muonTkPairSortedTk1Charge[ID].clear();
+    muonTkPairSortedTk1Chi2[ID].clear();
+    muonTkPairSortedTk1Ndof[ID].clear();
+    muonTkPairSortedTk2Pt[ID].clear();
+    muonTkPairSortedTk2Px[ID].clear();
+    muonTkPairSortedTk2Py[ID].clear();
+    muonTkPairSortedTk2Pz[ID].clear();
+    muonTkPairSortedTk2Eta[ID].clear();
+    muonTkPairSortedTk2Phi[ID].clear();
+    muonTkPairSortedTk2Charge[ID].clear();
+    muonTkPairSortedTk2Chi2[ID].clear();
+    muonTkPairSortedTk2Ndof[ID].clear();
+    muonTkPairSortedTkVtxDcaPreFit[ID].clear();
+
 }
 
 void MakeTopologyNtupleMiniAOD::clearMetArrays(const std::string& ID){
@@ -2916,6 +3135,8 @@ void MakeTopologyNtupleMiniAOD::clearPVarrays() {
         pvChi2[numPVs] = -1;
         pvNtracks[numPVs] = 0;
         pvNtracksW05[numPVs] = 0;
+        pvTime[numPVs] = 0.;
+        pvTimeError[numPVs] = -999999.;
     }   
 }
 
@@ -3205,7 +3426,6 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
 
     // fillMuons(iEvent, iSetup, muoLabel_, "Calo");
     fillMuons           (iEvent, iSetup, patMuonsToken_, "PF");
-    fillMuonTrackPairs (iEvent, iSetup, patMuonsToken_, "PF");
 
     fillElectrons(iEvent, iSetup, patElectronsToken_, "PF", eleLabel_);
  //   fillPhotons(iEvent, iSetup, patPhotonsToken_, "PF", phoLabel_);
@@ -4168,9 +4388,8 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID, cons
     zcandidatesvector[ID] = tempVecF;
 }
 // book muon branches:
-void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
-                                                 const std::string& name)
-{
+void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const std::string& name) {
+
     // Initialise maps to prevent root panicing.
     std::vector<float> tempVecF(NMUONSMAX);
     std::vector<int> tempVecI(NMUONSMAX);
@@ -4222,16 +4441,16 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
     muonSortedVertY[ID] = tempVecF;
     muonSortedVertZ[ID] = tempVecF;
 
-    muonSortedBestTkPt[ID] = tempVecF;
-    muonSortedBestTkPx[ID] = tempVecF;
-    muonSortedBestTkPy[ID] = tempVecF;
-    muonSortedBestTkPz[ID] = tempVecF;
-    muonSortedBestTkEta[ID] = tempVecF;
-    muonSortedBestTkPhi[ID] = tempVecF;
+    muonSortedInnerTkPt[ID] = tempVecF;
+    muonSortedInnerTkPx[ID] = tempVecF;
+    muonSortedInnerTkPy[ID] = tempVecF;
+    muonSortedInnerTkPz[ID] = tempVecF;
+    muonSortedInnerTkEta[ID] = tempVecF;
+    muonSortedInnerTkPhi[ID] = tempVecF;
 
     muonSortedTkLysWithMeasurements[ID] = tempVecI;
     muonSortedGlbTkNormChi2[ID] = tempVecF;
-    muonSortedBestTkNormChi2[ID] = tempVecF;
+    muonSortedInnerTkNormChi2[ID] = tempVecF;
     muonSortedDBPV[ID] = tempVecF;
     muonSortedDBPVError[ID] = tempVecF;
     muonSortedDZPV[ID] = tempVecF;
@@ -4270,101 +4489,86 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
     genMuonSortedPromptFinalState[ID] = tempVecI;
     genMuonSortedHardProcess[ID] = tempVecI;
 
-    mytree_->Branch(("numMuon" + name).c_str(),
-                    &numMuo[ID],
-                    ("numMuon" + name + "/I").c_str());
+    // Initialise maps to prevent root panicing.
+    std::vector<float> tempVecF2(NMUONSMAX);
+    std::vector<int> tempVecI2(NMUONSMAX);
+
+    muonTkPairSortedIndex1[ID] = tempVecI2;
+    muonTkPairSortedIndex2[ID] = tempVecI2;
+    muonTkPairSortedTkVtxPx[ID] = tempVecF2;
+    muonTkPairSortedTkVtxPy[ID] = tempVecF2;
+    muonTkPairSortedTkVtxPz[ID] = tempVecF2;
+    muonTkPairSortedTkVx[ID] = tempVecF2;
+    muonTkPairSortedTkVy[ID] = tempVecF2;
+    muonTkPairSortedTkVz[ID] = tempVecF2;
+    muonTkPairSortedTkVxError[ID] = tempVecF2;
+    muonTkPairSortedTkVyError[ID] = tempVecF2;
+    muonTkPairSortedTkVzError[ID] = tempVecF2;
+    muonTkPairSortedTkVtxChi2[ID] = tempVecF2;
+    muonTkPairSortedTkVtxNdof[ID] = tempVecF2;
+    muonTkPairSortedTkVtxTime[ID] = tempVecF2;
+    muonTkPairSortedTkVtxTimeError[ID] = tempVecF2;
+    muonTkPairSortedTkVtxAngleXY[ID] = tempVecF2;
+    muonTkPairSortedTkVtxDistMagXY[ID] = tempVecF2;
+    muonTkPairSortedTkVtxDistMagXYSigma[ID] = tempVecF2;
+    muonTkPairSortedTkVtxAngleXYZ[ID] = tempVecF2;
+    muonTkPairSortedTkVtxDistMagXYZ[ID] = tempVecF2;
+    muonTkPairSortedTkVtxDistMagXYZSigma[ID] = tempVecF2;
+    muonTkPairSortedTk1Pt[ID] = tempVecF2;
+    muonTkPairSortedTk1Px[ID] = tempVecF2;
+    muonTkPairSortedTk1Py[ID] = tempVecF2;
+    muonTkPairSortedTk1Pz[ID] = tempVecF2;
+    muonTkPairSortedTk1Eta[ID] = tempVecF2;
+    muonTkPairSortedTk1Phi[ID] = tempVecF2;
+    muonTkPairSortedTk1Charge[ID] = tempVecI2;
+    muonTkPairSortedTk1Chi2[ID] = tempVecF2;
+    muonTkPairSortedTk1Ndof[ID] = tempVecF2;
+    muonTkPairSortedTk2Pt[ID] = tempVecF2;
+    muonTkPairSortedTk2Px[ID] = tempVecF2;
+    muonTkPairSortedTk2Py[ID] = tempVecF2;
+    muonTkPairSortedTk2Pz[ID] = tempVecF2;
+    muonTkPairSortedTk2Eta[ID] = tempVecF2;
+    muonTkPairSortedTk2Phi[ID] = tempVecF2;
+    muonTkPairSortedTk2Charge[ID] = tempVecI2;
+    muonTkPairSortedTk2Chi2[ID] = tempVecF2;
+    muonTkPairSortedTk2Ndof[ID] = tempVecF2;
+    muonTkPairSortedTkVtxDcaPreFit[ID] = tempVecF2;
+
+    mytree_->Branch(("numMuon" + name).c_str(), &numMuo[ID], ("numMuon" + name + "/I").c_str());
     std::string prefix{"muon" + name};
-    mytree_->Branch((prefix + "E").c_str(),
-                    &muonSortedE[ID][0],
-                    (prefix + "E[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "ET").c_str(),
-                    &muonSortedEt[ID][0],
-                    (prefix + "ET[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Pt").c_str(),
-                    &muonSortedPt[ID][0],
-                    (prefix + "Pt[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "PX").c_str(),
-                    &muonSortedPx[ID][0],
-                    (prefix + "PX[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "PY").c_str(),
-                    &muonSortedPy[ID][0],
-                    (prefix + "PY[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "PZ").c_str(),
-                    &muonSortedPz[ID][0],
-                    (prefix + "PZ[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Phi").c_str(),
-                    &muonSortedPhi[ID][0],
-                    (prefix + "Phi[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Theta").c_str(),
-                    &muonSortedTheta[ID][0],
-                    (prefix + "Theta[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Eta").c_str(),
-                    &muonSortedEta[ID][0],
-                    (prefix + "Eta[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "Charge").c_str(),
-                    &muonSortedCharge[ID][0],
-                    (prefix + "Charge[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "E").c_str(), &muonSortedE[ID][0], (prefix + "E[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ET").c_str(), &muonSortedEt[ID][0], (prefix + "ET[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Pt").c_str(), &muonSortedPt[ID][0], (prefix + "Pt[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PX").c_str(), &muonSortedPx[ID][0], (prefix + "PX[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PY").c_str(), &muonSortedPy[ID][0], (prefix + "PY[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PZ").c_str(), &muonSortedPz[ID][0], (prefix + "PZ[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Phi").c_str(), &muonSortedPhi[ID][0], (prefix + "Phi[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Theta").c_str(), &muonSortedTheta[ID][0], (prefix + "Theta[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Eta").c_str(), &muonSortedEta[ID][0], (prefix + "Eta[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Charge").c_str(), &muonSortedCharge[ID][0], (prefix + "Charge[numMuon" + name + "]/I").c_str());
 
-    mytree_->Branch((prefix + "LooseCutId").c_str(),
-                    &muonSortedLooseCutId[ID][0],
-                    (prefix + "LooseCutId[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "MediumCutId").c_str(),
-                    &muonSortedMediumCutId[ID][0],
-                    (prefix + "MediumCutId[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "TightCutId").c_str(),
-                    &muonSortedTightCutId[ID][0],
-                    (prefix + "TightCutId[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "PfIsoVeryLoose").c_str(),
-                    &muonSortedPfIsoVeryLoose[ID][0],
-                    (prefix + "PfIsoVeryLoose[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "PfIsoLoose").c_str(),
-                    &muonSortedPfIsoLoose[ID][0],
-                    (prefix + "PfIsoLoose[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "PfIsoMedium").c_str(),
-                    &muonSortedPfIsoMedium[ID][0],
-                    (prefix + "PfIsoMedium[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "PfIsoTight").c_str(),
-                    &muonSortedPfIsoTight[ID][0],
-                    (prefix + "PfIsoTight[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "PfIsoVeryTight").c_str(),
-                    &muonSortedPfIsoVeryTight[ID][0],
-                    (prefix + "PfIsoVeryTight[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "TkIsoLoose").c_str(),
-                    &muonSortedTkIsoLoose[ID][0],
-                    (prefix + "TkIsoLoose[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "TkIsoTight").c_str(),
-                    &muonSortedTkIsoTight[ID][0],
-                    (prefix + "TkIsoTight[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "MvaLoose").c_str(),
-                    &muonSortedMvaLoose[ID][0],
-                    (prefix + "MvaLoose[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "MvaMedium").c_str(),
-                    &muonSortedMvaMedium[ID][0],
-                    (prefix + "MvaMedium[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "MvaTight").c_str(),
-                    &muonSortedMvaTight[ID][0],
-                    (prefix + "MvaTight[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "LooseCutId").c_str(), &muonSortedLooseCutId[ID][0], (prefix + "LooseCutId[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "MediumCutId").c_str(), &muonSortedMediumCutId[ID][0], (prefix + "MediumCutId[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "TightCutId").c_str(), &muonSortedTightCutId[ID][0], (prefix + "TightCutId[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "PfIsoVeryLoose").c_str(), &muonSortedPfIsoVeryLoose[ID][0], (prefix + "PfIsoVeryLoose[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "PfIsoLoose").c_str(), &muonSortedPfIsoLoose[ID][0], (prefix + "PfIsoLoose[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "PfIsoMedium").c_str(), &muonSortedPfIsoMedium[ID][0], (prefix + "PfIsoMedium[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "PfIsoTight").c_str(), &muonSortedPfIsoTight[ID][0], (prefix + "PfIsoTight[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "PfIsoVeryTight").c_str(), &muonSortedPfIsoVeryTight[ID][0], (prefix + "PfIsoVeryTight[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "TkIsoLoose").c_str(), &muonSortedTkIsoLoose[ID][0], (prefix + "TkIsoLoose[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "TkIsoTight").c_str(), &muonSortedTkIsoTight[ID][0], (prefix + "TkIsoTight[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "MvaLoose").c_str(), &muonSortedMvaLoose[ID][0], (prefix + "MvaLoose[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "MvaMedium").c_str(), &muonSortedMvaMedium[ID][0], (prefix + "MvaMedium[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "MvaTight").c_str(), &muonSortedMvaTight[ID][0], (prefix + "MvaTight[numMuon" + name + "]/I").c_str());
 
-    mytree_->Branch((prefix + "GlobalID").c_str(),
-                    &muonSortedGlobalID[ID][0],
-                    (prefix + "GlobalID[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "TrackID").c_str(),
-                    &muonSortedTrackID[ID][0],
-                    (prefix + "TrackID[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "GlobalID").c_str(), &muonSortedGlobalID[ID][0], (prefix + "GlobalID[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TrackID").c_str(), &muonSortedTrackID[ID][0], (prefix + "TrackID[numMuon" + name + "]/F").c_str());
 
-    mytree_->Branch((prefix + "Chi2").c_str(),
-                    &muonSortedChi2[ID][0],
-                    (prefix + "Chi2[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "D0").c_str(),
-                    &muonSortedD0[ID][0],
-                    (prefix + "D0[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "TrackDBD0").c_str(),
-                    &muonSortedDBBeamSpotCorrectedTrackD0[ID][0],
-                    (prefix + "TrackDBD0[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Chi2").c_str(), &muonSortedChi2[ID][0], (prefix + "Chi2[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "D0").c_str(), &muonSortedD0[ID][0], (prefix + "D0[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TrackDBD0").c_str(), &muonSortedDBBeamSpotCorrectedTrackD0[ID][0], (prefix + "TrackDBD0[numMuon" + name + "]/F").c_str());
 
-    mytree_->Branch((prefix + "DBInnerTrackD0").c_str(),
-                    &muonSortedDBInnerTrackD0[ID][0],
-                   (prefix + "DBInnerTrackD0[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "DBInnerTrackD0").c_str(), &muonSortedDBInnerTrackD0[ID][0], (prefix + "DBInnerTrackD0[numMuon" + name + "]/F").c_str());
 
     mytree_->Branch((prefix + "BeamSpotCorrectedD0").c_str(), &muonSortedBeamSpotCorrectedD0[ID][0], (prefix + "BeamSpotCorrectedD0[numMuon" + name + "]/F").c_str());
 
@@ -4376,12 +4580,12 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
     mytree_->Branch((prefix + "VertY").c_str(), &muonSortedVertY[ID][0], (prefix + "VertY[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "VertZ").c_str(), &muonSortedVertZ[ID][0], (prefix + "VertZ[numMuon" + name + "]/F").c_str());
 
-    mytree_->Branch((prefix + "BestTkPt").c_str(), &muonSortedBestTkPt[ID][0], (prefix + "BestTkPt[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "BestTkPx").c_str(), &muonSortedBestTkPx[ID][0], (prefix + "BestTkPx[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "BestTkPy").c_str(), &muonSortedBestTkPy[ID][0], (prefix + "BestTkPy[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "BestTkPz").c_str(), &muonSortedBestTkPz[ID][0], (prefix + "BestTkPz[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "BestTkEta").c_str(), &muonSortedBestTkEta[ID][0], (prefix + "BestTkEta[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "BestTkPhi").c_str(), &muonSortedBestTkPhi[ID][0], (prefix + "BestTkPhi[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "InnerTkPt").c_str(), &muonSortedInnerTkPt[ID][0], (prefix + "InnerTkPt[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "InnerTkPx").c_str(), &muonSortedInnerTkPx[ID][0], (prefix + "InnerTkPx[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "InnerTkPy").c_str(), &muonSortedInnerTkPy[ID][0], (prefix + "InnerTkPy[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "InnerTkPz").c_str(), &muonSortedInnerTkPz[ID][0], (prefix + "InnerTkPz[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "InnerTkEta").c_str(), &muonSortedInnerTkEta[ID][0], (prefix + "InnerTkEta[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "InnerTkPhi").c_str(), &muonSortedInnerTkPhi[ID][0], (prefix + "InnerTkPhi[numMuon" + name + "]/F").c_str());
 
     mytree_->Branch((prefix + "TkLysWithMeasurements").c_str(), &muonSortedTkLysWithMeasurements[ID][0], (prefix + "TkLysWithMeasurements[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "GlbTkNormChi2").c_str(), &muonSortedGlbTkNormChi2[ID][0], (prefix + "GlbTkNormChi2[numMuon" + name + "]/F").c_str());
@@ -4392,33 +4596,15 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
     mytree_->Branch((prefix + "VldPixHits").c_str(), &muonSortedVldPixHits[ID][0], (prefix + "VldPixHits[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "MatchedStations").c_str(), &muonSortedMatchedStations[ID][0], (prefix + "MatchedStations[numMuon" + name + "]/F").c_str());
 
-    mytree_->Branch(
-        (prefix + "ChargedHadronIso").c_str(),
-        &muonSortedChargedHadronIso[ID][0],
-        (prefix + "ChargedHadronIso[numMuon" + name + "]/F").c_str());
-    mytree_->Branch(
-        (prefix + "NeutralHadronIso").c_str(),
-        &muonSortedNeutralHadronIso[ID][0],
-        (prefix + "NeutralHadronIso[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "PhotonIso").c_str(),
-                    &muonSortedPhotonIso[ID][0],
-                    (prefix + "PhotonIso[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ChargedHadronIso").c_str(), &muonSortedChargedHadronIso[ID][0], (prefix + "ChargedHadronIso[numMuon" + name + "]/F").c_str());
+    mytree_->Branch( (prefix + "NeutralHadronIso").c_str(), &muonSortedNeutralHadronIso[ID][0], (prefix + "NeutralHadronIso[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "PhotonIso").c_str(), &muonSortedPhotonIso[ID][0], (prefix + "PhotonIso[numMuon" + name + "]/F").c_str());
 
-    mytree_->Branch((prefix + "TrackIso").c_str(),
-                    &muonSortedTrackIso[ID][0],
-                    (prefix + "TrackIso[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "EcalIso").c_str(),
-                    &muonSortedECalIso[ID][0],
-                    (prefix + "EcalIso[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "HcalIso").c_str(),
-                    &muonSortedHCalIso[ID][0],
-                    (prefix + "HcalIso[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "ComRelIso").c_str(),
-                    &muonSortedComRelIso[ID][0],
-                    (prefix + "ComRelIso[numMuon" + name + "]/F").c_str());
-    mytree_->Branch((prefix + "ComRelIsodBeta").c_str(),
-                    &muonSortedComRelIsodBeta[ID][0],
-                    (prefix + "ComRelIsodBeta[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TrackIso").c_str(), &muonSortedTrackIso[ID][0], (prefix + "TrackIso[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "EcalIso").c_str(), &muonSortedECalIso[ID][0], (prefix + "EcalIso[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "HcalIso").c_str(), &muonSortedHCalIso[ID][0], (prefix + "HcalIso[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ComRelIso").c_str(), &muonSortedComRelIso[ID][0], (prefix + "ComRelIso[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "ComRelIsodBeta").c_str(), &muonSortedComRelIsodBeta[ID][0], (prefix + "ComRelIsodBeta[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "IsPFMuon").c_str(), &muonSortedIsPFMuon[ID][0], (prefix + "IsPFMuon[numMuon" + name + "]/I").c_str());
     mytree_->Branch((prefix + "NumPackedCands").c_str(), &muonSortedNumPackedCands[ID][0], (prefix + "NumPackedCands[numMuon" + name + "]/I").c_str());
     mytree_->Branch((prefix + "PackedCandsIndex").c_str(), &muonSortedPackedCandsIndex[ID][0], (prefix + "PackedCandsIndex[numMuon" + name + "]/I").c_str());
@@ -4431,60 +4617,69 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID,
     mytree_->Branch((prefix + "TrkKick").c_str(), &muonTrkKick[ID][0], (prefix + "TrkKick[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "SegmentCompatibility").c_str(), &muonSegmentCompatibility[ID][0], (prefix + "SegmentCompatibility[numMuon" + name + "]/F").c_str());
 
-    if (runMCInfo_)
-    {
+    if (runMCInfo_) {
         prefix = "genMuon" + name;
-        mytree_->Branch((prefix + "PT").c_str(),
-                        &genMuonSortedPt[ID][0],
-                        (prefix + "PT[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "ET").c_str(),
-                        &genMuonSortedEt[ID][0],
-                        (prefix + "ET[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PX").c_str(),
-                        &genMuonSortedPx[ID][0],
-                        (prefix + "PX[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PY").c_str(),
-                        &genMuonSortedPy[ID][0],
-                        (prefix + "PY[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "PZ").c_str(),
-                        &genMuonSortedPz[ID][0],
-                        (prefix + "PZ[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "Phi").c_str(),
-                        &genMuonSortedPhi[ID][0],
-                        (prefix + "Phi[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "Theta").c_str(),
-                        &genMuonSortedTheta[ID][0],
-                        (prefix + "Theta[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "Eta").c_str(),
-                        &genMuonSortedEta[ID][0],
-                        (prefix + "Eta[numMuon" + name + "]/F").c_str());
-        mytree_->Branch((prefix + "Charge").c_str(),
-                        &genMuonSortedCharge[ID][0],
-                        (prefix + "Charge[numMuon" + name + "]/I").c_str());
-        mytree_->Branch((prefix + "PdgId").c_str(),
-                        &genMuonSortedPdgId[ID][0],
-                        (prefix + "PdgId[numMuon" + name + "]/I").c_str());
-        mytree_->Branch((prefix + "MotherId").c_str(),
-                        &genMuonSortedMotherId[ID][0],
-                        (prefix + "MotherId[numMuon" + name + "]/I").c_str());
-        mytree_->Branch(
-            (prefix + "PromptDecayed").c_str(),
-            &genMuonSortedPromptDecayed[ID][0],
-            (prefix + "PromptDecayed[numMuon" + name + "]/I").c_str());
-        mytree_->Branch(
-            (prefix + "PromptFinalState").c_str(),
-            &genMuonSortedPromptFinalState[ID][0],
-            (prefix + "PromptFinalState[numMuon" + name + "]/I").c_str());
-        mytree_->Branch(
-            (prefix + "HardProcess").c_str(),
-            &genMuonSortedHardProcess[ID][0],
-            (prefix + "HardProcess[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "PT").c_str(), &genMuonSortedPt[ID][0], (prefix + "PT[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "ET").c_str(), &genMuonSortedEt[ID][0], (prefix + "ET[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PX").c_str(), &genMuonSortedPx[ID][0], (prefix + "PX[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PY").c_str(), &genMuonSortedPy[ID][0], (prefix + "PY[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "PZ").c_str(), &genMuonSortedPz[ID][0], (prefix + "PZ[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "Phi").c_str(), &genMuonSortedPhi[ID][0], (prefix + "Phi[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "Theta").c_str(), &genMuonSortedTheta[ID][0], (prefix + "Theta[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "Eta").c_str(), &genMuonSortedEta[ID][0], (prefix + "Eta[numMuon" + name + "]/F").c_str());
+        mytree_->Branch((prefix + "Charge").c_str(), &genMuonSortedCharge[ID][0], (prefix + "Charge[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "PdgId").c_str(), &genMuonSortedPdgId[ID][0], (prefix + "PdgId[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "MotherId").c_str(), &genMuonSortedMotherId[ID][0], (prefix + "MotherId[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "PromptDecayed").c_str(), &genMuonSortedPromptDecayed[ID][0], (prefix + "PromptDecayed[numMuon" + name + "]/I").c_str());
+        mytree_->Branch( (prefix + "PromptFinalState").c_str(), &genMuonSortedPromptFinalState[ID][0], (prefix + "PromptFinalState[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "HardProcess").c_str(), &genMuonSortedHardProcess[ID][0], (prefix + "HardProcess[numMuon" + name + "]/I").c_str());
     }
+
+    mytree_->Branch(("numMuonTracks" + name).c_str(), &numMuonTracks[ID], ("numMuonTracks" + name + "/I").c_str());
+    std::string prefix2{"muonTkPair" + name};
+    mytree_->Branch((prefix + "Index1").c_str(), &muonTkPairSortedIndex1[ID][0], (prefix + "Index1[numMuonTracks" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "Index2").c_str(), &muonTkPairSortedIndex2[ID][0], (prefix + "Index2[numMuonTracks" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "TkVtxPx").c_str(), &muonTkPairSortedTkVtxPx[ID][0], (prefix + "TkVtxPx[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxPy").c_str(), &muonTkPairSortedTkVtxPy[ID][0], (prefix + "TkVtxPy[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxPz").c_str(), &muonTkPairSortedTkVtxPz[ID][0], (prefix + "TkVtxPz[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVx").c_str(), &muonTkPairSortedTkVx[ID][0], (prefix + "TkVx[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVy").c_str(), &muonTkPairSortedTkVy[ID][0], (prefix + "TkVy[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVz").c_str(), &muonTkPairSortedTkVz[ID][0], (prefix + "TkVz[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVxError").c_str(), &muonTkPairSortedTkVxError[ID][0], (prefix + "TkVxError[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVyError").c_str(), &muonTkPairSortedTkVyError[ID][0], (prefix + "TkVyError[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVzError").c_str(), &muonTkPairSortedTkVzError[ID][0], (prefix + "TkVzError[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxChi2").c_str(), &muonTkPairSortedTkVtxChi2[ID][0], (prefix + "TkVtxChi2[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxNdof").c_str(), &muonTkPairSortedTkVtxNdof[ID][0], (prefix + "TkVtxNdof[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxTime").c_str(), &muonTkPairSortedTkVtxTime[ID][0], (prefix + "TkVtxTimeError[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxTimeError").c_str(), &muonTkPairSortedTkVtxTimeError[ID][0], (prefix + "TkVtxTimeError[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxAngleXY").c_str(), &muonTkPairSortedTkVtxAngleXY[ID][0], (prefix + "TkVtxAngleXY[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxDistMagXY").c_str(), &muonTkPairSortedTkVtxDistMagXY[ID][0], (prefix + "TkVtxDistMagXY[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxDistMagXYSigma").c_str(), &muonTkPairSortedTkVtxDistMagXYSigma[ID][0], (prefix + "TkVtxDistMagXYSigma[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxAngleXYZ").c_str(), &muonTkPairSortedTkVtxAngleXYZ[ID][0], (prefix + "TkVtxAngleXYZ[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxDistMagXYZ").c_str(), &muonTkPairSortedTkVtxDistMagXYZ[ID][0], (prefix + "TkVtxDistMagXYZ[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxDistMagXYZSigma").c_str(), &muonTkPairSortedTkVtxDistMagXYZSigma[ID][0], (prefix + "TkVtxDistMagXYZSigma[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Pt").c_str(), &muonTkPairSortedTk1Pt[ID][0], (prefix + "Tk1Pt[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Px").c_str(), &muonTkPairSortedTk1Px[ID][0], (prefix + "Tk1Px[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Py").c_str(), &muonTkPairSortedTk1Py[ID][0], (prefix + "Tk1Py[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Pz").c_str(), &muonTkPairSortedTk1Pz[ID][0], (prefix + "Tk1Pz[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Eta").c_str(), &muonTkPairSortedTk1Eta[ID][0], (prefix + "Tk1Eta[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Phi").c_str(), &muonTkPairSortedTk1Phi[ID][0], (prefix + "Tk1Phi[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Charge").c_str(), &muonTkPairSortedTk1Charge[ID][0], (prefix + "Tk1Charge[numMuonTracks" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "Tk1Chi2").c_str(), &muonTkPairSortedTk1Chi2[ID][0], (prefix + "Tk1Chi2[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk1Ndof").c_str(), &muonTkPairSortedTk1Ndof[ID][0], (prefix + "Tk1Ndof[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Pt").c_str(), &muonTkPairSortedTk2Pt[ID][0], (prefix + "Tk2Pt[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Px").c_str(), &muonTkPairSortedTk2Px[ID][0], (prefix + "Tk2Px[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Py").c_str(), &muonTkPairSortedTk2Py[ID][0], (prefix + "Tk2Py[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Pz").c_str(), &muonTkPairSortedTk2Pz[ID][0], (prefix + "Tk2Pz[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Eta").c_str(), &muonTkPairSortedTk2Eta[ID][0], (prefix + "Tk2Eta[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Phi").c_str(), &muonTkPairSortedTk2Phi[ID][0], (prefix + "Tk2Phi[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Charge").c_str(), &muonTkPairSortedTk2Charge[ID][0], (prefix + "Tk2Charge[numMuonTracks" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "Tk2Chi2").c_str(), &muonTkPairSortedTk2Chi2[ID][0], (prefix + "Tk2Chi2[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "Tk2Ndof").c_str(), &muonTkPairSortedTk2Ndof[ID][0], (prefix + "Tk2Ndof[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "TkVtxDcaPreFit").c_str(), &muonTkPairSortedTkVtxDcaPreFit[ID][0], (prefix + "TkVtxDcaPreFit[numMuonTracks" + name + "]/F").c_str());
 }
 
-void MakeTopologyNtupleMiniAOD::bookMETBranches(const std::string& ID,
-                                                const std::string& name)
-{
+void MakeTopologyNtupleMiniAOD::bookMETBranches(const std::string& ID, const std::string& name) {
     // std::cout << "bookMETBranches CHECK" << std::endl;
     metE[ID] = -1.0;
     metEt[ID] = -1.0;
@@ -5100,7 +5295,8 @@ void MakeTopologyNtupleMiniAOD::bookPVbranches() {
     mytree_->Branch("pvChi2", &pvChi2, "pvChi2[numPVs]/F");
     mytree_->Branch("pvNtracks", &pvNtracks, "pvNtracks[numPVs]/I");
     mytree_->Branch("pvNtracksW05", &pvNtracksW05, "pvNtracksW05[numPVs]/I");
-
+    mytree_->Branch("pvTime", &pvTime, "pvTime[numPVs]/F");
+    mytree_->Branch("pvTimeError", &pvTime, "pvTimeError[numPVs]/F");
 }
 void MakeTopologyNtupleMiniAOD::bookSVbranches() {
     mytree_->Branch("numSVs", &numSVs, "numSVs/I");

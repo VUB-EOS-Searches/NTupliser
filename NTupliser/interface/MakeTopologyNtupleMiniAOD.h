@@ -179,7 +179,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
                        const std::string& ID,
                        bool fillMC);
     void fillMuons          (const edm::Event&, const edm::EventSetup&, edm::EDGetTokenT<pat::MuonCollection>, const std::string&);
-    void fillMuonTrackPairs (const edm::Event&, const edm::EventSetup&, edm::EDGetTokenT<pat::MuonCollection>, const std::string&);
     void fillElectrons(const edm::Event&,
                        const edm::EventSetup&,
                        edm::EDGetTokenT<pat::ElectronCollection>,
@@ -282,6 +281,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, int> numEle;
     std::map<std::string, int> numPho;
     std::map<std::string, int> numMuo;
+    std::map<std::string, int> numMuonTracks;
 
     math::XYZPoint beamSpotPoint_;
     math::XYZPoint vertexPoint_;
@@ -355,6 +355,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float pvNdof[NPVSMAX]{};
     int pvNtracks[NPVSMAX]{};
     int pvNtracksW05[NPVSMAX]{};
+    float pvTime[NPVSMAX]{};
+    float pvTimeError[NPVSMAX]{};
 
     static constexpr size_t NSVSMAX{20};
     int numSVs{};
@@ -712,7 +714,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     // Extra muon variables used for ID and stuff
     std::map<std::string, std::vector<int>> muonSortedTkLysWithMeasurements;
     std::map<std::string, std::vector<float>> muonSortedGlbTkNormChi2;
-    std::map<std::string, std::vector<float>> muonSortedBestTkNormChi2;
+    std::map<std::string, std::vector<float>> muonSortedInnerTkNormChi2;
     std::map<std::string, std::vector<float>> muonSortedDBPV;
     std::map<std::string, std::vector<float>> muonSortedDBPVError;
     std::map<std::string, std::vector<float>> muonSortedDZPV;
@@ -726,12 +728,12 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> muonSortedVertZ;
 
     // Best muon track information
-    std::map<std::string, std::vector<float>> muonSortedBestTkPt;
-    std::map<std::string, std::vector<float>> muonSortedBestTkPx;
-    std::map<std::string, std::vector<float>> muonSortedBestTkPy;
-    std::map<std::string, std::vector<float>> muonSortedBestTkPz;
-    std::map<std::string, std::vector<float>> muonSortedBestTkEta;
-    std::map<std::string, std::vector<float>> muonSortedBestTkPhi;
+    std::map<std::string, std::vector<float>> muonSortedInnerTkPt;
+    std::map<std::string, std::vector<float>> muonSortedInnerTkPx;
+    std::map<std::string, std::vector<float>> muonSortedInnerTkPy;
+    std::map<std::string, std::vector<float>> muonSortedInnerTkPz;
+    std::map<std::string, std::vector<float>> muonSortedInnerTkEta;
+    std::map<std::string, std::vector<float>> muonSortedInnerTkPhi;
 
     std::map<std::string, std::vector<float>> muonSortedChargedHadronIso;
     std::map<std::string, std::vector<float>> muonSortedNeutralHadronIso;
@@ -771,7 +773,47 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genMuonSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genMuonSortedHardProcess;
 
-    static constexpr size_t NMUONTRACKPAIRSMAX{190};
+    static constexpr size_t NMUONTKPAIRMAX{45};
+    std::map<std::string, std::vector<int>>   muonTkPairSortedIndex1;
+    std::map<std::string, std::vector<int>>   muonTkPairSortedIndex2;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxPx;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxPy;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxPz;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVx;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVy;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVz;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVxError;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVyError;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVzError;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxChi2;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxNdof;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxTime;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxTimeError;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxAngleXY;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxDistMagXY;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxDistMagXYSigma;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxAngleXYZ;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxDistMagXYZ;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxDistMagXYZSigma;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Pt;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Px;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Py;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Pz;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Eta;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Phi;
+    std::map<std::string, std::vector<int>>   muonTkPairSortedTk1Charge;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Chi2;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1Ndof;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Pt;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Px;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Py;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Pz;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Eta;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Phi;
+    std::map<std::string, std::vector<int>>   muonTkPairSortedTk2Charge;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Chi2;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2Ndof;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxDcaPreFit;
 
     static constexpr size_t NJETSMAX{40};
 
