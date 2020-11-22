@@ -1049,26 +1049,24 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
 
     // muons
     muonEts.clear();
-    for (const auto& muon : muons)
-    {
+    for (const auto& muon : muons) {
         double et{muon.et()}; // should already be corrected
         muonEts.emplace_back(et);
     }
 
-    if (muonEts.size() == 0)
-    { // prevents a crash, the IndexSorter does not know what to do with
-      // zero-size vectors
+    if (muonEts.size() == 0) { // prevents a crash, the IndexSorter does not know what to do with zero-size vectors
         return;
     }
     std::vector<size_t> etMuonSorted{IndexSorter<std::vector<float>>(muonEts, true)()};
 
+    // muon tracks
     // vectors to store muon track refs and indices for later
-    std::vector< int > muonTkIndices;
-    std::vector< reco::TrackRef > trackRefs;
-    std::vector< reco::TransientTrack > transTracks;
-
+    muonTkIndices.clear();
+    trackRefs.clear();
+    transTracks.clear();
 
     numMuo[ID] = 0;
+
     // muons:
     for (size_t imuo{0}; imuo < etMuonSorted.size() && numMuo[ID] < numeric_cast<int>(NMUONSMAX); ++imuo) {
         size_t jmu{etMuonSorted[imuo]};
@@ -2770,6 +2768,10 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     // std::cout << "clearmuonarrays CHECK" << std::endl;
     numMuo[ID] = 0;
     muonEts.clear(); // just used for sorting
+    // vectors to store muon track refs and indices for later
+    muonTkIndices.clear();
+    trackRefs.clear();
+    transTracks.clear();
 
     muonSortedE[ID].clear();
     muonSortedEt[ID].clear();

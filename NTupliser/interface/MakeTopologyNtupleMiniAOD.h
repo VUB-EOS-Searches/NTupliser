@@ -15,6 +15,7 @@
 
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
 
 class EffectiveAreas;
 class TTree;
@@ -34,12 +35,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     // ----------member data ---------------------------
 
     edm::Service<TFileService> fs;
-    std::map<std::string, TH1D*>
-        histocontainer_; // simple map to contain all histograms. Histograms
-                         // are booked in the beginJob() method
-    std::map<std::string, TH2D*>
-        histocontainer2D_; // simple map to contain all histograms. Histograms
-                           // are booked in the beginJob() method (2D)
+    std::map<std::string, TH1D*> histocontainer_; // simple map to contain all histograms. Histograms are booked in the beginJob() method
+    std::map<std::string, TH2D*> histocontainer2D_; // simple map to contain all histograms. Histograms are booked in the beginJob() method (2D)
 
     edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
     edm::EDGetTokenT<std::vector<pat::PackedCandidate>> packedCandToken_;
@@ -335,6 +332,10 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::vector<float> electronEts; // just used for sorting
     std::vector<float> photonEts; // just used for sorting
     std::vector<float> muonEts; // just used for sorting
+    // vectors to store muon track refs and indices for later
+    std::vector< int > muonTkIndices;
+    std::vector< reco::TrackRef > trackRefs;
+    std::vector< reco::TransientTrack > transTracks;
     std::vector<float> correctedJetEts; // just used for sorting
 
     float beamSpotX{};
