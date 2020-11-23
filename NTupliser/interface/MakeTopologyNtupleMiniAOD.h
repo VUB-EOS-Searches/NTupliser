@@ -342,7 +342,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     // containers to store charged hadrons track refs and indices for later
     std::vector< int > chsTkIndices;
-    std::vector< reco::Track > chsTracks;
+    std::vector< reco::Track > chsTrackRefs;
     std::vector< reco::TransientTrack > chsTransTracks;
 
     float beamSpotX{};
@@ -753,8 +753,6 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> muonSortedComRelIso;
     std::map<std::string, std::vector<float>> muonSortedComRelIsodBeta;
     std::map<std::string, std::vector<int>> muonSortedIsPFMuon;
-    std::map<std::string, std::vector<int>> muonSortedNumPackedCands;
-    std::map<std::string, std::vector<int>> muonSortedPackedCandsIndex;
 
     std::map<std::string, std::vector<int>> muonSortedNumChambers;
     std::map<std::string, std::vector<int>> muonSortedNumMatches;

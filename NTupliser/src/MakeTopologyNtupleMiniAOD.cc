@@ -1107,11 +1107,6 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
         iEvent.getByToken(packedCandToken_, packedCands);
 
-        muonSortedNumPackedCands[ID][numMuo[ID] - 1] = muo.numberOfSourceCandidatePtrs();
-        const reco::CandidatePtr packedCanPtr = muo.sourceCandidatePtr(0);
-        int sourceCandPtrIndex {-1};
-        muonSortedPackedCandsIndex[ID][numMuo[ID] -1] = sourceCandPtrIndex;
-
         // if (muo.genParticleRef().ref().isValid())
         if (!muo.genParticleRef().isNull()) {
             genMuonSortedPt[ID][numMuo[ID] - 1] = muo.genLepton()->pt();
@@ -2400,16 +2395,16 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     const MagneticField* theMagneticField = magneticFieldHandle.product();
 
     chsTkIndices.clear();
-    chsTracks.clear();
+    chsTrackRefs.clear();
     chsTransTracks.clear();
 
     numPackedCands = 0;
 
     for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); it++) {
 
-        if ( !it->hasTrackDetails() && it->pdgId() != 211 && it->pdgId() != 13 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
+       if ( !it->hasTrackDetails() && std::abs(it->pdgId()) != 211 && std::abs(it->pdgId()) != 13 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
         if ( it->charge() == 0 ) continue; // NO neutral objects
-        if ( it->pt() < 0.5 ) continue;
+//       if ( it->pt() < 0.5 ) continue;
 
 //        packedCandsPt[numPackedCands] = it->pt();
         packedCandsPx[numPackedCands] = it->px();
@@ -2462,9 +2457,9 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
 
             // Store packed cands track refs for post muon loop tracking analysis
-            if ( it->pdgId() == 211 && it->pseudoTrack().pt() > 5 && it->charge() != 0 ) { // only store charged hadrons
+            if ( std::abs(it->pdgId()) == 211 && it->charge() != 0 ) { // only store charged hadrons
                 chsTkIndices.push_back( numPackedCands );
-                chsTracks.push_back( it->pseudoTrack() );
+                chsTrackRefs.push_back( it->pseudoTrack() );
                 reco::TransientTrack tmpTransient( (it->pseudoTrack()), theMagneticField);
                 chsTransTracks.push_back( std::move( tmpTransient ) );
             }
@@ -2476,21 +2471,21 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     numChsTrackPairs = 0;
 
     // loop over chs tracks
-    for (unsigned int trdx1 = 0; trdx1 < chsTracks.size() && numChsTrackPairs< numeric_cast<int>(NCHSTKPAIRMAX); ++trdx1) {
-        for (unsigned int trdx2 = trdx1 + 1; trdx2 < chsTracks.size() && numChsTrackPairs < numeric_cast<int>(NCHSTKPAIRMAX); ++trdx2) {
+    for (unsigned int trdx1 = 0; trdx1 < chsTrackRefs.size() && numChsTrackPairs< numeric_cast<int>(NCHSTKPAIRMAX); ++trdx1) {
+        for (unsigned int trdx2 = trdx1 + 1; trdx2 < chsTrackRefs.size() && numChsTrackPairs < numeric_cast<int>(NCHSTKPAIRMAX); ++trdx2) {
 
             reco::Track trackRef1;
             reco::Track trackRef2;
             reco::TransientTrack* transTkPtr1 = nullptr;
             reco::TransientTrack* transTkPtr2 = nullptr;
 
-            trackRef1 = chsTracks[trdx1];
-            trackRef2 = chsTracks[trdx2];
+            trackRef1 = chsTrackRefs[trdx1];
+            trackRef2 = chsTrackRefs[trdx2];
             transTkPtr1 = &chsTransTracks[trdx1];
             transTkPtr2 = &chsTransTracks[trdx2];
 
        	    // check tracks are	opposite charges
-       //	    if ( transTkPtr1->charge() * transTkPtr2->charge() >= 0 ) continue;
+	    if ( trackRef1.charge() * trackRef2.charge() >= 0 ) continue;
 
             // measure distance between tracks at their closest approach
 
@@ -2927,8 +2922,6 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     muonSortedComRelIso[ID].clear();
     muonSortedComRelIsodBeta[ID].clear();
     muonSortedIsPFMuon[ID].clear();
-    muonSortedNumPackedCands[ID].clear();
-    muonSortedPackedCandsIndex[ID].clear();
 
     muonSortedNumChambers[ID].clear();
     muonSortedNumMatches[ID].clear();
@@ -3319,14 +3312,14 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
     numPackedCands = 0;
 
     chsTkIndices.clear();
-    chsTracks.clear();
+    chsTrackRefs.clear();
     chsTransTracks.clear();
 
     for (size_t i{0}; i < NPACKEDCANDSMAX; i++) {
-//        packedCandsPt[i] = -1.;
-        packedCandsPx[i] = -1.;
-        packedCandsPy[i] = -1.;
-        packedCandsPz[i] = -1.;
+//        packedCandsPt[i] = 0.;
+        packedCandsPx[i] = 0.;
+        packedCandsPy[i] = 0.;
+        packedCandsPz[i] = 0.;
         packedCandsE[i] = -1.;
 //        packedCandsEta[i] = 9999;
 //        packedCandsTheta[i] = 9999;
@@ -3350,10 +3343,10 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
         packedCandsDzError[i] = 9999;
         packedCandsDxyError[i] = 9999;
         packedCandsTimeError[i] = 9999;
-        packedCandsPseudoTrkPt[i] = -1.;
-        packedCandsPseudoTrkPx[i] = -1.;
-        packedCandsPseudoTrkPy[i] = -1.;
-        packedCandsPseudoTrkPz[i] = -1.;
+        packedCandsPseudoTrkPt[i] = 0.;
+        packedCandsPseudoTrkPx[i] = 0.;
+        packedCandsPseudoTrkPy[i] = 0.;
+        packedCandsPseudoTrkPz[i] = 0.;
         packedCandsPseudoTrkEta[i] = 9999;
         packedCandsPseudoTrkPhi[i] = 9999;
         packedCandsPseudoTrkCharge[i] = 0;
@@ -3373,10 +3366,10 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
     for (size_t i{0}; i < NCHSTKPAIRMAX; i++) {
         chsTkPairIndex1[i] = -1; 
         chsTkPairIndex2[i] = -1;
-        chsTkPairTkVtxPx[i] = -1.;
-        chsTkPairTkVtxPy[i] = -1.;
-        chsTkPairTkVtxPz[i] = -1.;
-        chsTkPairTkVtxP2[i] = -1.;
+        chsTkPairTkVtxPx[i] = 0.;
+        chsTkPairTkVtxPy[i] = 0.;
+        chsTkPairTkVtxPz[i] = 0.;
+        chsTkPairTkVtxP2[i] = 0.;
         chsTkPairTkVx[i] = 0.;
         chsTkPairTkVy[i] = 0.;                                   
         chsTkPairTkVz[i] = 0.;
@@ -3393,20 +3386,20 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
         chsTkPairTkVtxAngleXYZ[i] = 0.;
         chsTkPairTkVtxDistMagXYZ[i] = 0.;
         chsTkPairTkVtxDistMagXYZSigma[i] = 0.;
-        chsTkPairTk1Pt[i] = -1.;
-        chsTkPairTk1Px[i] = -1.;
-        chsTkPairTk1Py[i] = -1.;
-        chsTkPairTk1Pz[i] = -1.;
+        chsTkPairTk1Pt[i] = 0.;
+        chsTkPairTk1Px[i] = 0.;
+        chsTkPairTk1Py[i] = 0.;
+        chsTkPairTk1Pz[i] = 0.;
         chsTkPairTk1P2[i] = -1.;
         chsTkPairTk1Eta[i] = 9999.;
         chsTkPairTk1Phi[i] = 9999.;
         chsTkPairTk1Charge[i] = 0;
         chsTkPairTk1Chi2[i] = -9999.;
         chsTkPairTk1Ndof[i] = 0.;
-        chsTkPairTk2Pt[i] = -1.;
-        chsTkPairTk2Px[i] = -1.;
-        chsTkPairTk2Py[i] = -1.;
-        chsTkPairTk2Pz[i] = -1.;
+        chsTkPairTk2Pt[i] = 0.;
+        chsTkPairTk2Px[i] = 0.;
+        chsTkPairTk2Py[i] = 0.;
+        chsTkPairTk2Pz[i] = 0.;
         chsTkPairTk2P2[i] = -1.;
         chsTkPairTk2Eta[i] = 9999.;
         chsTkPairTk2Phi[i] = 9999.;
@@ -4591,8 +4584,6 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     muonSortedComRelIso[ID] = tempVecF;
     muonSortedComRelIsodBeta[ID] = tempVecF;
     muonSortedIsPFMuon[ID] = tempVecI;
-    muonSortedNumPackedCands[ID] = tempVecI;
-    muonSortedPackedCandsIndex[ID] = tempVecI;
 
     muonSortedNumChambers[ID] = tempVecI;
     muonSortedNumMatches[ID] = tempVecI;
@@ -4733,8 +4724,6 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     mytree_->Branch((prefix + "ComRelIso").c_str(), &muonSortedComRelIso[ID][0], (prefix + "ComRelIso[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "ComRelIsodBeta").c_str(), &muonSortedComRelIsodBeta[ID][0], (prefix + "ComRelIsodBeta[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "IsPFMuon").c_str(), &muonSortedIsPFMuon[ID][0], (prefix + "IsPFMuon[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "NumPackedCands").c_str(), &muonSortedNumPackedCands[ID][0], (prefix + "NumPackedCands[numMuon" + name + "]/I").c_str());
-    mytree_->Branch((prefix + "PackedCandsIndex").c_str(), &muonSortedPackedCandsIndex[ID][0], (prefix + "PackedCandsIndex[numMuon" + name + "]/I").c_str());
 
     mytree_->Branch((prefix + "NChambers").c_str(), &muonSortedNumChambers[ID][0], (prefix + "NChambers[numMuon" + name + "]/I").c_str());
     mytree_->Branch((prefix + "NMatches").c_str(), &muonSortedNumMatches[ID][0], (prefix + "NMatches[numMuon" + name + "]/I").c_str());
