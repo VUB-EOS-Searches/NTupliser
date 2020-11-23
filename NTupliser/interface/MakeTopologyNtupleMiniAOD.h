@@ -774,12 +774,13 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genMuonSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genMuonSortedHardProcess;
 
-    static constexpr size_t NMUONTKPAIRMAX{45};
+    static constexpr size_t NMUONTKPAIRMAX{190};
     std::map<std::string, std::vector<int>>   muonTkPairSortedIndex1;
     std::map<std::string, std::vector<int>>   muonTkPairSortedIndex2;
     std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxPx;
     std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxPy;
     std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxPz;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxP2;
     std::map<std::string, std::vector<float>> muonTkPairSortedTkVx;
     std::map<std::string, std::vector<float>> muonTkPairSortedTkVy;
     std::map<std::string, std::vector<float>> muonTkPairSortedTkVz;
@@ -800,6 +801,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> muonTkPairSortedTk1Px;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk1Py;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk1Pz;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk1P2;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk1Eta;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk1Phi;
     std::map<std::string, std::vector<int>>   muonTkPairSortedTk1Charge;
@@ -809,6 +811,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> muonTkPairSortedTk2Px;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk2Py;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk2Pz;
+    std::map<std::string, std::vector<float>> muonTkPairSortedTk2P2;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk2Eta;
     std::map<std::string, std::vector<float>> muonTkPairSortedTk2Phi;
     std::map<std::string, std::vector<int>>   muonTkPairSortedTk2Charge;

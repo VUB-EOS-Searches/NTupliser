@@ -243,21 +243,10 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
 
     filledBIDInfo_ = false;
-    histocontainer_["eventcount"] =
-        fs->make<TH1D>("eventcount", "events processed", 1, -0.5, +0.5);
+    histocontainer_["eventcount"] = fs->make<TH1D>("eventcount", "events processed", 1, -0.5, +0.5);
 
     // Putting in a few histograms to debug the loose lepton selection
     // hopefully.
-    histocontainer_["tightElectrons"] = fs->make<TH1D>(
-        "tightElectrons", "Number of tight electrons in event", 11, -0.5, 10.5);
-    histocontainer_["tightMuons"] = fs->make<TH1D>(
-        "tightMuons", "Number of tight muons in event", 11, -0.5, 10.5);
-
-    if (isttbar_)
-    {
-        histocontainer_["topPtWeightSum"] =
-            fs->make<TH1D>("topPtWeightSum", "topPtWeightSum", 1, -0.5, 0.5);
-    }
 
     eventCount = 0;
     bookBranches(); // and fill tree
@@ -267,8 +256,7 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     // Some debugging variables
 }
 
-MakeTopologyNtupleMiniAOD::~MakeTopologyNtupleMiniAOD()
-{
+MakeTopologyNtupleMiniAOD::~MakeTopologyNtupleMiniAOD() {
     // do anything here that needs to be done at desctruction time
     // (e.g. close files, deallocate resources etc.)
 
@@ -278,18 +266,13 @@ MakeTopologyNtupleMiniAOD::~MakeTopologyNtupleMiniAOD()
 //
 // member functions
 //
-void MakeTopologyNtupleMiniAOD::fillSummaryVariables()
-{
+void MakeTopologyNtupleMiniAOD::fillSummaryVariables() {
     ran_postloop_ = true;
     return;
 }
 
-void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup)
-{
-    if (ran_PV_)
-    {
-        return;
-    }
+void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+    if (ran_PV_) return;
     ran_PV_ = true;
 
     evtRun = iEvent.id().run();
@@ -300,8 +283,7 @@ void MakeTopologyNtupleMiniAOD::fillEventInfo(const edm::Event& iEvent, const ed
     edm::Handle<reco::VertexCollection> pvHandle;
     iEvent.getByToken(pvLabel_, pvHandle);
 
-    if (pvHandle.isValid())
-    {
+    if (pvHandle.isValid()) {
         std::vector<reco::Vertex> pv{*pvHandle};
 
         if (pv.size() > 0) {
@@ -322,8 +304,7 @@ void MakeTopologyNtupleMiniAOD::fillPV(const edm::Event& iEvent, const edm::Even
     edm::Handle<reco::VertexCollection> pvHandle;
     iEvent.getByToken(pvLabel_, pvHandle);
 
-    if (pvHandle.isValid())
-    {
+    if (pvHandle.isValid()) {
         std::vector<reco::Vertex> pv{*pvHandle};
 
         numPVs = 0;
@@ -361,8 +342,7 @@ void MakeTopologyNtupleMiniAOD::fillSV(const edm::Event& iEvent, const edm::Even
 
     if (!ran_PV_) fillEventInfo(iEvent, iSetup); // Make sure we have PV info otherwise this cannot be done!
 
-    if (svHandle.isValid())
-    {
+    if (svHandle.isValid()) {
         std::vector<reco::VertexCompositePtrCandidate> sv{*svHandle};
 
         std::vector<reco::VertexCompositePtrCandidate> kshort{*kshortHandle};
@@ -455,13 +435,10 @@ void MakeTopologyNtupleMiniAOD::fillMissingET(const edm::Event& iEvent, const ed
     metScalarEt[ID] = metHandle->front().sumEt();
     metEtUncorrected[ID] = metHandle->front().uncorPt();
     metPhiUncorrected[ID] = metHandle->front().uncorPhi();
-    metUnclusteredEnUp[ID] =
-        metHandle->front().shiftedPt(pat::MET::UnclusteredEnUp);
-    metUnclusteredEnDown[ID] =
-        metHandle->front().shiftedPt(pat::MET::UnclusteredEnDown);
+    metUnclusteredEnUp[ID] = metHandle->front().shiftedPt(pat::MET::UnclusteredEnUp);
+    metUnclusteredEnDown[ID] = metHandle->front().shiftedPt(pat::MET::UnclusteredEnDown);
 
-    if (metHandle->front().isCaloMET())
-    {
+    if (metHandle->front().isCaloMET()) {
         metMaxEtEM[ID] = metHandle->front().maxEtInEmTowers();
         metMaxEtHad[ID] = metHandle->front().maxEtInHadTowers();
         metEtFracHad[ID] = metHandle->front().etFractionHadronic();
@@ -477,8 +454,7 @@ void MakeTopologyNtupleMiniAOD::fillMissingET(const edm::Event& iEvent, const ed
         metSignificance[ID] = metHandle->front().metSignificance();
         // std::cout << metSignificance << std::endl;
     }
-    if (metHandle->front().genMET())
-    {
+    if (metHandle->front().genMET()) {
         genMetE[ID] = metHandle->front().genMET()->energy();
         genMetEt[ID] = metHandle->front().genMET()->et();
         genMetPhi[ID] = metHandle->front().genMET()->phi();
@@ -487,8 +463,7 @@ void MakeTopologyNtupleMiniAOD::fillMissingET(const edm::Event& iEvent, const ed
         genMetPy[ID] = metHandle->front().genMET()->py();
         genMetPz[ID] = metHandle->front().genMET()->pz();
     }
-    else
-    {
+    else {
         genMetE[ID] = -999.;
         genMetEt[ID] = -999.;
         genMetPhi[ID] = -999.;
@@ -499,13 +474,8 @@ void MakeTopologyNtupleMiniAOD::fillMissingET(const edm::Event& iEvent, const ed
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
-                                             const edm::EventSetup& iSetup)
-{
-    if (ran_BS_)
-    {
-        return;
-    }
+void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+    if (ran_BS_) return;
     ran_BS_ = true;
 
     reco::BeamSpot beamSpot;
@@ -513,15 +483,9 @@ void MakeTopologyNtupleMiniAOD::fillBeamSpot(const edm::Event& iEvent,
     edm::Handle<reco::BeamSpot> beamSpotHandle;
     iEvent.getByToken(beamSpotToken_, beamSpotHandle);
 
-    if (beamSpotHandle.isValid())
-    {
-        beamSpot = *beamSpotHandle;
-    }
-    else
-    {
-        edm::LogInfo("MyAnalyzer")
-            << "No beam spot available from EventSetup \n";
-    }
+    if (beamSpotHandle.isValid()) beamSpot = *beamSpotHandle;
+    else edm::LogInfo("MyAnalyzer") << "No beam spot available from EventSetup \n";
+
     beamSpotX = beamSpot.x0();
     beamSpotY = beamSpot.y0();
     beamSpotZ = beamSpot.z0();
@@ -666,13 +630,7 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-void MakeTopologyNtupleMiniAOD::fillElectrons(
-    const edm::Event& iEvent,
-    const edm::EventSetup& iSetup,
-    edm::EDGetTokenT<pat::ElectronCollection> eleIn_,
-    const std::string& ID,
-    edm::EDGetTokenT<pat::ElectronCollection> eleInOrg_)
-{
+void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::ElectronCollection> eleIn_, const std::string& ID, edm::EDGetTokenT<pat::ElectronCollection> eleInOrg_) {
     // if (ran_eleloop_)
     // {
     //     return;
@@ -695,9 +653,7 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
 
     // note that the fillJets() method needs electrons, due to the fact that we
     // do our own 'cross' cleaning
-    edm::Handle<pat::ElectronCollection>
-        electronHandle; // changed handle from pat::Electron to
-                        // reco::GsfElectron
+    edm::Handle<pat::ElectronCollection> electronHandle; // changed handle from pat::Electron to reco::GsfElectron
     iEvent.getByToken(eleIn_, electronHandle);
     const pat::ElectronCollection& electrons{*electronHandle};
 
@@ -716,8 +672,7 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
     rhoIso = *(rhoHand_.product());
 
     electronEts.clear();
-    for (const auto& electron : electrons)
-    {
+    for (const auto& electron : electrons) {
         double et{electron.et()};
         electronEts.emplace_back(et);
     }
@@ -726,8 +681,7 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
     // {
     //     std::cout << "N PF ele: " << electronEts.size() << std::endl;
     // }
-    std::vector<size_t> etSortedIndex{
-        IndexSorter<std::vector<float>>(electronEts, true)()};
+    std::vector<size_t> etSortedIndex{IndexSorter<std::vector<float>>(electronEts, true)()};
 
     // Primary vertex
     edm::Handle<reco::VertexCollection> pvHandle;
@@ -737,64 +691,42 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
     // now loop again, in the correct order
     numEle[ID] = 0;
 
-    for (size_t iele{0}; iele < etSortedIndex.size()
-                         && numEle[ID] < numeric_cast<int>(NELECTRONSMAX);
-         ++iele)
-    {
+    for (size_t iele{0}; iele < etSortedIndex.size() && numEle[ID] < numeric_cast<int>(NELECTRONSMAX); ++iele) {
         size_t jele{etSortedIndex[iele]};
         // const pat::Electron& ele = electrons[jele];
         const pat::Electron& ele{(*electronHandle)[jele]};
 
-        pat::ElectronRef refel{electronOrgHandle,
-                               numeric_cast<unsigned int>(jele)};
+        pat::ElectronRef refel{electronOrgHandle, numeric_cast<unsigned int>(jele)};
 
 //        int photonConversionTag{-1};
 
         numEle[ID]++;
 
         // Impact param significance
-        if (pvHandle.isValid())
-        {
+        if (pvHandle.isValid()) {
             std::vector<reco::Vertex> pv{*pvHandle};
 
             edm::ESHandle<TransientTrackBuilder> trackBuilder;
-            iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",
-                                                   trackBuilder);
-            reco::TransientTrack eleTransient{
-                trackBuilder->build(ele.gsfTrack())};
+            iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
+            reco::TransientTrack eleTransient{trackBuilder->build(ele.gsfTrack())};
 
-            std::pair<bool, Measurement1D> eleImpactTrans{
-                IPTools::absoluteTransverseImpactParameter(eleTransient,
-                                                           pv[0])};
-            std::pair<bool, Measurement1D> eleImpact3D{
-                IPTools::absoluteImpactParameter3D(eleTransient, pv[0])};
+            std::pair<bool, Measurement1D> eleImpactTrans{IPTools::absoluteTransverseImpactParameter(eleTransient, pv[0])};
+            std::pair<bool, Measurement1D> eleImpact3D{IPTools::absoluteImpactParameter3D(eleTransient, pv[0])};
 
-            if (eleImpactTrans.first)
-            {
-                electronSortedImpactTransDist[ID][numEle[ID] - 1] =
-                    eleImpactTrans.second.value();
-                electronSortedImpactTransError[ID][numEle[ID] - 1] =
-                    eleImpactTrans.second.error();
-                electronSortedImpactTransSignificance[ID][numEle[ID] - 1] =
-                    eleImpactTrans.second.significance();
+            if (eleImpactTrans.first) {
+                electronSortedImpactTransDist[ID][numEle[ID] - 1] = eleImpactTrans.second.value();
+                electronSortedImpactTransError[ID][numEle[ID] - 1] = eleImpactTrans.second.error();
+                electronSortedImpactTransSignificance[ID][numEle[ID] - 1] = eleImpactTrans.second.significance();
             }
-            if (eleImpact3D.first)
-            {
-                electronSortedImpact3DDist[ID][numEle[ID] - 1] =
-                    eleImpact3D.second.value();
-                electronSortedImpact3DError[ID][numEle[ID] - 1] =
-                    eleImpact3D.second.error();
-                electronSortedImpact3DSignificance[ID][numEle[ID] - 1] =
-                    eleImpact3D.second.significance();
+            if (eleImpact3D.first) {
+                electronSortedImpact3DDist[ID][numEle[ID] - 1] = eleImpact3D.second.value();
+                electronSortedImpact3DError[ID][numEle[ID] - 1] = eleImpact3D.second.error();
+                electronSortedImpact3DSignificance[ID][numEle[ID] - 1] = eleImpact3D.second.significance();
             }
         }
 
-        const double eleCorrScale{ele.userFloat("ecalTrkEnergyPostCorr")
-                                  / ele.p4().energy()};
-        const TLorentzVector eleCorr{ele.px() * eleCorrScale,
-                                     ele.py() * eleCorrScale,
-                                     ele.pz() * eleCorrScale,
-                                     ele.energy() * eleCorrScale};
+        const double eleCorrScale{ele.userFloat("ecalTrkEnergyPostCorr") / ele.p4().energy()};
+        const TLorentzVector eleCorr{ele.px() * eleCorrScale, ele.py() * eleCorrScale, ele.pz() * eleCorrScale, ele.energy() * eleCorrScale};
 
         electronSortedE[ID][numEle[ID] - 1] = eleCorr.E();
         electronSortedEt[ID][numEle[ID] - 1] = eleCorr.Et();
@@ -807,8 +739,7 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
         electronSortedPz[ID][numEle[ID] - 1] = eleCorr.Pz();
         electronSortedCharge[ID][numEle[ID] - 1] = ele.charge();
 
-        if (is2016rereco_)
-        {
+        if (is2016rereco_) {
             electronSortedCutIdVeto[ID][numEle[ID] - 1] =
                 ele.electronID("cutBasedElectronID-Summer16-80X-V1-veto");
             electronSortedCutIdLoose[ID][numEle[ID] - 1] =
@@ -920,22 +851,13 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
         electronSortedChHadIso[ID][numEle[ID] - 1] = pfIso.sumChargedHadronPt;
         electronSortedNtHadIso[ID][numEle[ID] - 1] = pfIso.sumNeutralHadronEt;
         electronSortedGammaIso[ID][numEle[ID] - 1] = pfIso.sumPhotonEt;
-        electronSortedComRelIsodBeta[ID][numEle[ID] - 1] =
-            (pfIso.sumChargedHadronPt
-             + std::max(0.0, pfIso.sumPhotonEt - 0.5 * pfIso.sumPUPt))
-            / ele.pt();
+        electronSortedComRelIsodBeta[ID][numEle[ID] - 1] = (pfIso.sumChargedHadronPt + std::max(0.0, pfIso.sumPhotonEt - 0.5 * pfIso.sumPUPt)) / ele.pt();
 
-        const float AEff03{effectiveAreaInfo_.getEffectiveArea(
-            std::abs(ele.superCluster()->eta()))};
+        const float AEff03{effectiveAreaInfo_.getEffectiveArea(std::abs(ele.superCluster()->eta()))};
         electronSortedAEff03[ID][numEle[ID] - 1] = AEff03;
         electronSortedRhoIso[ID][numEle[ID] - 1] = rhoIso;
 
-        const double combrelisorho{
-            (pfIso.sumChargedHadronPt
-             + std::max(0.0,
-                        pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt
-                            - rhoIso * AEff03))
-            / ele.pt()};
+        const double combrelisorho{(pfIso.sumChargedHadronPt + std::max(0.0, pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt - rhoIso * AEff03)) / ele.pt()};
         electronSortedComRelIsoRho[ID][numEle[ID] - 1] = combrelisorho;
         // (ele.trackIso() + ele.ecalIso() + ele.hcalIso()) / ele.et();
 
@@ -952,11 +874,8 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
         electronSortedDeltaEtaSC[ID][numEle[ID] - 1] =
             ele.deltaEtaSuperClusterTrackAtVtx();
         electronSortedDeltaEtaSeedSC[ID][numEle[ID] - 1] =
-            (ele.superCluster().isNonnull()
-                     && ele.superCluster()->seed().isNonnull()
-                 ? ele.deltaEtaSuperClusterTrackAtVtx()
-                       - ele.superCluster()->eta()
-                       + ele.superCluster()->seed()->eta()
+            (ele.superCluster().isNonnull() && ele.superCluster()->seed().isNonnull()
+                 ? ele.deltaEtaSuperClusterTrackAtVtx() - ele.superCluster()->eta()  + ele.superCluster()->seed()->eta()
                  : std::numeric_limits<float>::max());
         electronSortedIsBarrel[ID][numEle[ID] - 1] = ele.isEB();
 
@@ -972,32 +891,24 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(
         electronSortedPhotonConversionDcot[ID][numEle[ID] - 1] = ele.convDcot();
         electronSortedPhotonConversionVeto[ID][numEle[ID] - 1] = ele.passConversionVeto();
 
-        if (check_triggers_)
-        {
-            std::vector<pat::TriggerObjectStandAlone> matchedtriggers{
-                ele.triggerObjectMatches()};
+        if (check_triggers_) {
+            std::vector<pat::TriggerObjectStandAlone> matchedtriggers{ele.triggerObjectMatches()};
 
-            if (false)
-            { // Debug verboose info if set to 1.
-                for (auto& matchedtrigger : matchedtriggers)
-                {
+            if (false) { // Debug verboose info if set to 1.
+                for (auto& matchedtrigger : matchedtriggers) {
                     for (auto it{matchedtrigger.filterLabels().begin()},
                          it_end = matchedtrigger.filterLabels().end();
                          it != it_end;
-                         it++)
-                    {
+                         it++) {
                         // std::cout << *it << std::endl;
                     }
                 }
             }
-            electronSortedTriggerMatch[ID][numEle[ID] - 1] =
-                matchedtriggers.size(); // very coarse, probably want to select
-                                        // on a filter.
+            electronSortedTriggerMatch[ID][numEle[ID] - 1] = matchedtriggers.size(); // very coarse, probably want to select on a filter.
         }
 
         // if(ele.genParticleRef().ref().isValid()){
-        if (!ele.genParticleRef().isNull())
-        {
+        if (!ele.genParticleRef().isNull())  {
             genElectronSortedPt[ID][numEle[ID] - 1] = ele.genLepton()->pt();
             genElectronSortedEt[ID][numEle[ID] - 1] = ele.genLepton()->et();
             genElectronSortedEta[ID][numEle[ID] - 1] = ele.genLepton()->eta();
@@ -1070,15 +981,9 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
     // muons:
     for (size_t imuo{0}; imuo < etMuonSorted.size() && numMuo[ID] < numeric_cast<int>(NMUONSMAX); ++imuo) {
         size_t jmu{etMuonSorted[imuo]};
-        // std::cout << imuo << " " << jmu << std::endl;
         const pat::Muon& muo{muons[jmu]};
 
         numMuo[ID]++;
-
-        // std::cout << muo.pt() << " " << muo.eta() << " " <<
-        // muo.isGlobalMuon()
-        //           << " " << muo.isTrackerMuon() << " " << muo.isPFMuon()
-        //           << std::endl;
 
         muonSortedE[ID][numMuo[ID] - 1] = muo.energy();
         muonSortedEt[ID][numMuo[ID] - 1] = muo.et();
@@ -1091,32 +996,19 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         muonSortedPz[ID][numMuo[ID] - 1] = muo.pz();
         muonSortedCharge[ID][numMuo[ID] - 1] = muo.charge();
 
-        muonSortedLooseCutId[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::CutBasedIdLoose);
-        muonSortedMediumCutId[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::CutBasedIdMedium);
-        muonSortedTightCutId[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::CutBasedIdTight);
-        muonSortedPfIsoVeryLoose[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::PFIsoVeryLoose);
-        muonSortedPfIsoLoose[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::PFIsoLoose);
-        muonSortedPfIsoMedium[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::PFIsoMedium);
-        muonSortedPfIsoTight[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::PFIsoTight);
-        muonSortedPfIsoVeryTight[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::PFIsoVeryTight);
-        muonSortedTkIsoLoose[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::TkIsoLoose);
-        muonSortedTkIsoTight[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::TkIsoTight);
-        muonSortedMvaLoose[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::MvaLoose);
-        muonSortedMvaMedium[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::MvaMedium);
-        muonSortedMvaTight[ID][numMuo[ID] - 1] =
-            muo.passed(reco::Muon::MvaTight);
+        muonSortedLooseCutId[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::CutBasedIdLoose);
+        muonSortedMediumCutId[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::CutBasedIdMedium);
+        muonSortedTightCutId[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::CutBasedIdTight);
+        muonSortedPfIsoVeryLoose[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::PFIsoVeryLoose);
+        muonSortedPfIsoLoose[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::PFIsoLoose);
+        muonSortedPfIsoMedium[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::PFIsoMedium);
+        muonSortedPfIsoTight[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::PFIsoTight);
+        muonSortedPfIsoVeryTight[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::PFIsoVeryTight);
+        muonSortedTkIsoLoose[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::TkIsoLoose);
+        muonSortedTkIsoTight[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::TkIsoTight);
+        muonSortedMvaLoose[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::MvaLoose);
+        muonSortedMvaMedium[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::MvaMedium);
+        muonSortedMvaTight[ID][numMuo[ID] - 1] = muo.passed(reco::Muon::MvaTight);
 
         muonSortedGlobalID[ID][numMuo[ID] - 1] = muo.isGlobalMuon();
         muonSortedTrackID[ID][numMuo[ID] - 1] = muo.isTrackerMuon();
@@ -1233,14 +1125,10 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             genMuonSortedPz[ID][numMuo[ID] - 1] = muo.genLepton()->pz();
             genMuonSortedCharge[ID][numMuo[ID] - 1] = muo.genLepton()->charge();
             genMuonSortedPdgId[ID][numMuo[ID] - 1] = muo.genLepton()->pdgId();
-            genMuonSortedMotherId[ID][numMuo[ID] - 1] =
-                muo.genLepton()->mother()->pdgId();
-            genMuonSortedPromptDecayed[ID][numMuo[ID] - 1] =
-                muo.genLepton()->isPromptDecayed();
-            genMuonSortedPromptFinalState[ID][numMuo[ID] - 1] =
-                muo.genLepton()->isPromptFinalState();
-            genMuonSortedHardProcess[ID][numMuo[ID] - 1] =
-                muo.genLepton()->isHardProcess();
+            genMuonSortedMotherId[ID][numMuo[ID] - 1] = muo.genLepton()->mother()->pdgId();
+            genMuonSortedPromptDecayed[ID][numMuo[ID] - 1] = muo.genLepton()->isPromptDecayed();
+            genMuonSortedPromptFinalState[ID][numMuo[ID] - 1] = muo.genLepton()->isPromptFinalState();
+            genMuonSortedHardProcess[ID][numMuo[ID] - 1] = muo.genLepton()->isHardProcess();
         } // End gen muon loop
 
     }
@@ -1364,6 +1252,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
            muonTkPairSortedTkVtxPx[ID][numMuonTracks[ID] - 1] = px;
            muonTkPairSortedTkVtxPy[ID][numMuonTracks[ID] - 1] = py;
            muonTkPairSortedTkVtxPz[ID][numMuonTracks[ID] - 1] = pz;
+           muonTkPairSortedTkVtxP2[ID][numMuonTracks[ID] - 1] = totalP.mag2();
            muonTkPairSortedTkVx[ID][numMuonTracks[ID] - 1] = theVtx.x();
            muonTkPairSortedTkVy[ID][numMuonTracks[ID] - 1] = theVtx.y();
            muonTkPairSortedTkVz[ID][numMuonTracks[ID] - 1] = theVtx.z();
@@ -1385,6 +1274,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
            muonTkPairSortedTk1Px[ID][numMuonTracks[ID] - 1] = P1.x();
            muonTkPairSortedTk1Py[ID][numMuonTracks[ID] - 1] = P1.y();
            muonTkPairSortedTk1Pz[ID][numMuonTracks[ID] - 1] = P1.z();
+           muonTkPairSortedTk1P2[ID][numMuonTracks[ID] - 1] = P1.mag2();
            muonTkPairSortedTk1Eta[ID][numMuonTracks[ID] - 1] = P1.eta();
            muonTkPairSortedTk1Phi[ID][numMuonTracks[ID] - 1] = P1.phi();
            muonTkPairSortedTk1Charge[ID][numMuonTracks[ID] - 1] = traj1->charge();
@@ -1400,6 +1290,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
            muonTkPairSortedTk2Px[ID][numMuonTracks[ID] - 1] = P2.x();
            muonTkPairSortedTk2Py[ID][numMuonTracks[ID] - 1] = P2.y();
            muonTkPairSortedTk2Pz[ID][numMuonTracks[ID] - 1] = P2.z();
+           muonTkPairSortedTk2P2[ID][numMuonTracks[ID] - 1] = P2.mag2();
            muonTkPairSortedTk2Eta[ID][numMuonTracks[ID] - 1] = P2.eta();
            muonTkPairSortedTk2Phi[ID][numMuonTracks[ID] - 1] = P2.phi();
            muonTkPairSortedTk2Charge[ID][numMuonTracks[ID] - 1] = traj2->charge();
@@ -1975,7 +1866,6 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent, const edm::
         //                   * exp(0.0615 - 0.0005 * tBarPt))
         //           << std::endl;
         topPtReweight = sqrt(exp(0.0615 - 0.0005 * topPt) * exp(0.0615 - 0.0005 * tBarPt));
-        histocontainer_["topPtWeightSum"]->Fill(0., topPtReweight);
     }
 
     nGenPar = 0;
@@ -2505,11 +2395,21 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
     iEvent.getByToken(packedCandToken_, packedCands);
 
-    numPackedCands = 0;
+/*
+    // packedCands
+    packedCandsEts.clear();
+    for (const auto& packedCand : muons) {
+        double et{muon.et()}; // should already be corrected
+        muonEts.emplace_back(et);
+    }
 
-//    uint numPackedTracks = 0;
-//    for (auto it{packedCands->begin()}; it != packedCands->end(); it++ ) if ( it->hasTrackDetails() && !it->isMuon() && it->pdgId() == 211 ) numPackedTracks++;
-//    std::cout << "numPackedTracks: " << numPackedTracks << std::endl;
+    if (muonEts.size() == 0) { // prevents a crash, the IndexSorter does not know what to do with zero-size vectors
+        return;
+    }
+    std::vector<size_t> etMuonSorted{IndexSorter<std::vector<float>>(muonEts, true)()};
+*/
+
+    numPackedCands = 0;
 
     for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); it++) {
         if ( !it->hasTrackDetails() && it->pdgId() != 211 && it->pdgId() != 13 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
@@ -2875,6 +2775,7 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     muonTkPairSortedTkVtxPx[ID].clear();
     muonTkPairSortedTkVtxPy[ID].clear();
     muonTkPairSortedTkVtxPz[ID].clear();
+    muonTkPairSortedTkVtxP2[ID].clear();
     muonTkPairSortedTkVx[ID].clear();
     muonTkPairSortedTkVy[ID].clear();                   
     muonTkPairSortedTkVz[ID].clear();
@@ -2895,6 +2796,7 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     muonTkPairSortedTk1Px[ID].clear();
     muonTkPairSortedTk1Py[ID].clear();
     muonTkPairSortedTk1Pz[ID].clear();
+    muonTkPairSortedTk1P2[ID].clear();
     muonTkPairSortedTk1Eta[ID].clear();
     muonTkPairSortedTk1Phi[ID].clear();
     muonTkPairSortedTk1Charge[ID].clear();
@@ -2904,6 +2806,7 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     muonTkPairSortedTk2Px[ID].clear();
     muonTkPairSortedTk2Py[ID].clear();
     muonTkPairSortedTk2Pz[ID].clear();
+    muonTkPairSortedTk2P2[ID].clear();
     muonTkPairSortedTk2Eta[ID].clear();
     muonTkPairSortedTk2Phi[ID].clear();
     muonTkPairSortedTk2Charge[ID].clear();
@@ -3478,8 +3381,6 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     }
 
     // fill debugging histograms.
-    histocontainer_["tightElectrons"]->Fill(numEle["PF"]);
-    histocontainer_["tightMuons"]->Fill(numMuo["PF"]);
 }
 
 void MakeTopologyNtupleMiniAOD::bookBranches() {
@@ -4492,6 +4393,7 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     muonTkPairSortedTkVtxPx[ID] = tempVecF2;
     muonTkPairSortedTkVtxPy[ID] = tempVecF2;
     muonTkPairSortedTkVtxPz[ID] = tempVecF2;
+    muonTkPairSortedTkVtxP2[ID] = tempVecF2;
     muonTkPairSortedTkVx[ID] = tempVecF2;
     muonTkPairSortedTkVy[ID] = tempVecF2;
     muonTkPairSortedTkVz[ID] = tempVecF2;
@@ -4512,6 +4414,7 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     muonTkPairSortedTk1Px[ID] = tempVecF2;
     muonTkPairSortedTk1Py[ID] = tempVecF2;
     muonTkPairSortedTk1Pz[ID] = tempVecF2;
+    muonTkPairSortedTk1P2[ID] = tempVecF2;
     muonTkPairSortedTk1Eta[ID] = tempVecF2;
     muonTkPairSortedTk1Phi[ID] = tempVecF2;
     muonTkPairSortedTk1Charge[ID] = tempVecI2;
@@ -4521,6 +4424,7 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     muonTkPairSortedTk2Px[ID] = tempVecF2;
     muonTkPairSortedTk2Py[ID] = tempVecF2;
     muonTkPairSortedTk2Pz[ID] = tempVecF2;
+    muonTkPairSortedTk2P2[ID] = tempVecF2;
     muonTkPairSortedTk2Eta[ID] = tempVecF2;
     muonTkPairSortedTk2Phi[ID] = tempVecF2;
     muonTkPairSortedTk2Charge[ID] = tempVecI2;
@@ -4637,6 +4541,7 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     mytree_->Branch((prefix2 + "TkVtxPx").c_str(), &muonTkPairSortedTkVtxPx[ID][0], (prefix2 + "TkVtxPx[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "TkVtxPy").c_str(), &muonTkPairSortedTkVtxPy[ID][0], (prefix2 + "TkVtxPy[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "TkVtxPz").c_str(), &muonTkPairSortedTkVtxPz[ID][0], (prefix2 + "TkVtxPz[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxP2").c_str(), &muonTkPairSortedTkVtxP2[ID][0], (prefix2 + "TkVtxP2[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "TkVx").c_str(), &muonTkPairSortedTkVx[ID][0], (prefix2 + "TkVx[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "TkVy").c_str(), &muonTkPairSortedTkVy[ID][0], (prefix2 + "TkVy[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "TkVz").c_str(), &muonTkPairSortedTkVz[ID][0], (prefix2 + "TkVz[numMuonTracks" + name + "]/F").c_str());
@@ -4657,6 +4562,7 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     mytree_->Branch((prefix2 + "Tk1Px").c_str(), &muonTkPairSortedTk1Px[ID][0], (prefix2 + "Tk1Px[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk1Py").c_str(), &muonTkPairSortedTk1Py[ID][0], (prefix2 + "Tk1Py[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk1Pz").c_str(), &muonTkPairSortedTk1Pz[ID][0], (prefix2 + "Tk1Pz[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1P2").c_str(), &muonTkPairSortedTk1P2[ID][0], (prefix2 + "Tk1P2[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk1Eta").c_str(), &muonTkPairSortedTk1Eta[ID][0], (prefix2 + "Tk1Eta[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk1Phi").c_str(), &muonTkPairSortedTk1Phi[ID][0], (prefix2 + "Tk1Phi[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk1Charge").c_str(), &muonTkPairSortedTk1Charge[ID][0], (prefix2 + "Tk1Charge[numMuonTracks" + name + "]/I").c_str());
@@ -4666,6 +4572,7 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     mytree_->Branch((prefix2 + "Tk2Px").c_str(), &muonTkPairSortedTk2Px[ID][0], (prefix2 + "Tk2Px[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk2Py").c_str(), &muonTkPairSortedTk2Py[ID][0], (prefix2 + "Tk2Py[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk2Pz").c_str(), &muonTkPairSortedTk2Pz[ID][0], (prefix2 + "Tk2Pz[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2P2").c_str(), &muonTkPairSortedTk2P2[ID][0], (prefix2 + "Tk2P2[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk2Eta").c_str(), &muonTkPairSortedTk2Eta[ID][0], (prefix2 + "Tk2Eta[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk2Phi").c_str(), &muonTkPairSortedTk2Phi[ID][0], (prefix2 + "Tk2Phi[numMuonTracks" + name + "]/F").c_str());
     mytree_->Branch((prefix2 + "Tk2Charge").c_str(), &muonTkPairSortedTk2Charge[ID][0], (prefix2 + "Tk2Charge[numMuonTracks" + name + "]/I").c_str());
@@ -5344,10 +5251,8 @@ void MakeTopologyNtupleMiniAOD::endJob()
     std::cout << "+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+="
               << std::endl;
     std::cout << "\n\nJOB Summary:" << std::endl;
-    std::cout << "number of events processed: "
-              << histocontainer_["eventcount"]->GetEntries() << std::endl;
-    std::cout << "number of events added to tree: " << mytree_->GetEntries()
-              << std::endl;
+    std::cout << "number of events processed: " << histocontainer_["eventcount"]->GetEntries() << std::endl;
+    std::cout << "number of events added to tree: " << mytree_->GetEntries() << std::endl;
     std::cout << "\n+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+="
               << std::endl;
 }
