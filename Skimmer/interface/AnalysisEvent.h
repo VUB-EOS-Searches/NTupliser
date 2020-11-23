@@ -164,12 +164,12 @@ class AnalysisEvent
     Float_t muonPF2PATVertX[NMUONSMAX];
     Float_t muonPF2PATVertY[NMUONSMAX];
     Float_t muonPF2PATVertZ[NMUONSMAX];
-    Float_t muonPF2PATInnerTrkPt[NMUONSMAX];
-    Float_t muonPF2PATInnerTrkPx[NMUONSMAX];
-    Float_t muonPF2PATInnerTrkPy[NMUONSMAX];
-    Float_t muonPF2PATInnerTrkPz[NMUONSMAX];
-    Float_t muonPF2PATInnerTrkEta[NMUONSMAX];
-    Float_t muonPF2PATInnerTrkPhi[NMUONSMAX];
+    Float_t muonPF2PATInnerTkPt[NMUONSMAX];
+    Float_t muonPF2PATInnerTkPx[NMUONSMAX];
+    Float_t muonPF2PATInnerTkPy[NMUONSMAX];
+    Float_t muonPF2PATInnerTkPz[NMUONSMAX];
+    Float_t muonPF2PATInnerTkEta[NMUONSMAX];
+    Float_t muonPF2PATInnerTkPhi[NMUONSMAX];
     Float_t muonPF2PATChargedHadronIso[NMUONSMAX];
     Float_t muonPF2PATNeutralHadronIso[NMUONSMAX];
     Float_t muonPF2PATPhotonIso[NMUONSMAX];
@@ -187,7 +187,7 @@ class AnalysisEvent
     Int_t muonPF2PATVldPixHits[NMUONSMAX];
     Int_t muonPF2PATMatchedStations[NMUONSMAX];
     Float_t muonPF2PATGlbTkNormChi2[NMUONSMAX];
-    Float_t muonPF2PATInnerTrkNormChi2[NMUONSMAX];
+    Float_t muonPF2PATInnerTkNormChi2[NMUONSMAX];
     Float_t muonPF2PATValidFraction[NMUONSMAX];
     Float_t muonPF2PATChi2LocalPosition[NMUONSMAX];
     Float_t muonPF2PATTrkKick[NMUONSMAX];
@@ -1236,12 +1236,12 @@ class AnalysisEvent
     TBranch* b_muonPF2PATVertX; //!
     TBranch* b_muonPF2PATVertY; //!
     TBranch* b_muonPF2PATVertZ; //!
-    TBranch* b_muonPF2PATInnerTrkPt; //!
-    TBranch* b_muonPF2PATInnerTrkPx; //!
-    TBranch* b_muonPF2PATInnerTrkPy; //!
-    TBranch* b_muonPF2PATInnerTrkPz; //!            
-    TBranch* b_muonPF2PATInnerTrkEta; //!
-    TBranch* b_muonPF2PATInnerTrkPhi; //!
+    TBranch* b_muonPF2PATInnerTkPt; //!
+    TBranch* b_muonPF2PATInnerTkPx; //!
+    TBranch* b_muonPF2PATInnerTkPy; //!
+    TBranch* b_muonPF2PATInnerTkPz; //!            
+    TBranch* b_muonPF2PATInnerTkEta; //!
+    TBranch* b_muonPF2PATInnerTkPhi; //!
     TBranch* b_muonPF2PATChargedHadronIso; //!
     TBranch* b_muonPF2PATNeutralHadronIso; //!
     TBranch* b_muonPF2PATPhotonIso; //!
@@ -1259,7 +1259,7 @@ class AnalysisEvent
     TBranch* b_muonPF2PATVldPixHits; //!
     TBranch* b_muonPF2PATMatchedStations; //!
     TBranch* b_muonPF2PATGlbTkNormChi2; //!
-    TBranch* b_muonPF2PATInnerTrkNormChi2; //!
+    TBranch* b_muonPF2PATInnerTkNormChi2; //!
     TBranch* b_muonPF2PATValidFraction; //!
     TBranch* b_muonPF2PATChi2LocalPosition; //!
     TBranch* b_muonPF2PATTrkKick; //!
@@ -2357,12 +2357,12 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("muonPF2PATVertX", muonPF2PATVertX, &b_muonPF2PATVertX);
    fChain->SetBranchAddress("muonPF2PATVertY", muonPF2PATVertY, &b_muonPF2PATVertY);
    fChain->SetBranchAddress("muonPF2PATVertZ", muonPF2PATVertZ, &b_muonPF2PATVertZ);
-   fChain->SetBranchAddress("muonPF2PATInnerTrkPt", muonPF2PATInnerTrkPt, &b_muonPF2PATInnerTrkPt);
-   fChain->SetBranchAddress("muonPF2PATInnerTrkPx", muonPF2PATInnerTrkPx, &b_muonPF2PATInnerTrkPx);
-   fChain->SetBranchAddress("muonPF2PATInnerTrkPy", muonPF2PATInnerTrkPy, &b_muonPF2PATInnerTrkPy);
-   fChain->SetBranchAddress("muonPF2PATInnerTrkPz", muonPF2PATInnerTrkPz, &b_muonPF2PATInnerTrkPz);
-   fChain->SetBranchAddress("muonPF2PATInnerTrkEta", muonPF2PATInnerTrkEta, &b_muonPF2PATInnerTrkEta);
-   fChain->SetBranchAddress("muonPF2PATInnerTrkPhi", muonPF2PATInnerTrkPhi, &b_muonPF2PATInnerTrkPhi);
+   fChain->SetBranchAddress("muonPF2PATInnerTkPt", muonPF2PATInnerTkPt, &b_muonPF2PATInnerTkPt);
+   fChain->SetBranchAddress("muonPF2PATInnerTkPx", muonPF2PATInnerTkPx, &b_muonPF2PATInnerTkPx);
+   fChain->SetBranchAddress("muonPF2PATInnerTkPy", muonPF2PATInnerTkPy, &b_muonPF2PATInnerTkPy);
+   fChain->SetBranchAddress("muonPF2PATInnerTkPz", muonPF2PATInnerTkPz, &b_muonPF2PATInnerTkPz);
+   fChain->SetBranchAddress("muonPF2PATInnerTkEta", muonPF2PATInnerTkEta, &b_muonPF2PATInnerTkEta);
+   fChain->SetBranchAddress("muonPF2PATInnerTkPhi", muonPF2PATInnerTkPhi, &b_muonPF2PATInnerTkPhi);
    fChain->SetBranchAddress("muonPF2PATChargedHadronIso", muonPF2PATChargedHadronIso, &b_muonPF2PATChargedHadronIso);
    fChain->SetBranchAddress("muonPF2PATNeutralHadronIso", muonPF2PATNeutralHadronIso, &b_muonPF2PATNeutralHadronIso);
    fChain->SetBranchAddress("muonPF2PATPhotonIso", muonPF2PATPhotonIso, &b_muonPF2PATPhotonIso);
@@ -2378,7 +2378,7 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("muonPF2PATNMatches", muonPF2PATNMatches, &b_muonPF2PATNMatches);
    fChain->SetBranchAddress("muonPF2PATTkLysWithMeasurements", muonPF2PATTkLysWithMeasurements, &b_muonPF2PATTkLysWithMeasurements);
    fChain->SetBranchAddress("muonPF2PATGlbTkNormChi2", muonPF2PATGlbTkNormChi2, &b_muonPF2PATGlbTkNormChi2);
-   fChain->SetBranchAddress("muonPF2PATInnerTrkNormChi2", muonPF2PATInnerTrkNormChi2, &b_muonPF2PATInnerTrkNormChi2);
+   fChain->SetBranchAddress("muonPF2PATInnerTkNormChi2", muonPF2PATInnerTkNormChi2, &b_muonPF2PATInnerTkNormChi2);
    fChain->SetBranchAddress("muonPF2PATValidFraction", muonPF2PATValidFraction, &b_muonPF2PATValidFraction);
    fChain->SetBranchAddress("muonPF2PATChi2LocalPosition", muonPF2PATChi2LocalPosition, &b_muonPF2PATChi2LocalPosition);
    fChain->SetBranchAddress("muonPF2PATTrkKick", muonPF2PATTrkKick, &b_muonPF2PATTrkKick);

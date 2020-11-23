@@ -39,18 +39,18 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
                                            triggerToken  = cms.InputTag("TriggerResults","","HLT"),
                                            metFilterToken  = cms.InputTag("TriggerResults", "", "PAT"),
                                            fakeTriggerList = cms.vstring(), # empty. You can add fake triggers that are run on the fly to this list. No check on the process name is made so when duplicates are available only the latest one is added.
-					   isLHEflag = cms.bool(False),
+					   isLHEflag = cms.bool(True),
 					   externalLHEToken = cms.InputTag("externalLHEProducer"), # "externalLHEProducer", "source" for THQ 
 
 					   pdfIdStart = cms.int32(2001),
 					   pdfIdEnd = cms.int32(2102),
-					   hasAlphaWeightFlag = cms.bool(False),
+					   hasAlphaWeightFlag = cms.bool(True),
 					   alphaIdStart = cms.int32(2101),
 					   alphaIdEnd = cms.int32(2102),
 
 					   pdfInfoFixingToken = cms.InputTag("pdfInfoFixing"),
 					   generatorToken = cms.InputTag("generator"),
-                                           minLeptons = cms.int32(0),
+                                           minLeptons = cms.int32(2),
 
                                            hasGeneralTracks   = cms.bool(False),
                                            generalTracksToken = cms.InputTag("generalTracks"),
@@ -446,7 +446,7 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
                                            maxEleEta = cms.double(2.70), #  electron |eta|
 					   eleRelIso = cms.double(0.50), # electron combined rel track iso with rho corrections
                                            # muon identification
-                                           minMuonPt = cms.double(9.0),
+                                           minMuonPt = cms.double(6.0),
                                            maxMuonEta = cms.double(2.80),
                                            muoRelIso = cms.double(0.50), # muon combined track isolation with delta beta corrections
                                            metCut = cms.double(0.0),

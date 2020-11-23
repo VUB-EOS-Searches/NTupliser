@@ -3466,19 +3466,11 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     else  { // If doing cuts, ensure that we have at least x leptons which meet minimum sensible criteria
 
         int numLeps{0};
-        numLeps = numEle["PF"] + numMuo["PF"];
-
-        for (int j{0}; j < numEle["PF"]; j++) {
-            if (electronSortedPt["PF"][0] < elePtCut_) continue;
-            if (std::abs(electronSortedEta["PF"][0]) > eleEtaCut_) continue;
-            if (electronSortedComRelIsoRho["PF"][0] > eleIsoCut_) continue;
-            numLeps++;
-        }
+        numLeps = numMuo["PF"];
 
         for (int j{0}; j < numMuo["PF"]; j++) {
             if (muonSortedPt["PF"][0] < muoPtCut_) continue;
             if (std::abs(muonSortedEta["PF"][0]) > muoEtaCut_) continue;
-            if (muonSortedComRelIsodBeta["PF"][0] > muoIsoCut_) continue;
             numLeps++;
         }
 
@@ -4591,6 +4583,7 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
 
     mytree_->Branch((prefix + "TkLysWithMeasurements").c_str(), &muonSortedTkLysWithMeasurements[ID][0], (prefix + "TkLysWithMeasurements[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "GlbTkNormChi2").c_str(), &muonSortedGlbTkNormChi2[ID][0], (prefix + "GlbTkNormChi2[numMuon" + name + "]/F").c_str());
+    mytree_->Branch((prefix + "InnerTkNormChi2").c_str(), &muonSortedInnerTkNormChi2[ID][0], (prefix + "InnerTkNormChi2[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "DBPV").c_str(), &muonSortedDBPV[ID][0], (prefix + "DBPV[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "DBPVError").c_str(), &muonSortedDBPVError[ID][0], (prefix + "DBPVError[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "DZPV").c_str(), &muonSortedDZPV[ID][0], (prefix + "DZPV[numMuon" + name + "]/F").c_str());
