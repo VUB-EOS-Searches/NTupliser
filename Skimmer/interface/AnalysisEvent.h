@@ -211,6 +211,52 @@ class AnalysisEvent
     Int_t genMuonPF2PATPromptFinalState[NMUONSMAX];
     Int_t genMuonPF2PATHardProcess[NMUONSMAX];
 
+    static constexpr size_t NMUONTKPAIRMAX{190};
+    Int_t   numMuonTrackPairsPF2PAT;
+    Int_t   muonTkPairPF2PATIndex1[NMUONTKPAIRMAX];
+    Int_t   muonTkPairPF2PATIndex2[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxPx[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxPy[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxPz[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxP2[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVx[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVy[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVz[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVxError[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVyError[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVzError[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxChi2[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxNdof[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxTime[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxTimeError[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxAngleXY[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxDistMagXY[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxDistMagXYSigma[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxAngleXYZ[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxDistMagXYZ[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxDistMagXYZSigma[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Pt[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Px[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Py[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Pz[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1P2[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Eta[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Phi[NMUONTKPAIRMAX];
+    Int_t   muonTkPairPF2PATTk1Charge[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Chi2[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk1Ndof[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Pt[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Px[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Py[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Pz[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2P2[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Eta[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Phi[NMUONTKPAIRMAX];
+    Int_t   muonTkPairPF2PATTk2Charge[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Chi2[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTk2Ndof[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxDcaPreFit[NMUONTKPAIRMAX];
+
     static constexpr size_t NJETSMAX{40};
     Int_t numJetPF2PAT;
     Double_t jetPF2PATE[NJETSMAX];
@@ -1282,6 +1328,50 @@ class AnalysisEvent
     TBranch* b_genMuonPF2PATPromptDecayed; //!
     TBranch* b_genMuonPF2PATPromptFinalState; //!
     TBranch* b_genMuonPF2PATHardProcess; //!
+    TBranch* b_numMuonTrackPairsPF2PAT; //!
+    TBranch* b_muonTkPairPF2PATIndex1; //!
+    TBranch* b_muonTkPairPF2PATIndex2; //!
+    TBranch* b_muonTkPairPF2PATTkVtxPx; //!
+    TBranch* b_muonTkPairPF2PATTkVtxPy; //!
+    TBranch* b_muonTkPairPF2PATTkVtxPz; //!
+    TBranch* b_muonTkPairPF2PATTkVtxP2; //!
+    TBranch* b_muonTkPairPF2PATTkVx; //!
+    TBranch* b_muonTkPairPF2PATTkVy; //!
+    TBranch* b_muonTkPairPF2PATTkVz; //!
+    TBranch* b_muonTkPairPF2PATTkVxError; //!
+    TBranch* b_muonTkPairPF2PATTkVyError; //!
+    TBranch* b_muonTkPairPF2PATTkVzError; //!
+    TBranch* b_muonTkPairPF2PATTkVtxChi2; //!
+    TBranch* b_muonTkPairPF2PATTkVtxNdof; //!
+    TBranch* b_muonTkPairPF2PATTkVtxTime; //!
+    TBranch* b_muonTkPairPF2PATTkVtxTimeError; //!
+    TBranch* b_muonTkPairPF2PATTkVtxAngleXY; //!
+    TBranch* b_muonTkPairPF2PATTkVtxDistMagXY; //!
+    TBranch* b_muonTkPairPF2PATTkVtxDistMagXYSigma; //!
+    TBranch* b_muonTkPairPF2PATTkVtxAngleXYZ; //!
+    TBranch* b_muonTkPairPF2PATTkVtxDistMagXYZ; //!
+    TBranch* b_muonTkPairPF2PATTkVtxDistMagXYZSigma; //!
+    TBranch* b_muonTkPairPF2PATTk1Pt; //!
+    TBranch* b_muonTkPairPF2PATTk1Px; //!
+    TBranch* b_muonTkPairPF2PATTk1Py; //!
+    TBranch* b_muonTkPairPF2PATTk1Pz; //!
+    TBranch* b_muonTkPairPF2PATTk1P2; //!
+    TBranch* b_muonTkPairPF2PATTk1Eta; //!
+    TBranch* b_muonTkPairPF2PATTk1Phi; //!
+    TBranch* b_muonTkPairPF2PATTk1Charge; //!
+    TBranch* b_muonTkPairPF2PATTk1Chi2; //!
+    TBranch* b_muonTkPairPF2PATTk1Ndof; //!
+    TBranch* b_muonTkPairPF2PATTk2Pt; //!
+    TBranch* b_muonTkPairPF2PATTk2Px; //!
+    TBranch* b_muonTkPairPF2PATTk2Py; //!
+    TBranch* b_muonTkPairPF2PATTk2Pz; //!
+    TBranch* b_muonTkPairPF2PATTk2P2; //!
+    TBranch* b_muonTkPairPF2PATTk2Eta; //!
+    TBranch* b_muonTkPairPF2PATTk2Phi; //!
+    TBranch* b_muonTkPairPF2PATTk2Charge; //!
+    TBranch* b_muonTkPairPF2PATTk2Chi2; //!
+    TBranch* b_muonTkPairPF2PATTk2Ndof; //!
+    TBranch* b_muonTkPairPF2PATTkVtxDcaPreFit; //!
     TBranch* b_numJetPF2PAT; //!
     TBranch* b_jetPF2PATE; //!
     TBranch* b_jetPF2PATEt; //!
@@ -2406,6 +2496,50 @@ AnalysisEvent::AnalysisEvent(bool isMC,
        fChain->SetBranchAddress("genMuonPF2PATPromptFinalState", genMuonPF2PATPromptFinalState, &b_genMuonPF2PATPromptFinalState);
        fChain->SetBranchAddress("genMuonPF2PATHardProcess", genMuonPF2PATHardProcess, &b_genMuonPF2PATHardProcess);
    }
+   fChain->SetBranchAddress("numMuonTrackPairsPF2PAT", &numMuonTrackPairsPF2PAT, &b_numMuonTrackPairsPF2PAT);
+   fChain->SetBranchAddress("muonTkPairPF2PATIndex1", muonTkPairPF2PATIndex1, &b_muonTkPairPF2PATIndex1); 
+   fChain->SetBranchAddress("muonTkPairPF2PATIndex2", muonTkPairPF2PATIndex2, &b_muonTkPairPF2PATIndex2);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxPx", muonTkPairPF2PATTkVtxPx, &b_muonTkPairPF2PATTkVtxPx);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxPy", muonTkPairPF2PATTkVtxPy, &b_muonTkPairPF2PATTkVtxPy);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxPz", muonTkPairPF2PATTkVtxPz, &b_muonTkPairPF2PATTkVtxPz);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxP2", muonTkPairPF2PATTkVtxP2, &b_muonTkPairPF2PATTkVtxP2);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVx", muonTkPairPF2PATTkVx, &b_muonTkPairPF2PATTkVx);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVy", muonTkPairPF2PATTkVy, &b_muonTkPairPF2PATTkVy);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVz", muonTkPairPF2PATTkVz, &b_muonTkPairPF2PATTkVz);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVxError", muonTkPairPF2PATTkVxError, &b_muonTkPairPF2PATTkVxError);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVyError", muonTkPairPF2PATTkVyError, &b_muonTkPairPF2PATTkVyError);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVzError", muonTkPairPF2PATTkVzError, &b_muonTkPairPF2PATTkVzError);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxChi2", muonTkPairPF2PATTkVtxChi2, &b_muonTkPairPF2PATTkVtxChi2);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxNdof", muonTkPairPF2PATTkVtxNdof, &b_muonTkPairPF2PATTkVtxNdof);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxTime", muonTkPairPF2PATTkVtxTime, &b_muonTkPairPF2PATTkVtxTime);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxTimeError", muonTkPairPF2PATTkVtxTimeError, &b_muonTkPairPF2PATTkVtxTimeError);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxAngleXY", muonTkPairPF2PATTkVtxAngleXY, &b_muonTkPairPF2PATTkVtxAngleXY);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxDistMagXY", muonTkPairPF2PATTkVtxDistMagXY, &b_muonTkPairPF2PATTkVtxDistMagXY);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxDistMagXYSigma", muonTkPairPF2PATTkVtxDistMagXYSigma, &b_muonTkPairPF2PATTkVtxDistMagXYSigma);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxAngleXYZ", muonTkPairPF2PATTkVtxAngleXYZ, &b_muonTkPairPF2PATTkVtxAngleXYZ);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxDistMagXYZ", muonTkPairPF2PATTkVtxDistMagXYZ, &b_muonTkPairPF2PATTkVtxDistMagXYZ);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxDistMagXYZSigma", muonTkPairPF2PATTkVtxDistMagXYZSigma, &b_muonTkPairPF2PATTkVtxDistMagXYZSigma);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Pt", muonTkPairPF2PATTk1Pt, &b_muonTkPairPF2PATTk1Pt);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Px", muonTkPairPF2PATTk1Px, &b_muonTkPairPF2PATTk1Px);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Py", muonTkPairPF2PATTk1Py, &b_muonTkPairPF2PATTk1Py);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Pz", muonTkPairPF2PATTk1Pz, &b_muonTkPairPF2PATTk1Pz);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1P2", muonTkPairPF2PATTk1P2, &b_muonTkPairPF2PATTk1P2);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Eta", muonTkPairPF2PATTk1Eta, &b_muonTkPairPF2PATTk1Eta);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Phi", muonTkPairPF2PATTk1Phi, &b_muonTkPairPF2PATTk1Phi);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Charge", muonTkPairPF2PATTk1Charge, &b_muonTkPairPF2PATTk1Charge);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Chi2", muonTkPairPF2PATTk1Chi2, &b_muonTkPairPF2PATTk1Chi2);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk1Ndof", muonTkPairPF2PATTk1Ndof, &b_muonTkPairPF2PATTk1Ndof);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Pt", muonTkPairPF2PATTk2Pt, &b_muonTkPairPF2PATTk2Pt);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Px", muonTkPairPF2PATTk2Px, &b_muonTkPairPF2PATTk2Px);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Py", muonTkPairPF2PATTk2Py, &b_muonTkPairPF2PATTk2Py);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Pz", muonTkPairPF2PATTk2Pz, &b_muonTkPairPF2PATTk2Pz);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2P2", muonTkPairPF2PATTk2P2, &b_muonTkPairPF2PATTk2P2);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Eta", muonTkPairPF2PATTk2Eta, &b_muonTkPairPF2PATTk2Eta);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Phi", muonTkPairPF2PATTk2Phi, &b_muonTkPairPF2PATTk2Phi);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Charge", muonTkPairPF2PATTk2Charge, &b_muonTkPairPF2PATTk2Charge);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Chi2", muonTkPairPF2PATTk2Chi2, &b_muonTkPairPF2PATTk2Chi2);
+   fChain->SetBranchAddress("muonTkPairPF2PATTk2Ndof", muonTkPairPF2PATTk2Ndof, &b_muonTkPairPF2PATTk2Ndof);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxDcaPreFit", muonTkPairPF2PATTkVtxDcaPreFit, &b_muonTkPairPF2PATTkVtxDcaPreFit);
    fChain->SetBranchAddress("numJetPF2PAT", &numJetPF2PAT, &b_numJetPF2PAT);
    fChain->SetBranchAddress("jetPF2PATE", jetPF2PATE, &b_jetPF2PATE);
    fChain->SetBranchAddress("jetPF2PATEt", jetPF2PATEt, &b_jetPF2PATEt);
