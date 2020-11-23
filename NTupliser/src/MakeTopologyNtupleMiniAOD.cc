@@ -785,10 +785,8 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
         electronSortedTrackNDOF[ID][numEle[ID] - 1] = ele.gsfTrack()->ndof();
         electronSortedTrackD0[ID][numEle[ID] - 1] = ele.gsfTrack()->d0();
         electronSortedDBBeamSpotCorrectedTrackD0[ID][numEle[ID] - 1] = ele.dB();
-        // electronSortedDBInnerTrackD0[ID][numEle[ID] - 1] =
-        //     -1. * (ele.innerTrack()->dxy(beamSpotPoint_));
-        electronSortedBeamSpotCorrectedTrackD0[ID][numEle[ID] - 1] =
-            -1. * (ele.gsfTrack()->dxy(beamSpotPoint_));
+        // electronSortedDBInnerTrackD0[ID][numEle[ID] - 1] = -1. * (ele.innerTrack()->dxy(beamSpotPoint_));
+        electronSortedBeamSpotCorrectedTrackD0[ID][numEle[ID] - 1] = -1. * (ele.gsfTrack()->dxy(beamSpotPoint_));
         electronSortedTrackDz[ID][numEle[ID] - 1] = ele.gsfTrack()->dz();
         electronSortedTrackD0PV[ID][numEle[ID] - 1] = ele.gsfTrack()->dxy(vertexPoint_);
         electronSortedTrackDZPV[ID][numEle[ID] - 1] = ele.gsfTrack()->dz(vertexPoint_);
@@ -798,8 +796,7 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
         electronSortedGsfPx[ID][numEle[ID] - 1] = ele.ecalDrivenMomentum().px();
         electronSortedGsfPy[ID][numEle[ID] - 1] = ele.ecalDrivenMomentum().py();
         electronSortedGsfPz[ID][numEle[ID] - 1] = ele.ecalDrivenMomentum().pz();
-        electronSortedGsfE[ID][numEle[ID] - 1] =
-            ele.ecalDrivenMomentum().energy();
+        electronSortedGsfE[ID][numEle[ID] - 1] =  ele.ecalDrivenMomentum().energy();
         electronSortedEcalEnergy[ID][numEle[ID] - 1] = ele.ecalEnergy();
 
         electronSortedSuperClusterEta[ID][numEle[ID] - 1] =
@@ -1019,24 +1016,10 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             muonTrkKick[ID][numMuo[ID] - 1] = muo.combinedQuality().trkKink;
             muonSegmentCompatibility[ID][numMuo[ID] - 1] = muon::segmentCompatibility(muo);
 
-            // Store muon track refs for post muon loop tracking analysis
-            muonTkIndices.push_back( numMuo[ID] - 1 );
-            trackRefs.push_back( muo.innerTrack() );
-            reco::TransientTrack tmpTransient( *(muo.innerTrack()), theMagneticField);
-            transTracks.push_back( std::move( tmpTransient ) );
-        }
-
-        //----------------------------------------------------------------------------
-        if (muo.isTrackerMuon() && muo.isGlobalMuon()) {
-            muonSortedChi2[ID][numMuo[ID] - 1] = muo.combinedMuon()->chi2(); // chi2 of the combined muon
-            //----------------------------------------------------------------------------
-            muonSortedD0[ID][numMuo[ID] - 1] = muo.combinedMuon()->d0(); // impact parameter
-            muonSortedDBInnerTrackD0[ID][numMuo[ID] - 1] = -1. * (muo.innerTrack()->dxy(beamSpotPoint_));
             muonSortedDBBeamSpotCorrectedTrackD0[ID][numMuo[ID] - 1] = muo.dB();
-            muonSortedBeamSpotCorrectedD0[ID][numMuo[ID] - 1] = -1. * (muo.combinedMuon()->dxy(beamSpotPoint_));
-            muonSortedNDOF[ID][numMuo[ID] - 1] = muo.combinedMuon()->ndof(); // n_d.o.f
             muonSortedTrackNHits[ID][numMuo[ID] - 1] = muo.track()->numberOfValidHits(); // number of valid hits in Tracker - same as muo.bestTrack()->hitPattern().numberOfValidHits()
-            muonSortedValidHitsGlobal[ID][numMuo[ID] - 1] = muo.globalTrack()->hitPattern().numberOfValidMuonHits();
+            muonSortedDBInnerTrackD0[ID][numMuo[ID] - 1] = -1. * (muo.innerTrack()->dxy(beamSpotPoint_));
+            muonSortedVldPixHits[ID][numMuo[ID] - 1] = muo.innerTrack()->hitPattern().numberOfValidPixelHits(); // muo.bestTrack()->hitPattern().numberOfValidPixelHits()
 
             // Save vertex information.
             muonSortedVertX[ID][numMuo[ID] - 1] = muo.vertex().X();
@@ -1051,16 +1034,32 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             muonSortedInnerTkEta[ID][numMuo[ID] - 1] = muo.bestTrack()->eta();
             muonSortedInnerTkPhi[ID][numMuo[ID] - 1] = muo.bestTrack()->phi();
 
-            // Just some extra stuff.
             muonSortedTkLysWithMeasurements[ID][numMuo[ID] - 1] = muo.track()->hitPattern().trackerLayersWithMeasurement();
-            muonSortedGlbTkNormChi2[ID][numMuo[ID] - 1] = muo.globalTrack()->normalizedChi2();
             muonSortedInnerTkNormChi2[ID][numMuo[ID] - 1] = muo.bestTrack()->normalizedChi2();
             muonSortedDBPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dxy(vertexPoint_);
             muonSortedDBPVError[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dxyError();
             muonSortedDZPV[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dz(vertexPoint_);
             muonSortedDZPVError[ID][numMuo[ID] - 1] = muo.muonBestTrack()->dzError();
-            muonSortedVldPixHits[ID][numMuo[ID] - 1] = muo.innerTrack()->hitPattern().numberOfValidPixelHits(); // muo.bestTrack()->hitPattern().numberOfValidPixelHits()
             muonSortedMatchedStations[ID][numMuo[ID] - 1] = muo.numberOfMatchedStations();
+
+            // Store muon track refs for post muon loop tracking analysis
+            muonTkIndices.push_back( numMuo[ID] - 1 );
+            trackRefs.push_back( muo.innerTrack() );
+            reco::TransientTrack tmpTransient( *(muo.innerTrack()), theMagneticField);
+            transTracks.push_back( std::move( tmpTransient ) );
+        }
+
+        //----------------------------------------------------------------------------
+        if (muo.isTrackerMuon() && muo.isGlobalMuon()) {
+            muonSortedChi2[ID][numMuo[ID] - 1] = muo.combinedMuon()->chi2(); // chi2 of the combined muon
+            //----------------------------------------------------------------------------
+            muonSortedD0[ID][numMuo[ID] - 1] = muo.combinedMuon()->d0(); // impact parameter
+            muonSortedBeamSpotCorrectedD0[ID][numMuo[ID] - 1] = -1. * (muo.combinedMuon()->dxy(beamSpotPoint_));
+            muonSortedNDOF[ID][numMuo[ID] - 1] = muo.combinedMuon()->ndof(); // n_d.o.f
+            muonSortedValidHitsGlobal[ID][numMuo[ID] - 1] = muo.globalTrack()->hitPattern().numberOfValidMuonHits();
+
+            // Just some extra stuff.
+            muonSortedGlbTkNormChi2[ID][numMuo[ID] - 1] = muo.globalTrack()->normalizedChi2();
         }
         //----------------------------------------------------------------------------
         // std::cout << "Gets to the filling bit which says track in it";
