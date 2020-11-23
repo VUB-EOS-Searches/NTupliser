@@ -4492,8 +4492,8 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     genMuonSortedHardProcess[ID] = tempVecI;
 
     // Initialise maps to prevent root panicing.
-    std::vector<float> tempVecF2(NMUONSMAX);
-    std::vector<int> tempVecI2(NMUONSMAX);
+    std::vector<float> tempVecF2(NMUONTKPAIRMAX);
+    std::vector<int> tempVecI2(NMUONTKPAIRMAX);
 
     muonTkPairSortedIndex1[ID] = tempVecI2;
     muonTkPairSortedIndex2[ID] = tempVecI2;
