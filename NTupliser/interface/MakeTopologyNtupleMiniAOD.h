@@ -274,11 +274,12 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int numGeneralTracks{};
     int numIsolatedTracks{};
     int numPackedCands{};
+    int numChsTrackPairs{};
     std::map<std::string, int> numJet;
     std::map<std::string, int> numEle;
     std::map<std::string, int> numPho;
     std::map<std::string, int> numMuo;
-    std::map<std::string, int> numMuonTracks;
+    std::map<std::string, int> numMuonTrackPairs;
 
     math::XYZPoint beamSpotPoint_;
     math::XYZPoint vertexPoint_;
@@ -332,11 +333,17 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::vector<float> electronEts; // just used for sorting
     std::vector<float> photonEts; // just used for sorting
     std::vector<float> muonEts; // just used for sorting
-    // vectors to store muon track refs and indices for later
-    std::vector< int > muonTkIndices;
-    std::vector< reco::TrackRef > trackRefs;
-    std::vector< reco::TransientTrack > transTracks;
     std::vector<float> correctedJetEts; // just used for sorting
+
+    // containers to store muon track refs and indices for later
+    std::vector< int > muonTkIndices;
+    std::vector< reco::TrackRef > muonTrackRefs;
+    std::vector< reco::TransientTrack > muonTransTracks;
+
+    // containers to store charged hadrons track refs and indices for later
+    std::vector< int > chsTkIndices;
+    std::vector< reco::Track > chsTracks;
+    std::vector< reco::TransientTrack > chsTransTracks;
 
     float beamSpotX{};
     float beamSpotY{};
@@ -1023,6 +1030,51 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int packedCandsPseudoTrkStripLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsPseudoTrkTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsHighPurityTrack[NPACKEDCANDSMAX]{};
+
+    static constexpr size_t NCHSTKPAIRMAX{300};
+    int    chsTkPairIndex1[NCHSTKPAIRMAX]{};
+    int    chsTkPairIndex2[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxPx[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxPy[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxPz[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxP2[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVx[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVy[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVz[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVxError[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVyError[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVzError[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxChi2[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxNdof[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxTime[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxTimeError[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxAngleXY[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxDistMagXY[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxDistMagXYSigma[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxAngleXYZ[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxDistMagXYZ[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxDistMagXYZSigma[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Pt[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Px[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Py[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Pz[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1P2[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Eta[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Phi[NCHSTKPAIRMAX]{};
+    int    chsTkPairTk1Charge[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Chi2[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk1Ndof[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Pt[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Px[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Py[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Pz[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2P2[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Eta[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Phi[NCHSTKPAIRMAX]{};
+    int    chsTkPairTk2Charge[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Chi2[NCHSTKPAIRMAX]{};
+    float  chsTkPairTk2Ndof[NCHSTKPAIRMAX]{};
+    float  chsTkPairTkVtxDcaPreFit[NCHSTKPAIRMAX]{};
 
     // gen particle vars
     static constexpr size_t NGENPARMAX{1000};

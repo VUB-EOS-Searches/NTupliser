@@ -970,8 +970,8 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
     // muon tracks
     // vectors to store muon track refs and indices for later
     muonTkIndices.clear();
-    trackRefs.clear();
-    transTracks.clear();
+    muonTrackRefs.clear();
+    muonTransTracks.clear();
 
     numMuo[ID] = 0;
 
@@ -1044,9 +1044,9 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
 
             // Store muon track refs for post muon loop tracking analysis
             muonTkIndices.push_back( numMuo[ID] - 1 );
-            trackRefs.push_back( muo.innerTrack() );
+            muonTrackRefs.push_back( muo.innerTrack() );
             reco::TransientTrack tmpTransient( *(muo.innerTrack()), theMagneticField);
-            transTracks.push_back( std::move( tmpTransient ) );
+            muonTransTracks.push_back( std::move( tmpTransient ) );
         }
 
         //----------------------------------------------------------------------------
@@ -1132,176 +1132,175 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
 
     }
 
-    numMuonTracks[ID] = 0;
+    numMuonTrackPairs[ID] = 0;
 
     // loop over muon tracks
-    for (unsigned int trdx1 = 0; trdx1 < trackRefs.size() && numMuonTracks[ID] < numeric_cast<int>(NMUONTKPAIRMAX); ++trdx1) {
-        for (unsigned int trdx2 = trdx1 + 1; trdx2 < trackRefs.size() && numMuonTracks[ID] < numeric_cast<int>(NMUONTKPAIRMAX); ++trdx2) {
+    for (unsigned int trdx1 = 0; trdx1 < muonTrackRefs.size() && numMuonTrackPairs[ID] < numeric_cast<int>(NMUONTKPAIRMAX); ++trdx1) {
+        for (unsigned int trdx2 = trdx1 + 1; trdx2 < muonTrackRefs.size() && numMuonTrackPairs[ID] < numeric_cast<int>(NMUONTKPAIRMAX); ++trdx2) {
 
             reco::TrackRef trackRef1;
             reco::TrackRef trackRef2;
             reco::TransientTrack* transTkPtr1 = nullptr;
             reco::TransientTrack* transTkPtr2 = nullptr;
 
-            trackRef1 = trackRefs[trdx1];
-            trackRef2 = trackRefs[trdx2];
-            transTkPtr1 = &transTracks[trdx1];
-            transTkPtr2 = &transTracks[trdx2];
+            trackRef1 = muonTrackRefs[trdx1];
+            trackRef2 = muonTrackRefs[trdx2];
+            transTkPtr1 = &muonTransTracks[trdx1];
+            transTkPtr2 = &muonTransTracks[trdx2];
 
-           // measure distance between tracks at their closest approach
+            // measure distance between tracks at their closest approach
 
-           //these two variables are needed to 'pin' the temporary value returned to the stack
-           // in order to keep both States from pointing to destructed objects
-           auto const& impact1 = transTkPtr1->impactPointTSCP();
-           auto const& impact2 = transTkPtr2->impactPointTSCP();
-           if (!impact1.isValid() || !impact2.isValid()) continue;
-           FreeTrajectoryState const& state1 = impact1.theState();
-           FreeTrajectoryState const& state2 = impact2.theState();
+            //these two variables are needed to 'pin' the temporary value returned to the stack
+            // in order to keep both States from pointing to destructed objects
+            auto const& impact1 = transTkPtr1->impactPointTSCP();
+            auto const& impact2 = transTkPtr2->impactPointTSCP();
+            if (!impact1.isValid() || !impact2.isValid()) continue;
+            FreeTrajectoryState const& state1 = impact1.theState();
+            FreeTrajectoryState const& state2 = impact2.theState();
 
-           ClosestApproachInRPhi cApp;
-           cApp.calculate(state1, state2);
-           if (!cApp.status()) continue;
+            ClosestApproachInRPhi cApp;
+            cApp.calculate(state1, state2);
+            if (!cApp.status()) continue;
 
-           float dca = std::abs(cApp.distance());
+            float dca = std::abs(cApp.distance());
 
-           // the POCA should at least be in the sensitive volume
-           GlobalPoint cxPt = cApp.crossingPoint();
-           if ((cxPt.x() * cxPt.x() + cxPt.y() * cxPt.y()) > 120. * 120. || std::abs(cxPt.z()) > 300.) continue;
+            // the POCA should at least be in the sensitive volume
+            GlobalPoint cxPt = cApp.crossingPoint();
+            if ((cxPt.x() * cxPt.x() + cxPt.y() * cxPt.y()) > 120. * 120. || std::abs(cxPt.z()) > 300.) continue;
 
-           TrajectoryStateClosestToPoint const& TSCP1 = transTkPtr1->trajectoryStateClosestToPoint(cxPt);
-           TrajectoryStateClosestToPoint const& TSCP2 = transTkPtr2->trajectoryStateClosestToPoint(cxPt);
-           if (!TSCP1.isValid() || !TSCP2.isValid()) continue;
+            TrajectoryStateClosestToPoint const& TSCP1 = transTkPtr1->trajectoryStateClosestToPoint(cxPt);
+            TrajectoryStateClosestToPoint const& TSCP2 = transTkPtr2->trajectoryStateClosestToPoint(cxPt);
+            if (!TSCP1.isValid() || !TSCP2.isValid()) continue;
 
-           // Fill the vector of TransientTracks to send to KVF
-           std::vector<reco::TransientTrack> tmpTransTracks;
-           tmpTransTracks.reserve(2);
-           tmpTransTracks.push_back(*transTkPtr1);
-           tmpTransTracks.push_back(*transTkPtr2);
+            // Fill the vector of TransientTracks to send to KVF
+            std::vector<reco::TransientTrack> tmpTransTracks;
+            tmpTransTracks.reserve(2);
+            tmpTransTracks.push_back(*transTkPtr1);
+            tmpTransTracks.push_back(*transTkPtr2);
 
-           // create the vertex fitter object and vertex the tracks
-           KalmanVertexFitter theKalmanFitter(true); // KalmanVertexFitter(bool useSmoothing = false);
-           TransientVertex theRecoVertex  = theKalmanFitter.vertex(tmpTransTracks);
-           if (!theRecoVertex.isValid()) continue;
+            // create the vertex fitter object and vertex the tracks
+            KalmanVertexFitter theKalmanFitter(true); // KalmanVertexFitter(bool useSmoothing = false);
+            TransientVertex theRecoVertex  = theKalmanFitter.vertex(tmpTransTracks);
+            if (!theRecoVertex.isValid()) continue;
 
-           // do stuff with new vertices
+            // do stuff with new vertices
 
-           reco::Vertex theVtx = theRecoVertex;
-           GlobalPoint vtxPos(theVtx.x(), theVtx.y(), theVtx.z());
+            reco::Vertex theVtx = theRecoVertex;
+            GlobalPoint vtxPos(theVtx.x(), theVtx.y(), theVtx.z());
 
-           // 2D decay significance
-           ROOT::Math::SMatrix<double, 3, 3, ROOT::Math::MatRepSym<double, 3>> totalCov = vertexPrimary_->covariance() + theVtx.covariance();
-           ROOT::Math::SVector<double, 3>  distVecXY(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), 0.);
-           double distMagXY = ROOT::Math::Mag(distVecXY);
-           double sigmaDistMagXY = sqrt(ROOT::Math::Similarity(totalCov, distVecXY)) / distMagXY;
+            // 2D decay significance
+            ROOT::Math::SMatrix<double, 3, 3, ROOT::Math::MatRepSym<double, 3>> totalCov = vertexPrimary_->covariance() + theVtx.covariance();
+            ROOT::Math::SVector<double, 3>  distVecXY(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), 0.);
+            double distMagXY = ROOT::Math::Mag(distVecXY);
+            double sigmaDistMagXY = sqrt(ROOT::Math::Similarity(totalCov, distVecXY)) / distMagXY;
 
-           // 3D decay significance
-           ROOT::Math::SVector<double, 3>  distVecXYZ(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), vtxPos.z() - vertexPrimary_->position().z());
-           double distMagXYZ = ROOT::Math::Mag(distVecXYZ);
-           double sigmaDistMagXYZ = sqrt(ROOT::Math::Similarity(totalCov, distVecXYZ)) / distMagXYZ;
+            // 3D decay significance
+            ROOT::Math::SVector<double, 3>  distVecXYZ(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), vtxPos.z() - vertexPrimary_->position().z());
+            double distMagXYZ = ROOT::Math::Mag(distVecXYZ);
+            double sigmaDistMagXYZ = sqrt(ROOT::Math::Similarity(totalCov, distVecXYZ)) / distMagXYZ;
 
-           // do stuff with refit tracks
+            // do stuff with refit tracks
 
-           std::unique_ptr<TrajectoryStateClosestToPoint> traj1;
-           std::unique_ptr<TrajectoryStateClosestToPoint> traj2;
-           std::vector<reco::TransientTrack> theRefTracks = theRecoVertex.refittedTracks();
+            std::unique_ptr<TrajectoryStateClosestToPoint> traj1;
+            std::unique_ptr<TrajectoryStateClosestToPoint> traj2;
+            std::vector<reco::TransientTrack> theRefTracks = theRecoVertex.refittedTracks();
 
-           if ( theRefTracks.size() > 1 ) {
-               reco::TransientTrack* transTk1 = nullptr;
-               reco::TransientTrack* transTk2 = nullptr;
+            if ( theRefTracks.size() > 1 ) {
+                reco::TransientTrack* transTk1 = nullptr;
+                reco::TransientTrack* transTk2 = nullptr;
 
-               transTk1 = &theRefTracks[0];
-               transTk2 = &theRefTracks[1];
+                transTk1 = &theRefTracks[0];
+                transTk2 = &theRefTracks[1];
 
-               if (transTk1 == nullptr || transTk2 == nullptr) continue;
-               traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTk1->trajectoryStateClosestToPoint(vtxPos));
-               traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTk2->trajectoryStateClosestToPoint(vtxPos));
-           }
+                if (transTk1 == nullptr || transTk2 == nullptr) continue;
+                traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTk1->trajectoryStateClosestToPoint(vtxPos));
+                traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTk2->trajectoryStateClosestToPoint(vtxPos));
+            }
+            else {
+                traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr1->trajectoryStateClosestToPoint(vtxPos));
+                traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr2->trajectoryStateClosestToPoint(vtxPos));
+            }
 
-           else {
-               traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr1->trajectoryStateClosestToPoint(vtxPos));
-               traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr2->trajectoryStateClosestToPoint(vtxPos));
-           }
+            if (traj1.get() == nullptr || traj2.get() == nullptr || !traj1->isValid() || !traj2->isValid()) continue;
 
-           if (traj1.get() == nullptr || traj2.get() == nullptr || !traj1->isValid() || !traj2->isValid()) continue;
+            GlobalVector P1(traj1->momentum());
+            GlobalVector P2(traj2->momentum());
+            GlobalVector totalP(P1 + P2);
 
-           GlobalVector P1(traj1->momentum());
-           GlobalVector P2(traj2->momentum());
-           GlobalVector totalP(P1 + P2);
+            // 2D pointing angle
+            double dx = theVtx.x() - vertexPrimary_->position().x();
+            double dy = theVtx.y() - vertexPrimary_->position().y();
+            double px = totalP.x();
+            double py = totalP.y();
+            double angleXY = (dx * px + dy * py) / (sqrt(dx * dx + dy * dy) * sqrt(px * px + py * py));
 
-           // 2D pointing angle
-           double dx = theVtx.x() - vertexPrimary_->position().x();
-           double dy = theVtx.y() - vertexPrimary_->position().y();
-           double px = totalP.x();
-           double py = totalP.y();
-           double angleXY = (dx * px + dy * py) / (sqrt(dx * dx + dy * dy) * sqrt(px * px + py * py));
+            // 3D pointing angle
+            double dz = theVtx.z() - vertexPrimary_->position().z();
+            double pz = totalP.z();
+            double angleXYZ = (dx * px + dy * py + dz * pz) / (sqrt(dx * dx + dy * dy + dz * dz) * sqrt(px * px + py * py + pz * pz));
 
-           // 3D pointing angle
-           double dz = theVtx.z() - vertexPrimary_->position().z();
-           double pz = totalP.z();
-           double angleXYZ = (dx * px + dy * py + dz * pz) / (sqrt(dx * dx + dy * dy + dz * dz) * sqrt(px * px + py * py + pz * pz));
+            reco::Particle::Point vtx(theVtx.x(), theVtx.y(), theVtx.z());
+//           const reco::Vertex::CovarianceMatrix vtxCov(theVtx.covariance()); // Currently unused
 
-           reco::Particle::Point vtx(theVtx.x(), theVtx.y(), theVtx.z());
-           const reco::Vertex::CovarianceMatrix vtxCov(theVtx.covariance());
+            numMuonTrackPairs[ID]++;
 
-           numMuonTracks[ID]++;
+            muonTkPairSortedIndex1[ID][numMuonTrackPairs[ID] - 1] = muonTkIndices[trdx1];
+            muonTkPairSortedIndex2[ID][numMuonTrackPairs[ID] - 1] = muonTkIndices[trdx2];
 
-           muonTkPairSortedIndex1[ID][numMuonTracks[ID] - 1] = muonTkIndices[trdx1];
-           muonTkPairSortedIndex2[ID][numMuonTracks[ID] - 1] = muonTkIndices[trdx2];
+            muonTkPairSortedTkVtxPx[ID][numMuonTrackPairs[ID] - 1] = px;
+            muonTkPairSortedTkVtxPy[ID][numMuonTrackPairs[ID] - 1] = py;
+            muonTkPairSortedTkVtxPz[ID][numMuonTrackPairs[ID] - 1] = pz;
+            muonTkPairSortedTkVtxP2[ID][numMuonTrackPairs[ID] - 1] = totalP.mag2();
+            muonTkPairSortedTkVx[ID][numMuonTrackPairs[ID] - 1] = theVtx.x();
+            muonTkPairSortedTkVy[ID][numMuonTrackPairs[ID] - 1] = theVtx.y();
+            muonTkPairSortedTkVz[ID][numMuonTrackPairs[ID] - 1] = theVtx.z();
+            muonTkPairSortedTkVxError[ID][numMuonTrackPairs[ID] - 1] = theVtx.xError();
+            muonTkPairSortedTkVyError[ID][numMuonTrackPairs[ID] - 1] = theVtx.yError();
+            muonTkPairSortedTkVzError[ID][numMuonTrackPairs[ID] - 1] = theVtx.zError();
+            muonTkPairSortedTkVtxChi2[ID][numMuonTrackPairs[ID] - 1] = theVtx.chi2();
+            muonTkPairSortedTkVtxNdof[ID][numMuonTrackPairs[ID] - 1] = theVtx.ndof();
+            muonTkPairSortedTkVtxTime[ID][numMuonTrackPairs[ID] - 1] = theVtx.t();
+            muonTkPairSortedTkVtxTimeError[ID][numMuonTrackPairs[ID] - 1] = theVtx.tError();
+            muonTkPairSortedTkVtxAngleXY[ID][numMuonTrackPairs[ID] - 1] = angleXY;
+            muonTkPairSortedTkVtxDistMagXY[ID][numMuonTrackPairs[ID] - 1] = distMagXY;
+            muonTkPairSortedTkVtxDistMagXYSigma[ID][numMuonTrackPairs[ID] - 1] = sigmaDistMagXY;
+            muonTkPairSortedTkVtxAngleXYZ[ID][numMuonTrackPairs[ID] - 1] = angleXYZ; 
+            muonTkPairSortedTkVtxDistMagXYZ[ID][numMuonTrackPairs[ID] - 1] = distMagXYZ;
+            muonTkPairSortedTkVtxDistMagXYZSigma[ID][numMuonTrackPairs[ID] - 1] = sigmaDistMagXYZ;
 
-           muonTkPairSortedTkVtxPx[ID][numMuonTracks[ID] - 1] = px;
-           muonTkPairSortedTkVtxPy[ID][numMuonTracks[ID] - 1] = py;
-           muonTkPairSortedTkVtxPz[ID][numMuonTracks[ID] - 1] = pz;
-           muonTkPairSortedTkVtxP2[ID][numMuonTracks[ID] - 1] = totalP.mag2();
-           muonTkPairSortedTkVx[ID][numMuonTracks[ID] - 1] = theVtx.x();
-           muonTkPairSortedTkVy[ID][numMuonTracks[ID] - 1] = theVtx.y();
-           muonTkPairSortedTkVz[ID][numMuonTracks[ID] - 1] = theVtx.z();
-           muonTkPairSortedTkVxError[ID][numMuonTracks[ID] - 1] = theVtx.xError();
-           muonTkPairSortedTkVyError[ID][numMuonTracks[ID] - 1] = theVtx.yError();
-           muonTkPairSortedTkVzError[ID][numMuonTracks[ID] - 1] = theVtx.zError();
-           muonTkPairSortedTkVtxChi2[ID][numMuonTracks[ID] - 1] = theVtx.chi2();
-           muonTkPairSortedTkVtxNdof[ID][numMuonTracks[ID] - 1] = theVtx.ndof();
-           muonTkPairSortedTkVtxTime[ID][numMuonTracks[ID] - 1] = theVtx.t();
-           muonTkPairSortedTkVtxTimeError[ID][numMuonTracks[ID] - 1] = theVtx.tError();
-           muonTkPairSortedTkVtxAngleXY[ID][numMuonTracks[ID] - 1] = angleXY;
-           muonTkPairSortedTkVtxDistMagXY[ID][numMuonTracks[ID] - 1] = distMagXY;
-           muonTkPairSortedTkVtxDistMagXYSigma[ID][numMuonTracks[ID] - 1] = sigmaDistMagXY;
-           muonTkPairSortedTkVtxAngleXYZ[ID][numMuonTracks[ID] - 1] = angleXYZ; 
-           muonTkPairSortedTkVtxDistMagXYZ[ID][numMuonTracks[ID] - 1] = distMagXYZ;
-           muonTkPairSortedTkVtxDistMagXYZSigma[ID][numMuonTracks[ID] - 1] = sigmaDistMagXYZ;
+            muonTkPairSortedTk1Pt[ID][numMuonTrackPairs[ID] - 1] = traj1->pt();
+            muonTkPairSortedTk1Px[ID][numMuonTrackPairs[ID] - 1] = P1.x();
+            muonTkPairSortedTk1Py[ID][numMuonTrackPairs[ID] - 1] = P1.y();
+            muonTkPairSortedTk1Pz[ID][numMuonTrackPairs[ID] - 1] = P1.z();
+            muonTkPairSortedTk1P2[ID][numMuonTrackPairs[ID] - 1] = P1.mag2();
+            muonTkPairSortedTk1Eta[ID][numMuonTrackPairs[ID] - 1] = P1.eta();
+            muonTkPairSortedTk1Phi[ID][numMuonTrackPairs[ID] - 1] = P1.phi();
+            muonTkPairSortedTk1Charge[ID][numMuonTrackPairs[ID] - 1] = traj1->charge();
+            float tk1Chi2{0.}, tk1Ndof{0.};
+            if ( theRefTracks.size() > 1 ) {
+                tk1Chi2 = theRefTracks[0].chi2();
+                tk1Ndof = theRefTracks[0].ndof();
+            }
+            muonTkPairSortedTk1Chi2[ID][numMuonTrackPairs[ID] - 1] = tk1Chi2;
+            muonTkPairSortedTk1Ndof[ID][numMuonTrackPairs[ID] - 1] = tk1Ndof;
 
-           muonTkPairSortedTk1Pt[ID][numMuonTracks[ID] - 1] = traj1->pt();
-           muonTkPairSortedTk1Px[ID][numMuonTracks[ID] - 1] = P1.x();
-           muonTkPairSortedTk1Py[ID][numMuonTracks[ID] - 1] = P1.y();
-           muonTkPairSortedTk1Pz[ID][numMuonTracks[ID] - 1] = P1.z();
-           muonTkPairSortedTk1P2[ID][numMuonTracks[ID] - 1] = P1.mag2();
-           muonTkPairSortedTk1Eta[ID][numMuonTracks[ID] - 1] = P1.eta();
-           muonTkPairSortedTk1Phi[ID][numMuonTracks[ID] - 1] = P1.phi();
-           muonTkPairSortedTk1Charge[ID][numMuonTracks[ID] - 1] = traj1->charge();
-           float tk1Chi2{0.}, tk1Ndof{0.};
-           if ( theRefTracks.size() > 1 ) {
-               tk1Chi2 = theRefTracks[0].chi2();
-               tk1Ndof = theRefTracks[0].ndof();
-           }
-           muonTkPairSortedTk1Chi2[ID][numMuonTracks[ID] - 1] = tk1Chi2;
-           muonTkPairSortedTk1Ndof[ID][numMuonTracks[ID] - 1] = tk1Ndof;
+            muonTkPairSortedTk2Pt[ID][numMuonTrackPairs[ID] - 1] = traj2->pt();
+            muonTkPairSortedTk2Px[ID][numMuonTrackPairs[ID] - 1] = P2.x();
+            muonTkPairSortedTk2Py[ID][numMuonTrackPairs[ID] - 1] = P2.y();
+            muonTkPairSortedTk2Pz[ID][numMuonTrackPairs[ID] - 1] = P2.z();
+            muonTkPairSortedTk2P2[ID][numMuonTrackPairs[ID] - 1] = P2.mag2();
+            muonTkPairSortedTk2Eta[ID][numMuonTrackPairs[ID] - 1] = P2.eta();
+            muonTkPairSortedTk2Phi[ID][numMuonTrackPairs[ID] - 1] = P2.phi();
+            muonTkPairSortedTk2Charge[ID][numMuonTrackPairs[ID] - 1] = traj2->charge();
+            float tk2Chi2{0.}, tk2Ndof{0.};
+            if ( theRefTracks.size() > 1 ) {
+                tk2Chi2 = theRefTracks[1].chi2();
+                tk2Ndof = theRefTracks[1].ndof();
+            }
+            muonTkPairSortedTk2Chi2[ID][numMuonTrackPairs[ID] - 1] = tk2Chi2;
+            muonTkPairSortedTk2Ndof[ID][numMuonTrackPairs[ID] - 1] = tk2Ndof;
 
-           muonTkPairSortedTk2Pt[ID][numMuonTracks[ID] - 1] = traj2->pt();
-           muonTkPairSortedTk2Px[ID][numMuonTracks[ID] - 1] = P2.x();
-           muonTkPairSortedTk2Py[ID][numMuonTracks[ID] - 1] = P2.y();
-           muonTkPairSortedTk2Pz[ID][numMuonTracks[ID] - 1] = P2.z();
-           muonTkPairSortedTk2P2[ID][numMuonTracks[ID] - 1] = P2.mag2();
-           muonTkPairSortedTk2Eta[ID][numMuonTracks[ID] - 1] = P2.eta();
-           muonTkPairSortedTk2Phi[ID][numMuonTracks[ID] - 1] = P2.phi();
-           muonTkPairSortedTk2Charge[ID][numMuonTracks[ID] - 1] = traj2->charge();
-           float tk2Chi2{0.}, tk2Ndof{0.};
-           if ( theRefTracks.size() > 1 ) {
-               tk2Chi2 = theRefTracks[1].chi2();
-               tk2Ndof = theRefTracks[1].ndof();
-           }
-           muonTkPairSortedTk2Chi2[ID][numMuonTracks[ID] - 1] = tk2Chi2;
-           muonTkPairSortedTk2Ndof[ID][numMuonTracks[ID] - 1] = tk2Ndof;
-
-           muonTkPairSortedTkVtxDcaPreFit[ID][numMuonTracks[ID] - 1] = dca;
+            muonTkPairSortedTkVtxDcaPreFit[ID][numMuonTrackPairs[ID] - 1] = dca;
         }
     }
 
@@ -2394,23 +2393,18 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
     iEvent.getByToken(packedCandToken_, packedCands);
 
-/*
-    // packedCands
-    packedCandsEts.clear();
-    for (const auto& packedCand : muons) {
-        double et{muon.et()}; // should already be corrected
-        muonEts.emplace_back(et);
-    }
+    edm::ESHandle<MagneticField> magneticFieldHandle;
+    iSetup.get<IdealMagneticFieldRecord>().get(magneticFieldHandle);
+    const MagneticField* theMagneticField = magneticFieldHandle.product();
 
-    if (muonEts.size() == 0) { // prevents a crash, the IndexSorter does not know what to do with zero-size vectors
-        return;
-    }
-    std::vector<size_t> etMuonSorted{IndexSorter<std::vector<float>>(muonEts, true)()};
-*/
+    chsTkIndices.clear();
+    chsTracks.clear();
+    chsTransTracks.clear();
 
     numPackedCands = 0;
 
     for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); it++) {
+
         if ( !it->hasTrackDetails() && it->pdgId() != 211 && it->pdgId() != 13 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
         if ( it->charge() == 0 ) continue; // NO neutral objects
         if ( it->pt() < 0.5 ) continue;
@@ -2442,6 +2436,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 
         packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
         if ( it->hasTrackDetails() ) {
+
             packedCandsDzError[numPackedCands] = it->dzError();
             packedCandsDxyError[numPackedCands] = it->dxyError();
             packedCandsTimeError[numPackedCands] = it->timeError();
@@ -2463,8 +2458,189 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 //            packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().stripLayersWithMeasurement();
 //            packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().trackerLayersWithMeasurement();
             packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
-        }
+
+            // Store packed cands track refs for post muon loop tracking analysis
+            if ( it->pdgId() == 211 && it->pseudoTrack().pt() > 5 && it->charge() != 0 ) { // only store charged hadrons
+                chsTkIndices.push_back( numPackedCands );
+                chsTracks.push_back( it->pseudoTrack() );
+                reco::TransientTrack tmpTransient( (it->pseudoTrack()), theMagneticField);
+                chsTransTracks.push_back( std::move( tmpTransient ) );
+            }
+
+        } // End track info loop
         numPackedCands++;
+    } // end packed cands loop
+
+    numChsTrackPairs = 0;
+
+    // loop over chs tracks
+    for (unsigned int trdx1 = 0; trdx1 < chsTracks.size() && numChsTrackPairs< numeric_cast<int>(NCHSTKPAIRMAX); ++trdx1) {
+        for (unsigned int trdx2 = trdx1 + 1; trdx2 < chsTracks.size() && numChsTrackPairs < numeric_cast<int>(NCHSTKPAIRMAX); ++trdx2) {
+
+            reco::Track trackRef1;
+            reco::Track trackRef2;
+            reco::TransientTrack* transTkPtr1 = nullptr;
+            reco::TransientTrack* transTkPtr2 = nullptr;
+
+            trackRef1 = chsTracks[trdx1];
+            trackRef2 = chsTracks[trdx2];
+            transTkPtr1 = &chsTransTracks[trdx1];
+            transTkPtr2 = &chsTransTracks[trdx2];
+
+            // measure distance between tracks at their closest approach
+
+            //these two variables are needed to 'pin' the temporary value returned to the stack
+            // in order to keep both States from pointing to destructed objects
+            auto const& impact1 = transTkPtr1->impactPointTSCP();
+            auto const& impact2 = transTkPtr2->impactPointTSCP();
+            if (!impact1.isValid() || !impact2.isValid()) continue;
+            FreeTrajectoryState const& state1 = impact1.theState();
+            FreeTrajectoryState const& state2 = impact2.theState();
+
+            ClosestApproachInRPhi cApp;
+            cApp.calculate(state1, state2);
+            if (!cApp.status()) continue;
+
+            float dca = std::abs(cApp.distance());
+
+            // the POCA should at least be in the sensitive volume
+            GlobalPoint cxPt = cApp.crossingPoint();
+            if ((cxPt.x() * cxPt.x() + cxPt.y() * cxPt.y()) > 120. * 120. || std::abs(cxPt.z()) > 300.) continue;
+
+            TrajectoryStateClosestToPoint const& TSCP1 = transTkPtr1->trajectoryStateClosestToPoint(cxPt);
+            TrajectoryStateClosestToPoint const& TSCP2 = transTkPtr2->trajectoryStateClosestToPoint(cxPt);
+            if (!TSCP1.isValid() || !TSCP2.isValid()) continue;
+
+            // Fill the vector of TransientTracks to send to KVF
+            std::vector<reco::TransientTrack> tmpTransTracks;
+            tmpTransTracks.reserve(2);
+            tmpTransTracks.push_back(*transTkPtr1);
+            tmpTransTracks.push_back(*transTkPtr2);
+
+            // create the vertex fitter object and vertex the tracks
+            KalmanVertexFitter theKalmanFitter(true); // KalmanVertexFitter(bool useSmoothing = false);
+            TransientVertex theRecoVertex  = theKalmanFitter.vertex(tmpTransTracks);
+            if (!theRecoVertex.isValid()) continue;
+
+            // do stuff with new vertices
+
+            reco::Vertex theVtx = theRecoVertex;
+            GlobalPoint vtxPos(theVtx.x(), theVtx.y(), theVtx.z());
+
+            // 2D decay significance
+            ROOT::Math::SMatrix<double, 3, 3, ROOT::Math::MatRepSym<double, 3>> totalCov = vertexPrimary_->covariance() + theVtx.covariance();
+            ROOT::Math::SVector<double, 3>  distVecXY(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), 0.);
+            double distMagXY = ROOT::Math::Mag(distVecXY);
+            double sigmaDistMagXY = sqrt(ROOT::Math::Similarity(totalCov, distVecXY)) / distMagXY;
+
+            // 3D decay significance
+            ROOT::Math::SVector<double, 3>  distVecXYZ(vtxPos.x() - vertexPrimary_->position().x(), vtxPos.y() - vertexPrimary_->position().y(), vtxPos.z() - vertexPrimary_->position().z());
+            double distMagXYZ = ROOT::Math::Mag(distVecXYZ);
+            double sigmaDistMagXYZ = sqrt(ROOT::Math::Similarity(totalCov, distVecXYZ)) / distMagXYZ;
+
+            // do stuff with refit tracks
+
+            std::unique_ptr<TrajectoryStateClosestToPoint> traj1;
+            std::unique_ptr<TrajectoryStateClosestToPoint> traj2;
+            std::vector<reco::TransientTrack> theRefTracks = theRecoVertex.refittedTracks();
+ 
+            if ( theRefTracks.size() > 1 ) {
+                reco::TransientTrack* transTk1 = nullptr;
+                reco::TransientTrack* transTk2 = nullptr;
+ 
+                transTk1 = &theRefTracks[0];
+                transTk2 = &theRefTracks[1];
+
+                if (transTk1 == nullptr || transTk2 == nullptr) continue;
+                traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTk1->trajectoryStateClosestToPoint(vtxPos));
+                traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTk2->trajectoryStateClosestToPoint(vtxPos));
+            }
+            else {
+                traj1 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr1->trajectoryStateClosestToPoint(vtxPos));
+                traj2 = std::make_unique<TrajectoryStateClosestToPoint>(transTkPtr2->trajectoryStateClosestToPoint(vtxPos));
+            }
+
+            if (traj1.get() == nullptr || traj2.get() == nullptr || !traj1->isValid() || !traj2->isValid()) continue;
+
+            GlobalVector P1(traj1->momentum());
+            GlobalVector P2(traj2->momentum());
+            GlobalVector totalP(P1 + P2);
+
+            // 2D pointing angle
+            double dx = theVtx.x() - vertexPrimary_->position().x();
+            double dy = theVtx.y() - vertexPrimary_->position().y();
+            double px = totalP.x();
+            double py = totalP.y();
+            double angleXY = (dx * px + dy * py) / (sqrt(dx * dx + dy * dy) * sqrt(px * px + py * py));
+
+            // 3D pointing angle
+            double dz = theVtx.z() - vertexPrimary_->position().z();
+            double pz = totalP.z();
+            double angleXYZ = (dx * px + dy * py + dz * pz) / (sqrt(dx * dx + dy * dy + dz * dz) * sqrt(px * px + py * py + pz * pz));
+
+            reco::Particle::Point vtx(theVtx.x(), theVtx.y(), theVtx.z());
+//            const reco::Vertex::CovarianceMatrix vtxCov(theVtx.covariance()); // Currently unused
+ 
+            chsTkPairIndex1[numChsTrackPairs] = chsTkIndices[trdx1];
+            chsTkPairIndex2[numChsTrackPairs] = chsTkIndices[trdx2];
+
+            chsTkPairTkVtxPx[numChsTrackPairs] = px;
+            chsTkPairTkVtxPy[numChsTrackPairs] = py;
+            chsTkPairTkVtxPz[numChsTrackPairs] = pz;
+            chsTkPairTkVtxP2[numChsTrackPairs] = totalP.mag2();
+            chsTkPairTkVx[numChsTrackPairs] = theVtx.x();
+            chsTkPairTkVy[numChsTrackPairs] = theVtx.y();
+            chsTkPairTkVz[numChsTrackPairs] = theVtx.z();
+            chsTkPairTkVxError[numChsTrackPairs] = theVtx.xError();
+            chsTkPairTkVyError[numChsTrackPairs] = theVtx.yError();
+            chsTkPairTkVzError[numChsTrackPairs] = theVtx.zError();
+            chsTkPairTkVtxChi2[numChsTrackPairs] = theVtx.chi2();
+            chsTkPairTkVtxNdof[numChsTrackPairs] = theVtx.ndof();
+            chsTkPairTkVtxTime[numChsTrackPairs] = theVtx.t();
+            chsTkPairTkVtxTimeError[numChsTrackPairs] = theVtx.tError();
+            chsTkPairTkVtxAngleXY[numChsTrackPairs] = angleXY;
+            chsTkPairTkVtxDistMagXY[numChsTrackPairs] = distMagXY;
+            chsTkPairTkVtxDistMagXYSigma[numChsTrackPairs] = sigmaDistMagXY;
+            chsTkPairTkVtxAngleXYZ[numChsTrackPairs] = angleXYZ; 
+            chsTkPairTkVtxDistMagXYZ[numChsTrackPairs] = distMagXYZ;
+            chsTkPairTkVtxDistMagXYZSigma[numChsTrackPairs] = sigmaDistMagXYZ;
+
+            chsTkPairTk1Pt[numChsTrackPairs] = traj1->pt();
+            chsTkPairTk1Px[numChsTrackPairs] = P1.x();
+            chsTkPairTk1Py[numChsTrackPairs] = P1.y();
+            chsTkPairTk1Pz[numChsTrackPairs] = P1.z();
+            chsTkPairTk1P2[numChsTrackPairs] = P1.mag2();
+            chsTkPairTk1Eta[numChsTrackPairs] = P1.eta();
+            chsTkPairTk1Phi[numChsTrackPairs] = P1.phi();
+            chsTkPairTk1Charge[numChsTrackPairs] = traj1->charge();
+            float tk1Chi2{0.}, tk1Ndof{0.};
+            if ( theRefTracks.size() > 1 ) {
+                tk1Chi2 = theRefTracks[0].chi2();
+                tk1Ndof = theRefTracks[0].ndof();
+            }
+            chsTkPairTk1Chi2[numChsTrackPairs] = tk1Chi2;
+            chsTkPairTk1Ndof[numChsTrackPairs] = tk1Ndof;
+
+            chsTkPairTk2Pt[numChsTrackPairs] = traj2->pt();
+            chsTkPairTk2Px[numChsTrackPairs] = P2.x();
+            chsTkPairTk2Py[numChsTrackPairs] = P2.y();
+            chsTkPairTk2Pz[numChsTrackPairs] = P2.z();
+            chsTkPairTk2P2[numChsTrackPairs] = P2.mag2();
+            chsTkPairTk2Eta[numChsTrackPairs] = P2.eta();
+            chsTkPairTk2Phi[numChsTrackPairs] = P2.phi();
+            chsTkPairTk2Charge[numChsTrackPairs] = traj2->charge();
+            float tk2Chi2{0.}, tk2Ndof{0.};
+            if ( theRefTracks.size() > 1 ) {
+                tk2Chi2 = theRefTracks[1].chi2();
+                tk2Ndof = theRefTracks[1].ndof();
+            }
+            chsTkPairTk2Chi2[numChsTrackPairs] = tk2Chi2;
+            chsTkPairTk2Ndof[numChsTrackPairs] = tk2Ndof;
+
+            chsTkPairTkVtxDcaPreFit[numChsTrackPairs] = dca;
+
+            numChsTrackPairs++;
+        }
     }
 }
 
@@ -2669,8 +2845,8 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     muonEts.clear(); // just used for sorting
     // vectors to store muon track refs and indices for later
     muonTkIndices.clear();
-    trackRefs.clear();
-    transTracks.clear();
+    muonTrackRefs.clear();
+    muonTransTracks.clear();
 
     muonSortedE[ID].clear();
     muonSortedEt[ID].clear();
@@ -2768,7 +2944,7 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     genMuonSortedPromptFinalState[ID].clear();
     genMuonSortedHardProcess[ID].clear();
 
-    numMuonTracks[ID] = 0;
+    numMuonTrackPairs[ID] = 0;
     muonTkPairSortedIndex1[ID].clear(); 
     muonTkPairSortedIndex2[ID].clear();
     muonTkPairSortedTkVtxPx[ID].clear();
@@ -2812,7 +2988,6 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     muonTkPairSortedTk2Chi2[ID].clear();
     muonTkPairSortedTk2Ndof[ID].clear();
     muonTkPairSortedTkVtxDcaPreFit[ID].clear();
-
 }
 
 void MakeTopologyNtupleMiniAOD::clearMetArrays(const std::string& ID){
@@ -3139,8 +3314,11 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
     // std::cout << "clearPackedCandsArrays CHECK" << std::endl;
     numPackedCands = 0;
 
-    for (size_t i{0}; i < NISOTRACKSMAX; i++)
-    {
+    chsTkIndices.clear();
+    chsTracks.clear();
+    chsTransTracks.clear();
+
+    for (size_t i{0}; i < NPACKEDCANDSMAX; i++) {
 //        packedCandsPt[i] = -1.;
         packedCandsPx[i] = -1.;
         packedCandsPy[i] = -1.;
@@ -3185,6 +3363,53 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
 //        packedCandsPseudoTrkStripLayersWithMeasurement[i] = -1;
 //        packedCandsPseudoTrkTrackerLayersWithMeasurement[i] = -1;
         packedCandsHighPurityTrack[i] = -1;
+    }
+
+    numChsTrackPairs = 0;
+    for (size_t i{0}; i < NCHSTKPAIRMAX; i++) {
+        chsTkPairIndex1[i] = -1; 
+        chsTkPairIndex2[i] = -1;
+        chsTkPairTkVtxPx[i] = -1.;
+        chsTkPairTkVtxPy[i] = -1.;
+        chsTkPairTkVtxPz[i] = -1.;
+        chsTkPairTkVtxP2[i] = -1.;
+        chsTkPairTkVx[i] = 0.;
+        chsTkPairTkVy[i] = 0.;                                   
+        chsTkPairTkVz[i] = 0.;
+        chsTkPairTkVxError[i] = 0.;
+        chsTkPairTkVyError[i] = 0.;
+        chsTkPairTkVzError[i] = 0.;
+        chsTkPairTkVtxChi2[i] = -9999.;
+        chsTkPairTkVtxNdof[i] = 0.;
+        chsTkPairTkVtxTime[i] = 0.;
+        chsTkPairTkVtxTimeError[i] = 0.;
+        chsTkPairTkVtxAngleXY[i] = 0.;
+        chsTkPairTkVtxDistMagXY[i] = 0.;
+        chsTkPairTkVtxDistMagXYSigma[i] = 0.;
+        chsTkPairTkVtxAngleXYZ[i] = 0.;
+        chsTkPairTkVtxDistMagXYZ[i] = 0.;
+        chsTkPairTkVtxDistMagXYZSigma[i] = 0.;
+        chsTkPairTk1Pt[i] = -1.;
+        chsTkPairTk1Px[i] = -1.;
+        chsTkPairTk1Py[i] = -1.;
+        chsTkPairTk1Pz[i] = -1.;
+        chsTkPairTk1P2[i] = -1.;
+        chsTkPairTk1Eta[i] = 9999.;
+        chsTkPairTk1Phi[i] = 9999.;
+        chsTkPairTk1Charge[i] = 0;
+        chsTkPairTk1Chi2[i] = -9999.;
+        chsTkPairTk1Ndof[i] = 0.;
+        chsTkPairTk2Pt[i] = -1.;
+        chsTkPairTk2Px[i] = -1.;
+        chsTkPairTk2Py[i] = -1.;
+        chsTkPairTk2Pz[i] = -1.;
+        chsTkPairTk2P2[i] = -1.;
+        chsTkPairTk2Eta[i] = 9999.;
+        chsTkPairTk2Phi[i] = 9999.;
+        chsTkPairTk2Charge[i] = 0;
+        chsTkPairTk2Chi2[i] = -9999.;
+        chsTkPairTk2Ndof[i] = 0.;
+        chsTkPairTkVtxDcaPreFit[i] = -9999.;
     }
 }
 
@@ -4533,55 +4758,56 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
         mytree_->Branch((prefix + "HardProcess").c_str(), &genMuonSortedHardProcess[ID][0], (prefix + "HardProcess[numMuon" + name + "]/I").c_str());
     }
 
-    mytree_->Branch(("numMuonTracks" + name).c_str(), &numMuonTracks[ID], ("numMuonTracks" + name + "/I").c_str());
+    mytree_->Branch(("numMuonTrackPairs" + name).c_str(), &numMuonTrackPairs[ID], ("numMuonTrackPairs" + name + "/I").c_str());
     std::string prefix2{"muonTkPair" + name};
-    mytree_->Branch((prefix2 + "Index1").c_str(), &muonTkPairSortedIndex1[ID][0], (prefix2 + "Index1[numMuonTracks" + name + "]/I").c_str());
-    mytree_->Branch((prefix2 + "Index2").c_str(), &muonTkPairSortedIndex2[ID][0], (prefix2 + "Index2[numMuonTracks" + name + "]/I").c_str());
-    mytree_->Branch((prefix2 + "TkVtxPx").c_str(), &muonTkPairSortedTkVtxPx[ID][0], (prefix2 + "TkVtxPx[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxPy").c_str(), &muonTkPairSortedTkVtxPy[ID][0], (prefix2 + "TkVtxPy[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxPz").c_str(), &muonTkPairSortedTkVtxPz[ID][0], (prefix2 + "TkVtxPz[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxP2").c_str(), &muonTkPairSortedTkVtxP2[ID][0], (prefix2 + "TkVtxP2[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVx").c_str(), &muonTkPairSortedTkVx[ID][0], (prefix2 + "TkVx[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVy").c_str(), &muonTkPairSortedTkVy[ID][0], (prefix2 + "TkVy[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVz").c_str(), &muonTkPairSortedTkVz[ID][0], (prefix2 + "TkVz[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVxError").c_str(), &muonTkPairSortedTkVxError[ID][0], (prefix2 + "TkVxError[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVyError").c_str(), &muonTkPairSortedTkVyError[ID][0], (prefix2 + "TkVyError[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVzError").c_str(), &muonTkPairSortedTkVzError[ID][0], (prefix2 + "TkVzError[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxChi2").c_str(), &muonTkPairSortedTkVtxChi2[ID][0], (prefix2 + "TkVtxChi2[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxNdof").c_str(), &muonTkPairSortedTkVtxNdof[ID][0], (prefix2 + "TkVtxNdof[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxTime").c_str(), &muonTkPairSortedTkVtxTime[ID][0], (prefix2 + "TkVtxTimeError[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxTimeError").c_str(), &muonTkPairSortedTkVtxTimeError[ID][0], (prefix2 + "TkVtxTimeError[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxAngleXY").c_str(), &muonTkPairSortedTkVtxAngleXY[ID][0], (prefix2 + "TkVtxAngleXY[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxDistMagXY").c_str(), &muonTkPairSortedTkVtxDistMagXY[ID][0], (prefix2 + "TkVtxDistMagXY[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxDistMagXYSigma").c_str(), &muonTkPairSortedTkVtxDistMagXYSigma[ID][0], (prefix2 + "TkVtxDistMagXYSigma[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxAngleXYZ").c_str(), &muonTkPairSortedTkVtxAngleXYZ[ID][0], (prefix2 + "TkVtxAngleXYZ[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxDistMagXYZ").c_str(), &muonTkPairSortedTkVtxDistMagXYZ[ID][0], (prefix2 + "TkVtxDistMagXYZ[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxDistMagXYZSigma").c_str(), &muonTkPairSortedTkVtxDistMagXYZSigma[ID][0], (prefix2 + "TkVtxDistMagXYZSigma[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Pt").c_str(), &muonTkPairSortedTk1Pt[ID][0], (prefix2 + "Tk1Pt[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Px").c_str(), &muonTkPairSortedTk1Px[ID][0], (prefix2 + "Tk1Px[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Py").c_str(), &muonTkPairSortedTk1Py[ID][0], (prefix2 + "Tk1Py[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Pz").c_str(), &muonTkPairSortedTk1Pz[ID][0], (prefix2 + "Tk1Pz[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1P2").c_str(), &muonTkPairSortedTk1P2[ID][0], (prefix2 + "Tk1P2[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Eta").c_str(), &muonTkPairSortedTk1Eta[ID][0], (prefix2 + "Tk1Eta[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Phi").c_str(), &muonTkPairSortedTk1Phi[ID][0], (prefix2 + "Tk1Phi[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Charge").c_str(), &muonTkPairSortedTk1Charge[ID][0], (prefix2 + "Tk1Charge[numMuonTracks" + name + "]/I").c_str());
-    mytree_->Branch((prefix2 + "Tk1Chi2").c_str(), &muonTkPairSortedTk1Chi2[ID][0], (prefix2 + "Tk1Chi2[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk1Ndof").c_str(), &muonTkPairSortedTk1Ndof[ID][0], (prefix2 + "Tk1Ndof[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Pt").c_str(), &muonTkPairSortedTk2Pt[ID][0], (prefix2 + "Tk2Pt[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Px").c_str(), &muonTkPairSortedTk2Px[ID][0], (prefix2 + "Tk2Px[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Py").c_str(), &muonTkPairSortedTk2Py[ID][0], (prefix2 + "Tk2Py[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Pz").c_str(), &muonTkPairSortedTk2Pz[ID][0], (prefix2 + "Tk2Pz[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2P2").c_str(), &muonTkPairSortedTk2P2[ID][0], (prefix2 + "Tk2P2[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Eta").c_str(), &muonTkPairSortedTk2Eta[ID][0], (prefix2 + "Tk2Eta[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Phi").c_str(), &muonTkPairSortedTk2Phi[ID][0], (prefix2 + "Tk2Phi[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Charge").c_str(), &muonTkPairSortedTk2Charge[ID][0], (prefix2 + "Tk2Charge[numMuonTracks" + name + "]/I").c_str());
-    mytree_->Branch((prefix2 + "Tk2Chi2").c_str(), &muonTkPairSortedTk2Chi2[ID][0], (prefix2 + "Tk2Chi2[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "Tk2Ndof").c_str(), &muonTkPairSortedTk2Ndof[ID][0], (prefix2 + "Tk2Ndof[numMuonTracks" + name + "]/F").c_str());
-    mytree_->Branch((prefix2 + "TkVtxDcaPreFit").c_str(), &muonTkPairSortedTkVtxDcaPreFit[ID][0], (prefix2 + "TkVtxDcaPreFit[numMuonTracks" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Index1").c_str(), &muonTkPairSortedIndex1[ID][0], (prefix2 + "Index1[numMuonTrackPairs" + name + "]/I").c_str());
+    mytree_->Branch((prefix2 + "Index2").c_str(), &muonTkPairSortedIndex2[ID][0], (prefix2 + "Index2[numMuonTrackPairs" + name + "]/I").c_str());
+    mytree_->Branch((prefix2 + "TkVtxPx").c_str(), &muonTkPairSortedTkVtxPx[ID][0], (prefix2 + "TkVtxPx[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxPy").c_str(), &muonTkPairSortedTkVtxPy[ID][0], (prefix2 + "TkVtxPy[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxPz").c_str(), &muonTkPairSortedTkVtxPz[ID][0], (prefix2 + "TkVtxPz[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxP2").c_str(), &muonTkPairSortedTkVtxP2[ID][0], (prefix2 + "TkVtxP2[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVx").c_str(), &muonTkPairSortedTkVx[ID][0], (prefix2 + "TkVx[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVy").c_str(), &muonTkPairSortedTkVy[ID][0], (prefix2 + "TkVy[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVz").c_str(), &muonTkPairSortedTkVz[ID][0], (prefix2 + "TkVz[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVxError").c_str(), &muonTkPairSortedTkVxError[ID][0], (prefix2 + "TkVxError[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVyError").c_str(), &muonTkPairSortedTkVyError[ID][0], (prefix2 + "TkVyError[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVzError").c_str(), &muonTkPairSortedTkVzError[ID][0], (prefix2 + "TkVzError[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxChi2").c_str(), &muonTkPairSortedTkVtxChi2[ID][0], (prefix2 + "TkVtxChi2[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxNdof").c_str(), &muonTkPairSortedTkVtxNdof[ID][0], (prefix2 + "TkVtxNdof[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxTime").c_str(), &muonTkPairSortedTkVtxTime[ID][0], (prefix2 + "TkVtxTimeError[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxTimeError").c_str(), &muonTkPairSortedTkVtxTimeError[ID][0], (prefix2 + "TkVtxTimeError[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxAngleXY").c_str(), &muonTkPairSortedTkVtxAngleXY[ID][0], (prefix2 + "TkVtxAngleXY[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxDistMagXY").c_str(), &muonTkPairSortedTkVtxDistMagXY[ID][0], (prefix2 + "TkVtxDistMagXY[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxDistMagXYSigma").c_str(), &muonTkPairSortedTkVtxDistMagXYSigma[ID][0], (prefix2 + "TkVtxDistMagXYSigma[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxAngleXYZ").c_str(), &muonTkPairSortedTkVtxAngleXYZ[ID][0], (prefix2 + "TkVtxAngleXYZ[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxDistMagXYZ").c_str(), &muonTkPairSortedTkVtxDistMagXYZ[ID][0], (prefix2 + "TkVtxDistMagXYZ[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxDistMagXYZSigma").c_str(), &muonTkPairSortedTkVtxDistMagXYZSigma[ID][0], (prefix2 + "TkVtxDistMagXYZSigma[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Pt").c_str(), &muonTkPairSortedTk1Pt[ID][0], (prefix2 + "Tk1Pt[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Px").c_str(), &muonTkPairSortedTk1Px[ID][0], (prefix2 + "Tk1Px[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Py").c_str(), &muonTkPairSortedTk1Py[ID][0], (prefix2 + "Tk1Py[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Pz").c_str(), &muonTkPairSortedTk1Pz[ID][0], (prefix2 + "Tk1Pz[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1P2").c_str(), &muonTkPairSortedTk1P2[ID][0], (prefix2 + "Tk1P2[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Eta").c_str(), &muonTkPairSortedTk1Eta[ID][0], (prefix2 + "Tk1Eta[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Phi").c_str(), &muonTkPairSortedTk1Phi[ID][0], (prefix2 + "Tk1Phi[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Charge").c_str(), &muonTkPairSortedTk1Charge[ID][0], (prefix2 + "Tk1Charge[numMuonTrackPairs" + name + "]/I").c_str());
+    mytree_->Branch((prefix2 + "Tk1Chi2").c_str(), &muonTkPairSortedTk1Chi2[ID][0], (prefix2 + "Tk1Chi2[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk1Ndof").c_str(), &muonTkPairSortedTk1Ndof[ID][0], (prefix2 + "Tk1Ndof[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Pt").c_str(), &muonTkPairSortedTk2Pt[ID][0], (prefix2 + "Tk2Pt[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Px").c_str(), &muonTkPairSortedTk2Px[ID][0], (prefix2 + "Tk2Px[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Py").c_str(), &muonTkPairSortedTk2Py[ID][0], (prefix2 + "Tk2Py[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Pz").c_str(), &muonTkPairSortedTk2Pz[ID][0], (prefix2 + "Tk2Pz[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2P2").c_str(), &muonTkPairSortedTk2P2[ID][0], (prefix2 + "Tk2P2[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Eta").c_str(), &muonTkPairSortedTk2Eta[ID][0], (prefix2 + "Tk2Eta[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Phi").c_str(), &muonTkPairSortedTk2Phi[ID][0], (prefix2 + "Tk2Phi[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Charge").c_str(), &muonTkPairSortedTk2Charge[ID][0], (prefix2 + "Tk2Charge[numMuonTrackPairs" + name + "]/I").c_str());
+    mytree_->Branch((prefix2 + "Tk2Chi2").c_str(), &muonTkPairSortedTk2Chi2[ID][0], (prefix2 + "Tk2Chi2[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "Tk2Ndof").c_str(), &muonTkPairSortedTk2Ndof[ID][0], (prefix2 + "Tk2Ndof[numMuonTrackPairs" + name + "]/F").c_str());
+    mytree_->Branch((prefix2 + "TkVtxDcaPreFit").c_str(), &muonTkPairSortedTkVtxDcaPreFit[ID][0], (prefix2 + "TkVtxDcaPreFit[numMuonTrackPairs" + name + "]/F").c_str());
 }
 
 void MakeTopologyNtupleMiniAOD::bookMETBranches(const std::string& ID, const std::string& name) {
     // std::cout << "bookMETBranches CHECK" << std::endl;
+
     metE[ID] = -1.0;
     metEt[ID] = -1.0;
     metEtRaw[ID] = -1.0;
@@ -5180,6 +5406,52 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches() {
 //    mytree_->Branch("packedCandsPseudoTrkStripLayersWithMeasurement", &packedCandsPseudoTrkStripLayersWithMeasurement, "packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands]/I");
 //    mytree_->Branch("packedCandsPseudoTrkTrackerLayersWithMeasurement", &packedCandsPseudoTrkTrackerLayersWithMeasurement, "packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands]/I");
     mytree_->Branch("packedCandsHighPurityTrack", &packedCandsHighPurityTrack, "packedCandsHighPurityTrack[numPackedCands]/I");
+
+
+    mytree_->Branch("numChsTrackPairs", &numChsTrackPairs, "numChsTrackPairs/I");
+    mytree_->Branch("chsTkPairIndex1", &chsTkPairIndex1, "chsTkPairIndex1[numChsTrackPairs]/I");
+    mytree_->Branch("chsTkPairIndex2", &chsTkPairIndex2, "chsTkPairIndex2[numChsTrackPairs]/I");
+    mytree_->Branch("chsTkPairTkVtxPx", &chsTkPairTkVtxPx, "chsTkPairTkVtxPx[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxPy", &chsTkPairTkVtxPy, "chsTkPairTkVtxPy[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxPz", &chsTkPairTkVtxPz, "chsTkPairTkVtxPz[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxP2", &chsTkPairTkVtxP2, "chsTkPairTkVtxP2[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVx", &chsTkPairTkVx, "chsTkPairTkVx[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVy", &chsTkPairTkVy, "chsTkPairTkVy[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVz", &chsTkPairTkVz, "chsTkPairTkVz[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVxError", &chsTkPairTkVxError, "chsTkPairTkVxError[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVyError", &chsTkPairTkVyError, "chsTkPairTkVyError[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVzError", &chsTkPairTkVzError, "chsTkPairTkVzError[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxChi2", &chsTkPairTkVtxChi2, "chsTkPairTkVtxChi2[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxNdof", &chsTkPairTkVtxNdof, "chsTkPairTkVtxNdof[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxTime", &chsTkPairTkVtxTime, "chsTkPairTkVtxTime[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxTimeError", &chsTkPairTkVtxTimeError, "chsTkPairTkVtxTimeError[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxAngleXY", &chsTkPairTkVtxAngleXY, "chsTkPairTkVtxAngleXY[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxDistMagXY", &chsTkPairTkVtxDistMagXY, "chsTkPairTkVtxDistMagXY[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxDistMagXYSigma", &chsTkPairTkVtxDistMagXYSigma, "chsTkPairTkVtxDistMagXYSigma[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxAngleXYZ", &chsTkPairTkVtxAngleXYZ, "chsTkPairTkVtxAngleXYZ[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxDistMagXYZ", &chsTkPairTkVtxDistMagXYZ, "chsTkPairTkVtxDistMagXYZ[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxDistMagXYZSigma", &chsTkPairTkVtxDistMagXYZSigma, "chsTkPairTkVtxDistMagXYZSigma[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Pt", &chsTkPairTk1Pt, "chsTkPairTk1Pt[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Px", &chsTkPairTk1Px, "chsTkPairTk1Px[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Py", &chsTkPairTk1Py, "chsTkPairTk1Py[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Pz", &chsTkPairTk1Pz, "chsTkPairTk1Pz[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1P2", &chsTkPairTk1P2, "chsTkPairTk1P2[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Eta", &chsTkPairTk1Eta, "chsTkPairTk1Eta[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Phi", &chsTkPairTk1Phi, "chsTkPairTk1Phi[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Charge", &chsTkPairTk1Charge, "chsTkPairTk1Charge[numChsTrackPairs]/I");
+    mytree_->Branch("chsTkPairTk1Chi2", &chsTkPairTk1Chi2, "chsTkPairTk1Chi2[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk1Ndof", &chsTkPairTk1Ndof, "chsTkPairTk1Ndof[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Pt", &chsTkPairTk2Pt, "chsTkPairTk2Pt[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Px", &chsTkPairTk2Px, "chsTkPairTk2Px[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Py", &chsTkPairTk2Py, "chsTkPairTk2Py[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Pz", &chsTkPairTk2Pz, "chsTkPairTk2Pz[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2P2", &chsTkPairTk2P2, "chsTkPairTk2P2[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Eta", &chsTkPairTk2Eta, "chsTkPairTk2Eta[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Phi", &chsTkPairTk2Phi, "chsTkPairTk2Phi[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Charge", &chsTkPairTk2Charge, "chsTkPairTk2Charge[numChsTrackPairs]/I");
+    mytree_->Branch("chsTkPairTk2Chi2", &chsTkPairTk2Chi2, "chsTkPairTk2Chi2[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTk2Ndof", &chsTkPairTk2Ndof, "chsTkPairTk2Ndof[numChsTrackPairs]/F");
+    mytree_->Branch("chsTkPairTkVtxDcaPreFit", &chsTkPairTkVtxDcaPreFit, "chsTkPairTkVtxDcaPreFit[numChsTrackPairs]/F");
 }
 
 void MakeTopologyNtupleMiniAOD::bookPVbranches() {
