@@ -50,7 +50,7 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 
 					   pdfInfoFixingToken = cms.InputTag("pdfInfoFixing"),
 					   generatorToken = cms.InputTag("generator"),
-                                           minLeptons = cms.int32(2),
+                                           minLeptons = cms.int32(0),
 
                                            hasGeneralTracks   = cms.bool(False),
                                            generalTracksToken = cms.InputTag("generalTracks"),

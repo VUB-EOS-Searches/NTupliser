@@ -1148,10 +1148,12 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             transTkPtr1 = &muonTransTracks[trdx1];
             transTkPtr2 = &muonTransTracks[trdx2];
 
+            // check tracks are opposite charges
+            if ( trackRef1->charge() * trackRef2->charge() >= 0 ) continue;
+
             // measure distance between tracks at their closest approach
 
-            //these two variables are needed to 'pin' the temporary value returned to the stack
-            // in order to keep both States from pointing to destructed objects
+            //these two variables are needed to 'pin' the temporary value returned to the stack in order to keep both States from pointing to destructed objects
             auto const& impact1 = transTkPtr1->impactPointTSCP();
             auto const& impact2 = transTkPtr2->impactPointTSCP();
             if (!impact1.isValid() || !impact2.isValid()) continue;
@@ -2487,10 +2489,12 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             transTkPtr1 = &chsTransTracks[trdx1];
             transTkPtr2 = &chsTransTracks[trdx2];
 
+       	    // check tracks are	opposite charges
+       //	    if ( transTkPtr1->charge() * transTkPtr2->charge() >= 0 ) continue;
+
             // measure distance between tracks at their closest approach
 
-            //these two variables are needed to 'pin' the temporary value returned to the stack
-            // in order to keep both States from pointing to destructed objects
+            //these two variables are needed to 'pin' the temporary value returned to the stack in order to keep both States from pointing to destructed objects
             auto const& impact1 = transTkPtr1->impactPointTSCP();
             auto const& impact2 = transTkPtr2->impactPointTSCP();
             if (!impact1.isValid() || !impact2.isValid()) continue;
