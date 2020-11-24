@@ -35,8 +35,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     // ----------member data ---------------------------
 
     edm::Service<TFileService> fs;
-    std::map<std::string, TH1D*> histocontainer_; // simple map to contain all histograms. Histograms are booked in the beginJob() method
-    std::map<std::string, TH2D*> histocontainer2D_; // simple map to contain all histograms. Histograms are booked in the beginJob() method (2D)
+    std::map<std::string, TH1I*> histocontainer1I_; // simple map to contain all 1I histograms. Histograms are booked in the beginJob() method
+    std::map<std::string, TH1D*> histocontainer1D_; // simple map to contain all 1D histograms. Histograms are booked in the beginJob() method
+    std::map<std::string, TH2D*> histocontainer2D_; // simple map to contain all 2D histograms. Histograms are booked in the beginJob() method
 
     edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
     edm::EDGetTokenT<std::vector<pat::PackedCandidate>> packedCandToken_;

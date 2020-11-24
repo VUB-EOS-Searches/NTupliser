@@ -245,7 +245,8 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
 
     filledBIDInfo_ = false;
-    histocontainer_["eventcount"] = fs->make<TH1D>("eventcount", "events processed", 1, -0.5, +0.5);
+    histocontainer1D_["eventcount"] = fs->make<TH1D>("eventcount", "events processed", 1, -0.5, +0.5);
+    histocontainer1I_["sumWeights"] = fs->make<TH1I>("weightHisto", "weightHisto", 14, -0.5, 13.5);
 
     // Putting in a few histograms to debug the loose lepton selection
     // hopefully.
@@ -3588,7 +3589,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
         numVert = Tnpv;
     }
 
-    histocontainer_["eventcount"]->Fill(0.0);
+    histocontainer1D_["eventcount"]->Fill(0.0);
 
     // std::cout << "now in loop" << std::endl;
     // std::cout << "cleared arrays." << std::endl;
@@ -3680,6 +3681,13 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     }
 
     // fill debugging histograms.
+    origWeightForNorm_    >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(1)   : histocontainer1I_["sumWeights"]->AddBinContent(2);
+    weight_muF0p5_        >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(3)   : histocontainer1I_["sumWeights"]->AddBinContent(4);
+    weight_muR0p5_        >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(5)   : histocontainer1I_["sumWeights"]->AddBinContent(6);
+    weight_muF0p5muR0p5_  >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(7)   : histocontainer1I_["sumWeights"]->AddBinContent(8);
+    weight_muF2_          >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(9)   : histocontainer1I_["sumWeights"]->AddBinContent(10);
+    weight_muR2_          >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(11)  : histocontainer1I_["sumWeights"]->AddBinContent(12);
+    weight_muF2muR2_      >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(13)  : histocontainer1I_["sumWeights"]->AddBinContent(14);
 }
 
 void MakeTopologyNtupleMiniAOD::bookBranches() {
@@ -3744,11 +3752,9 @@ void MakeTopologyNtupleMiniAOD::bookBranches() {
     mytree_->Branch("weight_muF2", &weight_muF2_, "weight_muF2/D");
     mytree_->Branch("weight_muR0p5", &weight_muR0p5_, "weight_muR0p5/D");
     mytree_->Branch("weight_muR2", &weight_muR2_, "weight_muR2/D");
-    mytree_->Branch(
-        "weight_muF0p5muR0p5", &weight_muF0p5muR0p5_, "weight_muF0p5muR0p5/D");
+    mytree_->Branch("weight_muF0p5muR0p5", &weight_muF0p5muR0p5_, "weight_muF0p5muR0p5/D");
     mytree_->Branch("weight_muF2muR2", &weight_muF2muR2_, "weight_muF2muR2/D");
-    mytree_->Branch(
-        "origWeightForNorm", &origWeightForNorm_, "origWeightForNorm/D");
+    mytree_->Branch("origWeightForNorm", &origWeightForNorm_, "origWeightForNorm/D");
     mytree_->Branch("weight_pdfMax", &weight_pdfMax_, "weight_pdfMax/D");
     mytree_->Branch("weight_pdfMin", &weight_pdfMin_, "weight_pdfMin/D");
     mytree_->Branch("weight_alphaMax", &weight_alphaMax_, "weight_alphaMax/D");
@@ -5626,7 +5632,7 @@ void MakeTopologyNtupleMiniAOD::endJob()
     std::cout << "+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+="
               << std::endl;
     std::cout << "\n\nJOB Summary:" << std::endl;
-    std::cout << "number of events processed: " << histocontainer_["eventcount"]->GetEntries() << std::endl;
+    std::cout << "number of events processed: " << histocontainer1D_["eventcount"]->GetEntries() << std::endl;
     std::cout << "number of events added to tree: " << mytree_->GetEntries() << std::endl;
     std::cout << "\n+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+="
               << std::endl;
@@ -5659,7 +5665,7 @@ void MakeTopologyNtupleMiniAOD::fillTriggerData(const edm::Event& iEvent)
         for (int itrig{0}; itrig < (int)hltnames_.size(); ++itrig)
         {
             const bool accept{hltResults->accept(itrig)};
-            // if (histocontainer_["eventcount"]->GetBinContent(0.0) < 2)
+            // if (histocontainer1D_["eventcount"]->GetBinContent(0.0) < 2)
             // {
             //     std::cout << "TRIGGER BIT:" << itrig
             //               << ", NAME:" << hltnames_[itrig]
@@ -5704,7 +5710,7 @@ void MakeTopologyNtupleMiniAOD::fillTriggerData(const edm::Event& iEvent)
         for (int iFilter{0}; iFilter < (int)metFilterNames_.size(); ++iFilter)
         {
             const bool accept(metFilterResults->accept(iFilter));
-            // if (histocontainer_["eventcount"]->GetBinContent(0.0) < 2)
+            // if (histocontainer1D_["eventcount"]->GetBinContent(0.0) < 2)
             // {
             //     if (metFilterNames_[iFilter] == "Flag_noBadMuons")
             //     {
