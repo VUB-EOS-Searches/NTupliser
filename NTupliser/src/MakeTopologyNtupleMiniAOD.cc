@@ -2404,7 +2404,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 
 //       if ( !it->hasTrackDetails() || std::abs(it->pdgId()) != 211 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
 //       if ( it->charge() == 0 ) continue; // NO neutral objects
-       if ( it->pt() < 2.5 ) continue; // want high precision track info
+       if ( it->pt() < 0.5 ) continue; // want low or high precision track info
 
 //        packedCandsPt[numPackedCands] = it->pt();
         packedCandsPx[numPackedCands] = it->px();

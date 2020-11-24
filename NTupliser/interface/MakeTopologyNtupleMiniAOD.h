@@ -976,7 +976,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float isoTracksDeltaPhi[NISOTRACKSMAX]{};
 
     // packedCands are used to subtract photon conversion background
-    static constexpr size_t NPACKEDCANDSMAX{600};
+    static constexpr size_t NPACKEDCANDSMAX{3000};
     float packedCandsPt[NPACKEDCANDSMAX]{};
     float packedCandsPx[NPACKEDCANDSMAX]{};
     float packedCandsPy[NPACKEDCANDSMAX]{};
