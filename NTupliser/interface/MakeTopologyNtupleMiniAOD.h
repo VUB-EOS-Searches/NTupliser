@@ -123,8 +123,10 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     double elePtCut_{};
     double eleEtaCut_{};
     double eleIsoCut_{};
-    double muoPtCut_{};
+    double muoPt1Cut_{};
+    double muoPt2Cut_{};
     double muoEtaCut_{};
+    double invMuMuMassCut_{};
     double muoIsoCut_{};
     double metCut_{};
     double rhoIso{};
@@ -1050,7 +1052,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int packedCandsPseudoTrkTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsHighPurityTrack[NPACKEDCANDSMAX]{};
 
-    static constexpr size_t NCHSTKPAIRMAX{150};
+    static constexpr size_t NCHSTKPAIRMAX{350};
     int    chsTkPairIndex1[NCHSTKPAIRMAX]{};
     int    chsTkPairIndex2[NCHSTKPAIRMAX]{};
     float  chsTkPairTkVtxPx[NCHSTKPAIRMAX]{};

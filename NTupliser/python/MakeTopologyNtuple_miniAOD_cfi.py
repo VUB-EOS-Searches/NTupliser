@@ -39,7 +39,7 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
                                            triggerToken  = cms.InputTag("TriggerResults","","HLT"),
                                            metFilterToken  = cms.InputTag("TriggerResults", "", "PAT"),
                                            fakeTriggerList = cms.vstring(), # empty. You can add fake triggers that are run on the fly to this list. No check on the process name is made so when duplicates are available only the latest one is added.
-					   isLHEflag = cms.bool(True),
+					   isLHEflag = cms.bool(False),
 					   externalLHEToken = cms.InputTag("externalLHEProducer"), # "externalLHEProducer", "source" for THQ 
 
 					   pdfIdStart = cms.int32(2001),
@@ -50,7 +50,7 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 
 					   pdfInfoFixingToken = cms.InputTag("pdfInfoFixing"),
 					   generatorToken = cms.InputTag("generator"),
-                                           minLeptons = cms.int32(0),
+                                           minLeptons = cms.int32(0), ## currently deprecated
 
                                            hasGeneralTracks   = cms.bool(False),
                                            generalTracksToken = cms.InputTag("generalTracks"),

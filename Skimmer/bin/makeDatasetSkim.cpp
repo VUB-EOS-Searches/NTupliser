@@ -160,17 +160,20 @@ int main(int argc, char* argv[])
 		      if (std::abs(event.muonPF2PATEta[k]) > MAX_MUON_ETA) continue;
 		      TLorentzVector muon1{event.muonPF2PATPX[j], event.muonPF2PATPY[j], event.muonPF2PATPZ[j], event.muonPF2PATE[j]};
 		      TLorentzVector muon2{event.muonPF2PATPX[k], event.muonPF2PATPY[k], event.muonPF2PATPZ[k], event.muonPF2PATE[k]};
-		      double invMass { (muon1 + muon2).M() };
 		      if ( muon1.Pt() > muon2.Pt() ) {
-			if ( muon1.Pt() < MIN_MUON1_PATPT || muon2.Pt() < MIN_MUON2_PATPT ) continue;
+		        if ( muon1.Pt() < MIN_MUON1_PATPT || muon2.Pt() < MIN_MUON2_PATPT ) continue;
 		      }
 		      else {
-			if ( muon2.Pt() < MIN_MUON1_PATPT || muon1.Pt() < MIN_MUON2_PATPT ) continue;
+		        if ( muon2.Pt() < MIN_MUON1_PATPT || muon1.Pt() < MIN_MUON2_PATPT ) continue;
 		      }
-		      if ( invMass <= MAX_INVZMASS ) passMuonCut = true;
+		      double invMass { (muon1 + muon2).M() };
+		      if ( invMass <= MAX_INVZMASS ) {
+                          passMuonCut = true;
+                          break;
+                      }
                     }
+                    if ( passMuonCut ) break;
 		  }
-
                 if ( passMuonCut ) outTree->Fill();
                 }
             }

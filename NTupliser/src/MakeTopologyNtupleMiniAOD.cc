@@ -196,8 +196,10 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , elePtCut_{iConfig.getParameter<double>("minElePt")}
     , eleEtaCut_{iConfig.getParameter<double>("maxEleEta")}
     , eleIsoCut_{iConfig.getParameter<double>("eleRelIso")}
-    , muoPtCut_{iConfig.getParameter<double>("minMuonPt")}
+    , muoPt1Cut_{iConfig.getParameter<double>("minMuonPt1")}
+    , muoPt2Cut_{iConfig.getParameter<double>("minMuonPt2")}
     , muoEtaCut_{iConfig.getParameter<double>("maxMuonEta")}
+    , invMuMuMassCut_{iConfig.getParameter<double>("maxInvMuMuMass")}
     , muoIsoCut_{iConfig.getParameter<double>("muoRelIso")}
     , metCut_{iConfig.getParameter<double>("metCut")} // met cut
     , check_triggers_{iConfig.getParameter<bool>("checkTriggers")}
@@ -1183,6 +1185,9 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             TrajectoryStateClosestToPoint const& TSCP1 = transTkPtr1->trajectoryStateClosestToPoint(cxPt);
             TrajectoryStateClosestToPoint const& TSCP2 = transTkPtr2->trajectoryStateClosestToPoint(cxPt);
             if (!TSCP1.isValid() || !TSCP2.isValid()) continue;
+
+            // Are tracks in the same quadrant?
+            if ( TSCP1.momentum().dot(TSCP2.momentum()) < 0 ) continue;
 
             // Fill the vector of TransientTracks to send to KVF
             std::vector<reco::TransientTrack> tmpTransTracks;
@@ -2478,7 +2483,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
 
             // Store packed cands track refs for post muon loop tracking analysis
-            if ( std::abs(it->pdgId()) == 211 && it->charge() != 0 && it->pseudoTrack().pt() > 4.5 ) { // only store charged hadrons
+            if ( std::abs(it->pdgId()) == 211 && it->charge() != 0 && it->pseudoTrack().pt() > 2.9 ) { // only store charged hadrons
                 chsTkIndices.push_back( numPackedCands );
                 chsTrackRefs.push_back( it->pseudoTrack() );
                 reco::TransientTrack tmpTransient( (it->pseudoTrack()), theMagneticField);
@@ -2530,6 +2535,9 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             TrajectoryStateClosestToPoint const& TSCP1 = transTkPtr1->trajectoryStateClosestToPoint(cxPt);
             TrajectoryStateClosestToPoint const& TSCP2 = transTkPtr2->trajectoryStateClosestToPoint(cxPt);
             if (!TSCP1.isValid() || !TSCP2.isValid()) continue;
+
+            // Are tracks in the same quadrant?
+            if ( TSCP1.momentum().dot(TSCP2.momentum()) < 0 ) continue;
 
             // Fill the vector of TransientTracks to send to KVF
             std::vector<reco::TransientTrack> tmpTransTracks;
@@ -2585,6 +2593,8 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             GlobalVector P1(traj1->momentum());
             GlobalVector P2(traj2->momentum());
             GlobalVector totalP(P1 + P2);
+
+            if ( reco::deltaR(P1.eta(), P1.phi(), P2.eta(), P2.phi())> 0.8 ) continue;
 
             // 2D pointing angle
             double dx = theVtx.x() - vertexPrimary_->position().x();
@@ -3643,16 +3653,30 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     }
     else  { // If doing cuts, ensure that we have at least x leptons which meet minimum sensible criteria
 
-        int numLeps{0};
-        numLeps = numMuo["PF"];
+        bool passMuonCuts {false};
 
         for (int j{0}; j < numMuo["PF"]; j++) {
-            if (muonSortedPt["PF"][0] < muoPtCut_) continue;
-            if (std::abs(muonSortedEta["PF"][0]) > muoEtaCut_) continue;
-            numLeps++;
+            if ( std::abs(muonSortedEta["PF"][j]) > muoEtaCut_ ) continue;
+            for (int k{j+1}; k < numMuo["PF"]; k++) {
+                if ( std::abs(muonSortedEta["PF"][k]) > muoEtaCut_ ) continue;
+                TLorentzVector muon1{ muonSortedPx["PF"][j], muonSortedPy["PF"][j], muonSortedPz["PF"][j], muonSortedE["PF"][j] };
+                TLorentzVector muon2{ muonSortedPx["PF"][k], muonSortedPy["PF"][k], muonSortedPz["PF"][k], muonSortedE["PF"][k] };
+                if ( muon1.Pt() > muon2.Pt() ) {
+                    if ( muon1.Pt() < muoPt1Cut_ || muon2.Pt() < muoPt2Cut_ ) continue;
+                }
+                else {
+                    if ( muon1.Pt() < muoPt2Cut_ || muon1.Pt() < muoPt2Cut_ ) continue;
+                }
+                double invMass { (muon1+muon2).M() };
+                if (invMass <= invMuMuMassCut_) {
+                    passMuonCuts = true;
+                    break;
+                }
+            }
+            if ( passMuonCuts ) break;
         }
 
-        if (numLeps >= minLeptons_) mytree_->Fill();
+        if (passMuonCuts) mytree_->Fill();
     }
 
     // fill debugging histograms.
