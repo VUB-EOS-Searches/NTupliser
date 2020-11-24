@@ -220,9 +220,15 @@ class AnalysisEvent
     Float_t muonTkPairPF2PATTkVx[NMUONTKPAIRMAX];
     Float_t muonTkPairPF2PATTkVy[NMUONTKPAIRMAX];
     Float_t muonTkPairPF2PATTkVz[NMUONTKPAIRMAX];
-    Float_t muonTkPairPF2PATTkVxError[NMUONTKPAIRMAX];
-    Float_t muonTkPairPF2PATTkVyError[NMUONTKPAIRMAX];
-    Float_t muonTkPairPF2PATTkVzError[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov00[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov01[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov02[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov10[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov11[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov12[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov20[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov21[NMUONTKPAIRMAX];
+    Float_t muonTkPairPF2PATTkVtxCov22[NMUONTKPAIRMAX];
     Float_t muonTkPairPF2PATTkVtxChi2[NMUONTKPAIRMAX];
     Float_t muonTkPairPF2PATTkVtxNdof[NMUONTKPAIRMAX];
     Float_t muonTkPairPF2PATTkVtxTime[NMUONTKPAIRMAX];
@@ -569,9 +575,15 @@ class AnalysisEvent
     Float_t pvX[NPVSMAX];
     Float_t pvY[NPVSMAX];
     Float_t pvZ[NPVSMAX];
-    Float_t pvDX[NPVSMAX];
-    Float_t pvDY[NPVSMAX];
-    Float_t pvDZ[NPVSMAX];
+    Float_t pvCov00[NPVSMAX];
+    Float_t pvCov01[NPVSMAX];
+    Float_t pvCov02[NPVSMAX];
+    Float_t pvCov10[NPVSMAX];
+    Float_t pvCov11[NPVSMAX];
+    Float_t pvCov12[NPVSMAX];
+    Float_t pvCov20[NPVSMAX];
+    Float_t pvCov21[NPVSMAX];
+    Float_t pvCov22[NPVSMAX];
     Float_t pvRho[NPVSMAX];
     Int_t pvIsFake[NPVSMAX];
     Float_t pvNdof[NPVSMAX];
@@ -595,6 +607,15 @@ class AnalysisEvent
     Float_t svX[NSVSMAX];
     Float_t svY[NSVSMAX];
     Float_t svZ[NSVSMAX];
+    Float_t svCov00[NSVSMAX];
+    Float_t svCov01[NSVSMAX];
+    Float_t svCov02[NSVSMAX];
+    Float_t svCov10[NSVSMAX];
+    Float_t svCov11[NSVSMAX];
+    Float_t svCov12[NSVSMAX];
+    Float_t svCov20[NSVSMAX];
+    Float_t svCov21[NSVSMAX];
+    Float_t svCov22[NSVSMAX];
     Float_t svVertexChi2[NSVSMAX];
     Float_t svVertexNdof[NSVSMAX];
     Int_t svNtracks[NSVSMAX];
@@ -1334,9 +1355,15 @@ class AnalysisEvent
     TBranch* b_muonTkPairPF2PATTkVx; //!
     TBranch* b_muonTkPairPF2PATTkVy; //!
     TBranch* b_muonTkPairPF2PATTkVz; //!
-    TBranch* b_muonTkPairPF2PATTkVxError; //!
-    TBranch* b_muonTkPairPF2PATTkVyError; //!
-    TBranch* b_muonTkPairPF2PATTkVzError; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov00; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov01; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov02; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov10; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov11; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov12; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov20; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov21; //!
+    TBranch* b_muonTkPairPF2PATTkVtxCov22; //!
     TBranch* b_muonTkPairPF2PATTkVtxChi2; //!
     TBranch* b_muonTkPairPF2PATTkVtxNdof; //!
     TBranch* b_muonTkPairPF2PATTkVtxTime; //!
@@ -1671,9 +1698,15 @@ class AnalysisEvent
     TBranch* b_pvX; //!
     TBranch* b_pvY; //!
     TBranch* b_pvZ; //!
-    TBranch* b_pvDX; //!
-    TBranch* b_pvDY; //!
-    TBranch* b_pvDZ; //!
+    TBranch* b_pvCov00; //!
+    TBranch* b_pvCov01; //!
+    TBranch* b_pvCov02; //!
+    TBranch* b_pvCov10; //!
+    TBranch* b_pvCov11; //!
+    TBranch* b_pvCov12; //!
+    TBranch* b_pvCov20; //!
+    TBranch* b_pvCov21; //!
+    TBranch* b_pvCov22; //!
     TBranch* b_pvRho; //!
     TBranch* b_pvIsFake; //!
     TBranch* b_pvNdof; //!
@@ -1695,6 +1728,15 @@ class AnalysisEvent
     TBranch* b_svX; //!
     TBranch* b_svY; //!
     TBranch* b_svZ; //!
+    TBranch* b_svCov00; //!
+    TBranch* b_svCov01; //!
+    TBranch* b_svCov02; //!
+    TBranch* b_svCov10; //!
+    TBranch* b_svCov11; //!
+    TBranch* b_svCov12; //!
+    TBranch* b_svCov20; //!
+    TBranch* b_svCov21; //!
+    TBranch* b_svCov22; //!
     TBranch* b_svVertexChi2; //!
     TBranch* b_svVertexNdof; //!
     TBranch* b_svNtracks; //!
@@ -2500,9 +2542,15 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("muonTkPairPF2PATTkVx", muonTkPairPF2PATTkVx, &b_muonTkPairPF2PATTkVx);
    fChain->SetBranchAddress("muonTkPairPF2PATTkVy", muonTkPairPF2PATTkVy, &b_muonTkPairPF2PATTkVy);
    fChain->SetBranchAddress("muonTkPairPF2PATTkVz", muonTkPairPF2PATTkVz, &b_muonTkPairPF2PATTkVz);
-   fChain->SetBranchAddress("muonTkPairPF2PATTkVxError", muonTkPairPF2PATTkVxError, &b_muonTkPairPF2PATTkVxError);
-   fChain->SetBranchAddress("muonTkPairPF2PATTkVyError", muonTkPairPF2PATTkVyError, &b_muonTkPairPF2PATTkVyError);
-   fChain->SetBranchAddress("muonTkPairPF2PATTkVzError", muonTkPairPF2PATTkVzError, &b_muonTkPairPF2PATTkVzError);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov00", muonTkPairPF2PATTkVtxCov00, &b_muonTkPairPF2PATTkVtxCov00);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov01", muonTkPairPF2PATTkVtxCov01, &b_muonTkPairPF2PATTkVtxCov01);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov02", muonTkPairPF2PATTkVtxCov02, &b_muonTkPairPF2PATTkVtxCov02);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov10", muonTkPairPF2PATTkVtxCov10, &b_muonTkPairPF2PATTkVtxCov10);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov11", muonTkPairPF2PATTkVtxCov11, &b_muonTkPairPF2PATTkVtxCov11);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov12", muonTkPairPF2PATTkVtxCov12, &b_muonTkPairPF2PATTkVtxCov12);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov20", muonTkPairPF2PATTkVtxCov20, &b_muonTkPairPF2PATTkVtxCov20);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov21", muonTkPairPF2PATTkVtxCov21, &b_muonTkPairPF2PATTkVtxCov21);
+   fChain->SetBranchAddress("muonTkPairPF2PATTkVtxCov22", muonTkPairPF2PATTkVtxCov22, &b_muonTkPairPF2PATTkVtxCov22);
    fChain->SetBranchAddress("muonTkPairPF2PATTkVtxChi2", muonTkPairPF2PATTkVtxChi2, &b_muonTkPairPF2PATTkVtxChi2);
    fChain->SetBranchAddress("muonTkPairPF2PATTkVtxNdof", muonTkPairPF2PATTkVtxNdof, &b_muonTkPairPF2PATTkVtxNdof);
    fChain->SetBranchAddress("muonTkPairPF2PATTkVtxTime", muonTkPairPF2PATTkVtxTime, &b_muonTkPairPF2PATTkVtxTime);
@@ -2855,9 +2903,15 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("pvX", pvX, &b_pvX);
    fChain->SetBranchAddress("pvY", pvY, &b_pvY);
    fChain->SetBranchAddress("pvZ", pvZ, &b_pvZ);
-   fChain->SetBranchAddress("pvDX", pvDX, &b_pvDX);
-   fChain->SetBranchAddress("pvDY", pvDY, &b_pvDY);
-   fChain->SetBranchAddress("pvDZ", pvDZ, &b_pvDZ);
+   fChain->SetBranchAddress("pvCov00", pvCov00, &b_pvCov00);
+   fChain->SetBranchAddress("pvCov01", pvCov01, &b_pvCov01);
+   fChain->SetBranchAddress("pvCov02", pvCov02, &b_pvCov02);
+   fChain->SetBranchAddress("pvCov10", pvCov10, &b_pvCov10);
+   fChain->SetBranchAddress("pvCov11", pvCov11, &b_pvCov11);
+   fChain->SetBranchAddress("pvCov12", pvCov12, &b_pvCov12);
+   fChain->SetBranchAddress("pvCov20", pvCov20, &b_pvCov20);
+   fChain->SetBranchAddress("pvCov21", pvCov21, &b_pvCov21);
+   fChain->SetBranchAddress("pvCov22", pvCov22, &b_pvCov22);
    fChain->SetBranchAddress("pvRho", pvRho, &b_pvRho);
    fChain->SetBranchAddress("pvIsFake", pvIsFake, &b_pvIsFake);
    fChain->SetBranchAddress("pvNdof", pvNdof, &b_pvNdof);
@@ -2879,6 +2933,15 @@ AnalysisEvent::AnalysisEvent(bool isMC,
    fChain->SetBranchAddress("svX", svX, &b_svX);
    fChain->SetBranchAddress("svY", svY, &b_svY);
    fChain->SetBranchAddress("svZ", svZ, &b_svZ);
+   fChain->SetBranchAddress("svCov00", svCov00, &b_svCov00);
+   fChain->SetBranchAddress("svCov01", svCov01, &b_svCov01);
+   fChain->SetBranchAddress("svCov02", svCov02, &b_svCov02);
+   fChain->SetBranchAddress("svCov10", svCov10, &b_svCov10);
+   fChain->SetBranchAddress("svCov11", svCov11, &b_svCov11);
+   fChain->SetBranchAddress("svCov12", svCov12, &b_svCov12);
+   fChain->SetBranchAddress("svCov20", svCov20, &b_svCov20);
+   fChain->SetBranchAddress("svCov21", svCov21, &b_svCov21);
+   fChain->SetBranchAddress("svCov22", svCov22, &b_svCov22);
    fChain->SetBranchAddress("svVertexChi2", svVertexChi2, &b_svVertexChi2);
    fChain->SetBranchAddress("svVertexNdof", svVertexNdof, &b_svVertexNdof);
    fChain->SetBranchAddress("svNtracks", svNtracks, &b_svNtracks);
