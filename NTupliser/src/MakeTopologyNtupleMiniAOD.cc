@@ -2402,9 +2402,9 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 
     for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); it++) {
 
-       if ( !it->hasTrackDetails() && std::abs(it->pdgId()) != 211 && std::abs(it->pdgId()) != 13 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
-        if ( it->charge() == 0 ) continue; // NO neutral objects
-//       if ( it->pt() < 0.5 ) continue;
+//       if ( !it->hasTrackDetails() || std::abs(it->pdgId()) != 211 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
+//       if ( it->charge() == 0 ) continue; // NO neutral objects
+       if ( it->pt() < 2.5 ) continue; // want high precision track info
 
 //        packedCandsPt[numPackedCands] = it->pt();
         packedCandsPx[numPackedCands] = it->px();
@@ -2457,7 +2457,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
 
             // Store packed cands track refs for post muon loop tracking analysis
-            if ( std::abs(it->pdgId()) == 211 && it->charge() != 0 ) { // only store charged hadrons
+            if ( std::abs(it->pdgId()) == 211 && it->charge() != 0 && it->pseudoTrack().pt() > 4.5 ) { // only store charged hadrons
                 chsTkIndices.push_back( numPackedCands );
                 chsTrackRefs.push_back( it->pseudoTrack() );
                 reco::TransientTrack tmpTransient( (it->pseudoTrack()), theMagneticField);

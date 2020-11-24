@@ -779,7 +779,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genMuonSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genMuonSortedHardProcess;
 
-    static constexpr size_t NMUONTKPAIRMAX{190};
+    static constexpr size_t NMUONTKPAIRMAX{100};
     std::map<std::string, std::vector<int>>   muonTkPairSortedIndex1;
     std::map<std::string, std::vector<int>>   muonTkPairSortedIndex2;
     std::map<std::string, std::vector<float>> muonTkPairSortedTkVtxPx;
@@ -976,7 +976,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float isoTracksDeltaPhi[NISOTRACKSMAX]{};
 
     // packedCands are used to subtract photon conversion background
-    static constexpr size_t NPACKEDCANDSMAX{1000};
+    static constexpr size_t NPACKEDCANDSMAX{600};
     float packedCandsPt[NPACKEDCANDSMAX]{};
     float packedCandsPx[NPACKEDCANDSMAX]{};
     float packedCandsPy[NPACKEDCANDSMAX]{};
@@ -1029,7 +1029,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     int packedCandsPseudoTrkTrackerLayersWithMeasurement[NPACKEDCANDSMAX]{};
     int packedCandsHighPurityTrack[NPACKEDCANDSMAX]{};
 
-    static constexpr size_t NCHSTKPAIRMAX{300};
+    static constexpr size_t NCHSTKPAIRMAX{150};
     int    chsTkPairIndex1[NCHSTKPAIRMAX]{};
     int    chsTkPairIndex2[NCHSTKPAIRMAX]{};
     float  chsTkPairTkVtxPx[NCHSTKPAIRMAX]{};
