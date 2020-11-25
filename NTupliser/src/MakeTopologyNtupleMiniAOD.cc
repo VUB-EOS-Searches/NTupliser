@@ -3681,13 +3681,24 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     }
 
     // fill debugging histograms.
-    origWeightForNorm_    >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(1)   : histocontainer1I_["sumWeights"]->AddBinContent(2);
-    weight_muF0p5_        >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(3)   : histocontainer1I_["sumWeights"]->AddBinContent(4);
-    weight_muR0p5_        >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(5)   : histocontainer1I_["sumWeights"]->AddBinContent(6);
-    weight_muF0p5muR0p5_  >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(7)   : histocontainer1I_["sumWeights"]->AddBinContent(8);
-    weight_muF2_          >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(9)   : histocontainer1I_["sumWeights"]->AddBinContent(10);
-    weight_muR2_          >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(11)  : histocontainer1I_["sumWeights"]->AddBinContent(12);
-    weight_muF2muR2_      >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(13)  : histocontainer1I_["sumWeights"]->AddBinContent(14);
+    if ( isLHEflag_ ) {
+        origWeightForNorm_    >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(1)   : histocontainer1I_["sumWeights"]->AddBinContent(2);
+        weight_muF0p5_        >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(3)   : histocontainer1I_["sumWeights"]->AddBinContent(4);
+        weight_muR0p5_        >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(5)   : histocontainer1I_["sumWeights"]->AddBinContent(6);
+        weight_muF0p5muR0p5_  >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(7)   : histocontainer1I_["sumWeights"]->AddBinContent(8);
+        weight_muF2_          >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(9)   : histocontainer1I_["sumWeights"]->AddBinContent(10);
+        weight_muR2_          >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(11)  : histocontainer1I_["sumWeights"]->AddBinContent(12);
+        weight_muF2muR2_      >= 0.0 ? histocontainer1I_["sumWeights"]->AddBinContent(13)  : histocontainer1I_["sumWeights"]->AddBinContent(14);
+    }
+    else {
+        histocontainer1I_["sumWeights"]->AddBinContent(1);
+        histocontainer1I_["sumWeights"]->AddBinContent(3);
+        histocontainer1I_["sumWeights"]->AddBinContent(5);
+        histocontainer1I_["sumWeights"]->AddBinContent(7);
+        histocontainer1I_["sumWeights"]->AddBinContent(9);
+        histocontainer1I_["sumWeights"]->AddBinContent(11);
+        histocontainer1I_["sumWeights"]->AddBinContent(13);
+    }
 }
 
 void MakeTopologyNtupleMiniAOD::bookBranches() {
