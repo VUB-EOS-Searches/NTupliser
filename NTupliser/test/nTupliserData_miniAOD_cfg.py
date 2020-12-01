@@ -215,8 +215,10 @@ process.makeTopologyNtupleMiniAOD.bDiscCut=cms.double(-1.0)
 process.makeTopologyNtupleMiniAOD.minElePt=cms.double(9.0)
 process.makeTopologyNtupleMiniAOD.maxEleEta=cms.double(2.7)
 process.makeTopologyNtupleMiniAOD.eleRelIso=cms.double(0.50)
-process.makeTopologyNtupleMiniAOD.minMuonPt=cms.double(9.0)
+process.makeTopologyNtupleMiniAOD.maxInvMuMuMass=cms.double(10.0)
 process.makeTopologyNtupleMiniAOD.maxMuonEta=cms.double(2.8)
+process.makeTopologyNtupleMiniAOD.minMuonPt1=cms.double(15.0)
+process.makeTopologyNtupleMiniAOD.minMuonPt2=cms.double(6.0)
 process.makeTopologyNtupleMiniAOD.muonRelIso=cms.double(0.50)
 process.makeTopologyNtupleMiniAOD.maxDistForPhotonRej=cms.double(0.04)
 process.makeTopologyNtupleMiniAOD.maxDcotForPhotonRej=cms.double(0.03)
@@ -226,7 +228,6 @@ process.makeTopologyNtupleMiniAOD.fillAll=cms.bool(True)
 
 #Don't actually do cuts
 process.makeTopologyNtupleMiniAOD.doCuts=cms.bool(True) # if set to false will skip ALL cuts. Z veto still applies electron cuts.
-process.makeTopologyNtupleMiniAOD.minLeptons = cms.int32(2)
 
 #Make the inputs for the n-tupliser right.
 process.makeTopologyNtupleMiniAOD.electronPFToken = cms.InputTag("slimmedElectrons")

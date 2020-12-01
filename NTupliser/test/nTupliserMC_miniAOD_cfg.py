@@ -164,7 +164,10 @@ process.makeTopologyNtupleMiniAOD.minElePt=cms.double(9.0)
 process.makeTopologyNtupleMiniAOD.maxEleEta=cms.double(2.7)
 process.makeTopologyNtupleMiniAOD.eleRelIso=cms.double(0.50)
 process.makeTopologyNtupleMiniAOD.maxMuonEta=cms.double(2.8)
-process.makeTopologyNtupleMiniAOD.minMuonPt=cms.double(9.0)
+process.makeTopologyNtupleMiniAOD.maxInvMuMuMass=cms.double(10.0)
+process.makeTopologyNtupleMiniAOD.maxMuonEta=cms.double(2.8)
+process.makeTopologyNtupleMiniAOD.minMuonPt1=cms.double(15.0)
+process.makeTopologyNtupleMiniAOD.minMuonPt2=cms.double(6.0)
 process.makeTopologyNtupleMiniAOD.muonRelIso=cms.double(0.50)
 process.makeTopologyNtupleMiniAOD.maxDistForPhotonRej=cms.double(0.04)
 process.makeTopologyNtupleMiniAOD.maxDcotForPhotonRej=cms.double(0.03)
@@ -198,7 +201,7 @@ process.source = cms.Source("PoolSource",
 )
 
 ## Maximal Number of Events
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(4000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #process.source.fileNames = [
 #        'file:/vols/cms/adm10/MC/ggHZ/NLO_ggHZ_HToSSTobbbb_Vleptonic_M125_MS40_ctauS1000_13TeV/PAT_miniAOD/miniAOD_2017_500.root'
