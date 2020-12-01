@@ -41,6 +41,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
     edm::EDGetTokenT<std::vector<pat::PackedCandidate>> packedCandToken_;
+    edm::EDGetTokenT<std::vector<pat::PackedGenParticle>> packedGenParticleToken_;
     edm::EDGetTokenT<std::vector<pat::IsolatedTrack>> isolatedTrackToken_;
     edm::EDGetTokenT<reco::ConversionCollection> conversionsToken_;
 
@@ -781,6 +782,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<float>> muonTrkKick;
     std::map<std::string, std::vector<float>> muonSegmentCompatibility;
 
+    std::map<std::string, std::vector<int>> muonSortedNumSourceCandidates;
+    std::map<std::string, std::vector<int>> muonSortedPackedCandIndex;
 
     std::map<std::string, std::vector<float>> genMuonSortedPt;
     std::map<std::string, std::vector<float>> genMuonSortedEt;

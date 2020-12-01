@@ -25,6 +25,7 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
@@ -137,6 +138,7 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     const edm::ParameterSet& iConfig)
     : beamSpotToken_{consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpotToken"))}
     , packedCandToken_{consumes<std::vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("packedCandToken"))}
+    , packedGenParticleToken_{consumes<std::vector<pat::PackedGenParticle>>(iConfig.getParameter<edm::InputTag>("packedGenParticleToken"))}
     , isolatedTrackToken_{consumes<std::vector<pat::IsolatedTrack>>(iConfig.getParameter<edm::InputTag>("isolatedTrackToken"))}
     , conversionsToken_{consumes<std::vector<reco::Conversion>>(iConfig.getParameter<edm::InputTag>("conversionsToken"))}
     , eleLabel_{consumes<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronTag"))}
@@ -1121,9 +1123,31 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         muonSortedNumMatches[ID][numMuo[ID] - 1] = muo.numberOfMatches();
         muonSortedIsPFMuon[ID][numMuo[ID] - 1] = muo.isPFMuon();
 
+
         // Get index ref to packed cand collection
+
         edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
         iEvent.getByToken(packedCandToken_, packedCands);
+
+        int nSourcePackedCands = muo.numberOfSourceCandidatePtrs(), pfCandPtrIndex = -1;
+
+        if ( muo.numberOfSourceCandidatePtrs() > 0 ) {
+            for ( int j = 0; j != nSourcePackedCands; j++ ) {
+                reco::CandidatePtr muonPtr = muo.sourceCandidatePtr(j);
+                for ( unsigned int k = 0; k != packedCands->size() && k < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
+                    reco::CandidatePtr pfCandPtr(packedCands, k);
+                    if (pfCandPtr->pt() < 0.5) continue;
+                    if (pfCandPtr.isNonnull() && muonPtr == pfCandPtr) {
+                        pfCandPtrIndex = k;
+                        break;
+                    }
+                }
+            }
+        }
+        muonSortedNumSourceCandidates[ID][numMuo[ID] - 1] = nSourcePackedCands;
+        muonSortedPackedCandIndex[ID][numMuo[ID] - 1] = pfCandPtrIndex;
+
+        // Gen muon stuff
 
         // if (muo.genParticleRef().ref().isValid())
         if (!muo.genParticleRef().isNull()) {
@@ -2595,7 +2619,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             GlobalVector P2(traj2->momentum());
             GlobalVector totalP(P1 + P2);
 
-            if ( reco::deltaR(P1.eta(), P1.phi(), P2.eta(), P2.phi())> 0.8 ) continue;
+            if ( reco::deltaR(P1.eta(), P1.phi(), P2.eta(), P2.phi())> 0.5 ) continue;
 
             // 2D pointing angle
             double dx = theVtx.x() - vertexPrimary_->position().x();
@@ -2963,6 +2987,9 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
 
     muonSortedNumChambers[ID].clear();
     muonSortedNumMatches[ID].clear();
+
+    muonSortedNumSourceCandidates[ID].clear();
+    muonSortedPackedCandIndex[ID].clear();
 
     genMuonSortedPt[ID].clear();
     genMuonSortedEt[ID].clear();
@@ -4683,6 +4710,9 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     muonSortedNumChambers[ID] = tempVecI;
     muonSortedNumMatches[ID] = tempVecI;
 
+    muonSortedNumSourceCandidates[ID] = tempVecI;
+    muonSortedPackedCandIndex[ID] = tempVecI;
+
     genMuonSortedPt[ID] = tempVecF;
     genMuonSortedEt[ID] = tempVecF;
     genMuonSortedEta[ID] = tempVecF;
@@ -4833,6 +4863,9 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     mytree_->Branch((prefix + "Chi2LocalPosition").c_str(), &muonChi2LocalPosition[ID][0], (prefix + "Chi2LocalPosition[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "TrkKick").c_str(), &muonTrkKick[ID][0], (prefix + "TrkKick[numMuon" + name + "]/F").c_str());
     mytree_->Branch((prefix + "SegmentCompatibility").c_str(), &muonSegmentCompatibility[ID][0], (prefix + "SegmentCompatibility[numMuon" + name + "]/F").c_str());
+
+    mytree_->Branch((prefix + "NumSourceCandidates").c_str(), &muonSortedNumSourceCandidates[ID][0], (prefix + "NumSourceCandidates[numMuon" + name + "]/I").c_str());
+    mytree_->Branch((prefix + "PackedCandIndex").c_str(), &muonSortedPackedCandIndex[ID][0], (prefix + "PackedCandIndex[numMuon" + name + "]/I").c_str());
 
     if (runMCInfo_) {
         prefix = "genMuon" + name;
