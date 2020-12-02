@@ -1028,6 +1028,11 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float packedCandsDxy[NPACKEDCANDSMAX]{};
     float packedCandsDzAssocPV[NPACKEDCANDSMAX]{};
     float packedCandsVtxChi2Norm[NPACKEDCANDSMAX]{};
+    int packedCandsElectronIndex[NPACKEDCANDSMAX]{};
+    int packedCandsMuonIndex[NPACKEDCANDSMAX]{};
+    int packedCandsTauIndex[NPACKEDCANDSMAX]{};
+    int packedCandsPhotonIndex[NPACKEDCANDSMAX]{};
+    int packedCandsJetIndex[NPACKEDCANDSMAX]{};
     int packedCandsHasTrackDetails[NPACKEDCANDSMAX]{};
     float packedCandsPtTrk[NPACKEDCANDSMAX]{};
     float packedCandsDzError[NPACKEDCANDSMAX]{};

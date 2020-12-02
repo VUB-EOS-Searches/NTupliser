@@ -954,12 +954,14 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
 //////////////////////////////////////////////////////////////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::MuonCollection> muIn_, const std::string& ID) {
 
-//    if (!ran_packedCands_) fillPackedCandidates( iEvent, iSetup ); // This shouldn't fire, but just in case ...
 
     // ran_muonloop_ = true;
     edm::Handle<pat::MuonCollection> muonHandle;
     iEvent.getByToken(muIn_, muonHandle);
     const pat::MuonCollection& muons = *muonHandle;
+
+    edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
+    iEvent.getByToken(packedCandToken_, packedCands);
 
     edm::ESHandle<MagneticField> magneticFieldHandle;
     iSetup.get<IdealMagneticFieldRecord>().get(magneticFieldHandle);
@@ -1125,14 +1127,10 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
 
 
         // Get index ref to packed cand collection
-
-        edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
-        iEvent.getByToken(packedCandToken_, packedCands);
-
         int nSourcePackedCands = muo.numberOfSourceCandidatePtrs(), pfCandPtrIndex = -1;
 
-        if ( muo.numberOfSourceCandidatePtrs() > 0 ) {
-            for ( int j = 0; j != nSourcePackedCands; j++ ) {
+        if ( nSourcePackedCands > 0 ) {
+            for ( int j = 0; j < nSourcePackedCands; j++ ) {
                 reco::CandidatePtr muonPtr = muo.sourceCandidatePtr(j);
                 for ( unsigned int k = 0; k != packedCands->size() && k < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
                     reco::CandidatePtr pfCandPtr(packedCands, k);
@@ -2195,7 +2193,7 @@ void MakeTopologyNtupleMiniAOD::fillJets(
     // Make sure tracks are filled before jet stuff occurs
     //fillIsolatedTracks(iEvent, iSetup);
     //fillLostTracksCands(iEvent, iSetup);
-    fillPackedCands(iEvent, iSetup);
+    //fillPackedCands(iEvent, iSetup);
 
     edm::Handle<pat::JetCollection> jetHandle;
     iEvent.getByToken(jetIn_, jetHandle);
@@ -2272,7 +2270,9 @@ void MakeTopologyNtupleMiniAOD::fillJets(
 
         // Check our type to match with our electron collection. This will NOT
         // throw errors if it has not been ran yet!
-        std::string eleCol;
+        // Commented out as it is not used currently
+/* 
+       std::string eleCol;
         if (jet.isCaloJet())
         {
             eleCol = "Calo";
@@ -2293,6 +2293,7 @@ void MakeTopologyNtupleMiniAOD::fillJets(
         {
             eleCol = "Calo";
         } // For backup.
+*/
         fillOtherJetInfo(jet, numJet[ID], ID, iEvent);
         // Do jet smearing here.
         if (runMCInfo_)
@@ -2441,6 +2442,82 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
     iEvent.getByToken(packedCandToken_, packedCands);
 
+    // Get reco'ed electron, muon, tau, photon and jet collections for index matching
+
+    //// Get electrons
+    edm::Handle<pat::ElectronCollection> electronHandle; // changed handle from pat::Electron to reco::GsfElectron
+    iEvent.getByToken(patElectronsToken_, electronHandle);
+    // Sort electrons by eT like in fillElectrons()
+    const pat::ElectronCollection& electrons{*electronHandle};
+    electronEts.clear();
+    for (const auto& electron : electrons) {
+        double et{electron.et()};
+        electronEts.emplace_back(et);
+    }
+    std::vector<size_t> etSortedElectron {};
+    if ( electronEts.size() != 0 ) etSortedElectron = IndexSorter<std::vector<float>>(electronEts, true)();
+
+    // Get muons
+    edm::Handle<pat::MuonCollection> muonHandle;
+    iEvent.getByToken(patMuonsToken_, muonHandle);
+    // Sort muons by eT like in fillMuons()
+    const pat::MuonCollection& muons = *muonHandle;
+    muonEts.clear();
+    for (const auto& muon : muons) {
+        double et{muon.et()}; // should already be corrected
+        muonEts.emplace_back(et);
+    }
+    std::vector<size_t> etMuonSorted {};
+    if ( muonEts.size() != 0 ) etMuonSorted = IndexSorter<std::vector<float>>(muonEts, true)();
+
+/*
+    // Get Photons
+    edm::Handle<pat::PhotonCollection> photonHandle;
+    iEvent.getByToken(phoIn_, photonHandle);
+    // Sort photons by eT like in fillPhotons()
+    const pat::PhotonCollection& photons{*photonHandle};
+    photonEts.clear();
+    for (const auto& photon : photons) {
+        double et{photon.et()};
+        photonEts.emplace_back(et);
+    }
+    std::vector<size_t> etPhotonSorted {};
+    if ( photonEts.size() != 0 ) etPhotonSorted = IndexSorter<std::vector<float>>(photonEts, true)();
+*/
+
+    // Get Jets
+    edm::Handle<pat::JetCollection> jetHandle;
+    iEvent.getByToken(patJetsToken_, jetHandle);
+    // Sort jets by eT like in fillJets()
+    const pat::JetCollection& jets{*jetHandle};
+    correctedJetEts.clear();
+    for (const auto& jet : jets) {
+        if (useResidualJEC_) { // Correct the Et with residuals first
+            if (jet.isCaloJet()) {
+                jecCalo->setJetEta(jet.eta());
+                jecCalo->setJetPt(jet.pt());
+                correctedJetEts.emplace_back(jet.et()* jecCalo->getCorrection());
+            }
+            else if (jet.isPFJet()) {
+                jecPF->setJetEta(jet.eta());
+                jecPF->setJetPt(jet.pt());
+                correctedJetEts.emplace_back(jet.et() * jecPF->getCorrection());
+            }
+            else {
+                jecJPT->setJetEta(jet.eta());
+                jecJPT->setJetPt(jet.pt());
+                correctedJetEts.emplace_back(jet.et() * jecJPT->getCorrection());
+            }
+        }
+        else
+            correctedJetEts.emplace_back(jet.et());
+    }
+
+    std::vector<size_t> etJetSorted {}; 
+    if ( etJetSorted.size() != 0 ) etJetSorted = IndexSorter<std::vector<float>>(correctedJetEts, true)();
+
+
+
     edm::ESHandle<MagneticField> magneticFieldHandle;
     iSetup.get<IdealMagneticFieldRecord>().get(magneticFieldHandle);
     const MagneticField* theMagneticField = magneticFieldHandle.product();
@@ -2481,6 +2558,86 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
         packedCandsDxy[numPackedCands] = it->dxy();
 //        packedCandsDzAssocPV[numPackedCands] = it->dzAssociatedPV();
 //        packedCandsVtxChi2Norm[numPackedCands] = it->vertexNormalizedChi2();
+
+    int electronIndex {-1};
+    int muonIndex {-1};
+//    int tauIndex {-1};
+//    int photonIndex {-1};
+    int jetIndex {-1};
+
+    reco::CandidatePtr pfCandPtr(packedCands, numPackedCands);
+
+    // loop over electrons
+    int numEle = 0;
+    for (size_t iele{0}; iele < etSortedElectron.size() && numEle < numeric_cast<int>(NELECTRONSMAX); ++iele) {
+        size_t jele{etSortedElectron[iele]};
+        const pat::Electron& ele{(*electronHandle)[jele]};
+        if (ele.numberOfSourceCandidatePtrs() > 0 ) {
+            for (unsigned int k = 0; k < ele.numberOfSourceCandidatePtrs(); k++) {
+                reco::CandidatePtr electronPtr = ele.sourceCandidatePtr(k);
+                if ( electronPtr.isNonnull() && pfCandPtr == electronPtr ) {
+                    electronIndex = iele;
+                    break;
+                }
+            }
+        }
+    }
+
+    // loop over muons
+    int numMuo = 0;
+    for (size_t imuo{0}; imuo < etMuonSorted.size() && numMuo < numeric_cast<int>(NMUONSMAX); ++imuo) {
+        size_t jmu{etMuonSorted[imuo]};
+        const pat::Muon& muo{muons[jmu]};
+        if (muo.numberOfSourceCandidatePtrs() > 0 ) {
+            for (unsigned int k = 0; k < muo.numberOfSourceCandidatePtrs(); k++) {
+                reco::CandidatePtr muonPtr = muo.sourceCandidatePtr(k);
+                if ( muonPtr.isNonnull() && pfCandPtr == muonPtr ) {
+                    muonIndex = imuo;
+                    break;
+                }
+            }
+        }
+    }
+
+/*
+    // loop over photons
+    int numPho = 0;
+    for (size_t ipho{0}; ipho < etPhotonSorted.size() && numPho < numeric_cast<int>(NPHOTONSMAX); ++ipho) {
+        size_t jpho{etPhotonSorted[ipho]};
+        const pat::Photon& pho{(*photonHandle)[jpho]};
+       	if (phi.numberOfSourceCandidatePtrs() > 0 ) {
+            for (unsigned int k = 0; k < pho.numberOfSourceCandidatePtrs(); k++) {
+                reco::CandidatePtr photonPtr = pho.sourceCandidatePtr(k);
+                if ( photonPtr.isNonnull() && pfCandPtr == photonPtr )) {
+                    photonIndex = ipho;
+                    break;
+                }
+            }
+        }
+    }
+*/
+
+    // loop over jets
+    int numJet = 0;
+    for (size_t ijet{0}; ijet < etJetSorted.size() && numJet < numeric_cast<int>(NJETSMAX); ++ijet) {
+        size_t jjet{etJetSorted[ijet]};
+        const pat::Jet& jet{jets[jjet]};
+        if (jet.numberOfSourceCandidatePtrs() > 0 ) {
+            for (unsigned int k = 0; k < jet.numberOfSourceCandidatePtrs(); k++) {
+                reco::CandidatePtr jetPtr = jet.sourceCandidatePtr(k);
+                if ( jetPtr.isNonnull() && pfCandPtr == jetPtr ) {
+                    jetIndex = ijet;
+                    break;
+                }
+            }
+        }
+    }
+
+    packedCandsElectronIndex[numPackedCands] = electronIndex;
+    packedCandsMuonIndex[numPackedCands] = muonIndex; 
+//    packedCandsTauIndex[numPackedCands] = tauIndex;
+//    packedCandsPhotonIndex[numPackedCands] = photonIndex;
+    packedCandsJetIndex[numPackedCands] = jetIndex;
 
         packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
         if ( it->hasTrackDetails() ) {
@@ -3425,6 +3582,13 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
         packedCandsDxy[i] = 9999;
 //        packedCandsDzAssocPV[i] = 9999;
 //        packedCandsVtxChi2Norm[i] = -9999;
+
+        packedCandsElectronIndex[i] = -1;
+        packedCandsMuonIndex[i] = -1;
+//        packedCandsTauIndex[i] = -1;
+//        packedCandsPhotonIndex[i] = -1;
+        packedCandsJetIndex[i] = -1;
+
         packedCandsHasTrackDetails[i] = -1;
         packedCandsDzError[i] = 9999;
         packedCandsDxyError[i] = 9999;
@@ -5518,6 +5682,13 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches() {
     mytree_->Branch("packedCandsDxy", &packedCandsDxy, "packedCandsDxy[numPackedCands]/F");
 //    mytree_->Branch("packedCandsDzAssocPV", &packedCandsDzAssocPV, "packedCandsDzAssocPV[numPackedCands]/F");
 //    mytree_->Branch("packedCandsVtxChi2Norm", &packedCandsVtxChi2Norm, "packedCandsVtxChi2Norm[numPackedCands]/F");
+
+    mytree_->Branch("packedCandsElectronIndex", &packedCandsElectronIndex, "packedCandsElectronIndex[numPackedCands]/I");
+    mytree_->Branch("packedCandsMuonIndex", &packedCandsMuonIndex, "packedCandsMuonIndex[numPackedCands]/I");
+//    mytree_->Branch("packedCandsTauIndex", &packedCandsTauIndex, "packedCandsTauIndex[numPackedCands]/I");
+//    mytree_->Branch("packedCandsPhotonIndex", &packedCandsPhotonIndex, "packedCandsPhotonIndex[numPackedCands]/I");
+    mytree_->Branch("packedCandsJetIndex", &packedCandsJetIndex, "packedCandsJetIndex[numPackedCands]/I");
+
     mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
     mytree_->Branch("packedCandsDzError", &packedCandsDzError, "packedCandsDzError[numPackedCands]/F");
     mytree_->Branch("packedCandsDxyError", &packedCandsDxyError, "packedCandsDxyError[numPackedCands]/F");
