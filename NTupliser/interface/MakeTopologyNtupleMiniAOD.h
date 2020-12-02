@@ -529,6 +529,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     //  std::map< std::string, std::vector<float> > electronSortedIDResults_;
 
+    std::map<std::string, std::vector<int>> electronSortedNumSourceCandidates;
+    std::map<std::string, std::vector<int>> electronSortedPackedCandIndex;
+
     std::map<std::string, std::vector<float>> genElectronSortedPt;
     std::map<std::string, std::vector<float>> genElectronSortedEt;
     std::map<std::string, std::vector<float>> genElectronSortedEta;
@@ -590,6 +593,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> photonSortedCutIdTight;
     std::map<std::string, std::vector<int>> photonSortedMvaIdWp80;
     std::map<std::string, std::vector<int>> photonSortedMvaIdWp90;
+
+    std::map<std::string, std::vector<int>> photonSortedNumSourceCandidates;
+    std::map<std::string, std::vector<int>> photonSortedPackedCandIndex;
 
     std::map<std::string, std::vector<float>> genPhotonSortedPt;
     std::map<std::string, std::vector<float>> genPhotonSortedET;
