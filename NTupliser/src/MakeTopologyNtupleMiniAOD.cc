@@ -635,21 +635,23 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
     }
 
     // Get index ref to packed cand collection
-    int nSourcePackedCands = pho.numberOfSourceCandidatePtrs(), pfCandPtrIndex = -1;
+    unsigned int nSourcePackedCands = pho.numberOfSourceCandidatePtrs(), numPackedCands{0};
+    int pfCandPtrIndex {-1};
 
     if ( nSourcePackedCands > 0 ) {
-        for ( int j = 0; j < nSourcePackedCands; j++ ) {
+        for ( unsigned int j = 0; j < nSourcePackedCands; j++ ) {
             reco::CandidatePtr photonPtr = pho.sourceCandidatePtr(j);
-            for ( unsigned int k = 0; k != packedCands->size() && k < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
-                reco::CandidatePtr pfCandPtr(packedCands, k);
-                if (pfCandPtr->pt() < 0.5) continue;
-                if (pfCandPtr.isNonnull() && photonPtr == pfCandPtr) {
-                    pfCandPtrIndex = k;
-                    break;
-                }
-            }
-        }
-    }
+                for ( unsigned int k = 0; k != packedCands->size() && numPackedCands < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
+                    reco::CandidatePtr pfCandPtr(packedCands, k);
+                    if (pfCandPtr->pt() < 0.5) continue;
+                    if (pfCandPtr.isNonnull() && photonPtr == pfCandPtr) {
+                        pfCandPtrIndex = numPackedCands;
+                        break;
+                    } // end ptr comparison if ptrs match
+                    numPackedCands++;
+                } // loop over entire packed pf cand collection
+            } // loop over each assoc packed pf cand
+        } // if there's at least one packed pf cand assoc with this PAT electron
 
     photonSortedNumSourceCandidates[ID][numPho[ID] - 1] = nSourcePackedCands;
     photonSortedPackedCandIndex[ID][numPho[ID] - 1] = pfCandPtrIndex;
@@ -952,21 +954,23 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
         }
 
         // Get index ref to packed cand collection
-        int nSourcePackedCands = ele.numberOfSourceCandidatePtrs(), pfCandPtrIndex = -1;
+        unsigned int nSourcePackedCands = ele.numberOfSourceCandidatePtrs(), numPackedCands{0}; 
+        int pfCandPtrIndex {-1};
 
         if ( nSourcePackedCands > 0 ) {
-            for ( int j = 0; j < nSourcePackedCands; j++ ) {
+            for ( unsigned int j = 0; j < nSourcePackedCands; j++ ) {
                 reco::CandidatePtr electronPtr = ele.sourceCandidatePtr(j);
-                for ( unsigned int k = 0; k != packedCands->size() && k < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
+                for ( unsigned int k = 0; k != packedCands->size() && numPackedCands < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
                     reco::CandidatePtr pfCandPtr(packedCands, k);
                     if (pfCandPtr->pt() < 0.5) continue;
                     if (pfCandPtr.isNonnull() && electronPtr == pfCandPtr) {
-                        pfCandPtrIndex = k;
+                        pfCandPtrIndex = numPackedCands;
                         break;
-                    }
-                }
-            }
-        }
+                    } // end ptr comparison if ptrs match
+                    numPackedCands++;
+                } // loop over entire packed pf cand collection
+            } // loop over each assoc packed pf cand
+        } // if there's at least one packed pf cand assoc with this PAT electron
 
         electronSortedNumSourceCandidates[ID][numEle[ID] - 1] = nSourcePackedCands;
         electronSortedPackedCandIndex[ID][numEle[ID] - 1] = pfCandPtrIndex;
@@ -1172,23 +1176,26 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         muonSortedNumMatches[ID][numMuo[ID] - 1] = muo.numberOfMatches();
         muonSortedIsPFMuon[ID][numMuo[ID] - 1] = muo.isPFMuon();
 
-
         // Get index ref to packed cand collection
-        int nSourcePackedCands = muo.numberOfSourceCandidatePtrs(), pfCandPtrIndex = -1;
+        unsigned int nSourcePackedCands = muo.numberOfSourceCandidatePtrs(), numPackedCands{0};
+        int pfCandPtrIndex {-1};
 
         if ( nSourcePackedCands > 0 ) {
-            for ( int j = 0; j < nSourcePackedCands; j++ ) {
+            for ( unsigned int j = 0; j < nSourcePackedCands; j++ ) {
                 reco::CandidatePtr muonPtr = muo.sourceCandidatePtr(j);
-                for ( unsigned int k = 0; k != packedCands->size() && k < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
+                for ( unsigned int k = 0; k != packedCands->size() && numPackedCands < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
                     reco::CandidatePtr pfCandPtr(packedCands, k);
                     if (pfCandPtr->pt() < 0.5) continue;
                     if (pfCandPtr.isNonnull() && muonPtr == pfCandPtr) {
-                        pfCandPtrIndex = k;
+//                         std::cout << "pfCandPtr->pdgId(): " << pfCandPtr->pdgId() << std::endl;
+                       pfCandPtrIndex = numPackedCands;
                         break;
-                    }
-                }
-            }
-        }
+                    } // end ptr comparison if ptrs match
+                    numPackedCands++;
+                } // loop over entire packed pf cand collection
+            } // loop over each assoc packed pf cand
+        } // if there's at least one packed pf cand assoc with this PAT electron
+
         muonSortedNumSourceCandidates[ID][numMuo[ID] - 1] = nSourcePackedCands;
         muonSortedPackedCandIndex[ID][numMuo[ID] - 1] = pfCandPtrIndex;
 
@@ -2225,12 +2232,7 @@ void MakeTopologyNtupleMiniAOD::fillMCInfo(const edm::Event& iEvent, const edm::
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void MakeTopologyNtupleMiniAOD::fillJets(
-    const edm::Event& iEvent,
-    const edm::EventSetup& iSetup,
-    edm::EDGetTokenT<pat::JetCollection> jetIn_,
-    const std::string& ID)
-{
+void MakeTopologyNtupleMiniAOD::fillJets( const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::JetCollection> jetIn_, const std::string& ID ) {
     // if (ran_jetloop_)
     // {
     //     return;
@@ -2267,40 +2269,31 @@ void MakeTopologyNtupleMiniAOD::fillJets(
     // jets.size()
     //           << std::endl;
 
-    for (const auto& jet : jets)
-    {
-        if (useResidualJEC_) // Correct the Et with residuals first
-        {
-            if (jet.isCaloJet())
-            {
+    for (const auto& jet : jets) {
+        if (useResidualJEC_) { // Correct the Et with residuals first
+            if (jet.isCaloJet()) {
                 jecCalo->setJetEta(jet.eta());
                 jecCalo->setJetPt(jet.pt());
-                correctedJetEts.emplace_back(jet.et()
-                                             * jecCalo->getCorrection());
+                correctedJetEts.emplace_back(jet.et() * jecCalo->getCorrection());
             }
-            else if (jet.isPFJet())
-            {
+            else if (jet.isPFJet()) {
                 jecPF->setJetEta(jet.eta());
                 jecPF->setJetPt(jet.pt());
                 correctedJetEts.emplace_back(jet.et() * jecPF->getCorrection());
             }
             // else if (jet_iter->isJPTJet())
-            else
-            {
+            else {
                 jecJPT->setJetEta(jet.eta());
                 jecJPT->setJetPt(jet.pt());
-                correctedJetEts.emplace_back(jet.et()
-                                             * jecJPT->getCorrection());
+                correctedJetEts.emplace_back(jet.et() * jecJPT->getCorrection());
             }
         }
-        else
-        {
+        else {
             correctedJetEts.emplace_back(jet.et());
         }
     }
 
-    std::vector<size_t> etJetSorted{
-        IndexSorter<std::vector<float>>(correctedJetEts, true)()};
+    std::vector<size_t> etJetSorted{ IndexSorter<std::vector<float>>(correctedJetEts, true)() };
     // std::cout << "second jet loop: " << std::endl;
 
     // jets:
@@ -2611,77 +2604,76 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     int jetIndex {-1};
 
     reco::CandidatePtr pfCandPtr(packedCands, numPackedCands);
+//    reco::CandidatePtr pfCandPtr(std::vector<pat::PackedCandidate>, index);
 
     // loop over electrons
     int numEle = 0;
-    for (size_t iele{0}; iele < etSortedElectron.size() && numEle < numeric_cast<int>(NELECTRONSMAX); ++iele) {
+    for (size_t iele{0}; iele < etSortedElectron.size() && numEle < numeric_cast<int>(NELECTRONSMAX); ++iele) { // Loop over electrons
         size_t jele{etSortedElectron[iele]};
         const pat::Electron& ele{(*electronHandle)[jele]};
-        if (ele.numberOfSourceCandidatePtrs() > 0 ) {
-            for (unsigned int k = 0; k < ele.numberOfSourceCandidatePtrs(); k++) {
+        if (ele.numberOfSourceCandidatePtrs() > 0 ) { // If there's at least one packed pf cands associated with this electron
+            for (unsigned int k = 0; k < ele.numberOfSourceCandidatePtrs(); k++) { // Loop over all packed pf cands associated with this electron
                 reco::CandidatePtr electronPtr = ele.sourceCandidatePtr(k);
-                if ( electronPtr.isNonnull() && pfCandPtr == electronPtr ) {
+                if ( electronPtr.isNonnull() && pfCandPtr == electronPtr ) { // If electron ptr == packed pf ptr
                     electronIndex = numEle;
                     break;
-                }
-            }
-        }
+                } // End if ptrs matches
+            } // End loop over packed pf cands associated with this electron
+        } // End if there's at least one packed cand assoc with this electron
     numEle++;
-    }
+    } // End loop over electrons
 
     // loop over muons
     int numMuo = 0;
-    for (size_t imuo{0}; imuo < etMuonSorted.size() && numMuo < numeric_cast<int>(NMUONSMAX); ++imuo) {
+    for (size_t imuo{0}; imuo < etMuonSorted.size() && numMuo < numeric_cast<int>(NMUONSMAX); ++imuo) { // Loop	over muons
         size_t jmu{etMuonSorted[imuo]};
         const pat::Muon& muo{muons[jmu]};
-        if (muo.numberOfSourceCandidatePtrs() > 0 ) {
-            for (unsigned int k = 0; k < muo.numberOfSourceCandidatePtrs(); k++) {
+        if (muo.numberOfSourceCandidatePtrs() > 0 ) { // If there's at least one packed pf cands associated with this muon
+            for (unsigned int k = 0; k < muo.numberOfSourceCandidatePtrs(); k++) { // Loop over all packed pf cands associated with this muon
                 reco::CandidatePtr muonPtr = muo.sourceCandidatePtr(k);
-                if ( muonPtr.isNonnull() && pfCandPtr == muonPtr ) {
+                if ( muonPtr.isNonnull() && pfCandPtr == muonPtr ) { //	If muon ptr == packed pf ptr
                     muonIndex = numMuo;
                     break;
-                }
-            }
-        }
+                } // End if ptrs matches
+            } // End loop over packed pf cands associated with this muon
+        } // End if there's at least one packed	cand assoc with	this muon
     numMuo++;
-    }
+    } // End loop over muons
 
 /*
     // loop over photons
     int numPho = 0;
-    for (size_t ipho{0}; ipho < etPhotonSorted.size() && numPho < numeric_cast<int>(NPHOTONSMAX); ++ipho) {
+    for (size_t ipho{0}; ipho < etPhotonSorted.size() && numPho < numeric_cast<int>(NPHOTONSMAX); ++ipho) { // Loop over photons
         size_t jpho{etPhotonSorted[ipho]};
         const pat::Photon& pho{(*photonHandle)[jpho]};
-       	if (phi.numberOfSourceCandidatePtrs() > 0 ) {
-            for (unsigned int k = 0; k < pho.numberOfSourceCandidatePtrs(); k++) {
+       	if (pho.numberOfSourceCandidatePtrs() > 0 ) { // If there's at least one packed pf cands associated with this photon
+            for (unsigned int k = 0; k < pho.numberOfSourceCandidatePtrs(); k++) { // Loop over all packed pf cands associated with this photon
                 reco::CandidatePtr photonPtr = pho.sourceCandidatePtr(k);
-                if ( photonPtr.isNonnull() && pfCandPtr == photonPtr )) {
+                if ( photonPtr.isNonnull() && pfCandPtr == photonPtr )) { // If photon ptr == packed pf ptr
                     photonIndex = ipho;
                     break;
-                }
-            }
-        }
-    }
+                } // End if ptrs matches
+            } // End loop over packed pf cands associated with this photon
+        } // End if there's at least one packed cand assoc with this photon
+    } // End loop over photons
 */
 
-//    reco::CandidatePtr pfCandPtr(std::vector<pat::PackedCandidate>, index);
     // loop over jets
     int numJet = 0;
-
-    for (size_t ijet{0}; ijet < etJetSorted.size() && numJet < numeric_cast<int>(NJETSMAX); ++ijet) {
+    for (size_t ijet{0}; ijet < etJetSorted.size() && numJet < numeric_cast<int>(NJETSMAX); ++ijet) { // Loop over jets
         size_t jjet{etJetSorted[ijet]};
         const pat::Jet& jet{jets[jjet]};
-        if (jet.numberOfSourceCandidatePtrs() > 0 ) {
-            for (unsigned int k = 0; k < jet.numberOfSourceCandidatePtrs(); k++) {
+        if (jet.numberOfSourceCandidatePtrs() > 0 ) { // If there's at least one packed pf cands associated with this jet
+            for (unsigned int k = 0; k < jet.numberOfSourceCandidatePtrs(); k++) { // Loop over all packed pf cands associated with this jet
                 reco::CandidatePtr jetPtr = jet.sourceCandidatePtr(k);
-                if ( jetPtr.isNonnull() && pfCandPtr == jetPtr ) {
+                if ( jetPtr.isNonnull() && pfCandPtr == jetPtr ) {  // If jet ptr == packed pf ptr
                     jetIndex = ijet;
                     break;
-                }
-            }
-        }
+                } // End if ptrs matches
+            } // End loop over packed pf cands associated with this jet
+        } // End if there's at least one packed cand assoc with this jet
     numJet++;
-    }
+    } // End loop over jets
 
     packedCandsElectronIndex[numPackedCands] = electronIndex;
     packedCandsMuonIndex[numPackedCands] = muonIndex; 
