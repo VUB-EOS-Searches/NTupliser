@@ -338,6 +338,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::vector<float> photonEts; // just used for sorting
     std::vector<float> muonEts; // just used for sorting
     std::vector<float> correctedJetEts; // just used for sorting
+    std::vector<float> packedCandEts; // just used for sorting
 
     // containers to store muon track refs and indices for later
     std::vector< int > muonTkIndices;

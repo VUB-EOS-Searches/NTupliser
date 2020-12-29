@@ -536,6 +536,10 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
   iEvent.getByToken(phoInOrg_, photonOrgHandle);
   // const pat::PhotonCollection& PhotonsOrg = *PhotonOrgHandle;
   
+  edm::Handle<pat::PackedCandidateCollection> packedCandHandle;
+  iEvent.getByToken(packedCandToken_, packedCandHandle);
+  const pat::PackedCandidateCollection& packedCands{*packedCandHandle};
+
   // Electron conversions
   edm::Handle<reco::ConversionCollection> Conversions;
   iEvent.getByToken(conversionsToken_, Conversions);
@@ -553,8 +557,13 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
   
   std::vector<size_t> etSortedIndex{IndexSorter<std::vector<float>>(photonEts, true)()};
 
-  edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
-  iEvent.getByToken(packedCandToken_, packedCands);
+    packedCandEts.clear();
+    for ( const auto& cand : packedCands ) {
+        double et{cand.et()};
+        packedCandEts.emplace_back(et);
+    }
+    std::vector<size_t> etSortedPackedCands{IndexSorter<std::vector<float>>(packedCandEts, true)()};
+
 
   // Primary vertex
   edm::Handle<reco::VertexCollection> pvHandle;
@@ -635,23 +644,27 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
     }
 
     // Get index ref to packed cand collection
-    unsigned int nSourcePackedCands = pho.numberOfSourceCandidatePtrs(), numPackedCands{0};
+    unsigned int nSourcePackedCands = pho.numberOfSourceCandidatePtrs();
+    int numPackedCands{0};
     int pfCandPtrIndex {-1};
 
     if ( nSourcePackedCands > 0 ) {
         for ( unsigned int j = 0; j < nSourcePackedCands; j++ ) {
             reco::CandidatePtr photonPtr = pho.sourceCandidatePtr(j);
-                for ( unsigned int k = 0; k != packedCands->size() && numPackedCands < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
-                    reco::CandidatePtr pfCandPtr(packedCands, k);
-                    if (pfCandPtr->pt() < 0.5) continue;
-                    if (pfCandPtr.isNonnull() && photonPtr == pfCandPtr) {
-                        pfCandPtrIndex = numPackedCands;
-                        break;
-                    } // end ptr comparison if ptrs match
-                    numPackedCands++;
-                } // loop over entire packed pf cand collection
-            } // loop over each assoc packed pf cand
-        } // if there's at least one packed pf cand assoc with this PAT electron
+            for (size_t iCand{0}; iCand < etSortedPackedCands.size() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); ++iCand) {
+                size_t jCand{etSortedPackedCands[iCand]};
+                const pat::PackedCandidate& packedCand{packedCands[jCand]};
+                if (packedCand.pt() < 0.5) continue;
+
+                reco::CandidatePtr pfCandPtr(packedCandHandle, jCand);
+                if (pfCandPtr.isNonnull() && photonPtr == pfCandPtr) {
+                    pfCandPtrIndex = numPackedCands;
+                    break;
+                } // end ptr comparison if ptrs match
+                numPackedCands++;
+            } // loop over entire packed pf cand collection
+        } // loop over each assoc packed pf cand
+    } // if there's at least one packed pf cand assoc with this PAT electron
 
     photonSortedNumSourceCandidates[ID][numPho[ID] - 1] = nSourcePackedCands;
     photonSortedPackedCandIndex[ID][numPho[ID] - 1] = pfCandPtrIndex;
@@ -717,20 +730,27 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
     iEvent.getByToken(rhoToken_, rhoHand_);
     rhoIso = *(rhoHand_.product());
 
-    edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
-    iEvent.getByToken(packedCandToken_, packedCands);
+    edm::Handle<pat::PackedCandidateCollection> packedCandHandle;
+    iEvent.getByToken(packedCandToken_, packedCandHandle);
+    const pat::PackedCandidateCollection& packedCands{*packedCandHandle};
 
     electronEts.clear();
     for (const auto& electron : electrons) {
         double et{electron.et()};
         electronEts.emplace_back(et);
     }
-
     // if (ID == "PF")
     // {
     //     std::cout << "N PF ele: " << electronEts.size() << std::endl;
     // }
     std::vector<size_t> etSortedIndex{IndexSorter<std::vector<float>>(electronEts, true)()};
+
+    packedCandEts.clear();
+    for ( const auto& cand : packedCands ) {
+        double et{cand.et()};
+        packedCandEts.emplace_back(et);
+    }
+    std::vector<size_t> etSortedPackedCands{IndexSorter<std::vector<float>>(packedCandEts, true)()};
 
     // Primary vertex
     edm::Handle<reco::VertexCollection> pvHandle;
@@ -954,15 +974,19 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
         }
 
         // Get index ref to packed cand collection
-        unsigned int nSourcePackedCands = ele.numberOfSourceCandidatePtrs(), numPackedCands{0}; 
+        unsigned int nSourcePackedCands = ele.numberOfSourceCandidatePtrs();
+        int numPackedCands{0}; 
         int pfCandPtrIndex {-1};
 
         if ( nSourcePackedCands > 0 ) {
             for ( unsigned int j = 0; j < nSourcePackedCands; j++ ) {
                 reco::CandidatePtr electronPtr = ele.sourceCandidatePtr(j);
-                for ( unsigned int k = 0; k != packedCands->size() && numPackedCands < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
-                    reco::CandidatePtr pfCandPtr(packedCands, k);
-                    if (pfCandPtr->pt() < 0.5) continue;
+                for (size_t iCand{0}; iCand < etSortedPackedCands.size() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); ++iCand) {
+                    size_t jCand{etSortedPackedCands[iCand]};
+                    const pat::PackedCandidate& packedCand{packedCands[jCand]};
+                    if (packedCand.pt() < 0.5) continue;
+
+                    reco::CandidatePtr pfCandPtr(packedCandHandle, jCand);
                     if (pfCandPtr.isNonnull() && electronPtr == pfCandPtr) {
                         pfCandPtrIndex = numPackedCands;
                         break;
@@ -1005,14 +1029,14 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
 //////////////////////////////////////////////////////////////////////////////////////////////
 void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::EventSetup& iSetup, edm::EDGetTokenT<pat::MuonCollection> muIn_, const std::string& ID) {
 
-
     // ran_muonloop_ = true;
     edm::Handle<pat::MuonCollection> muonHandle;
     iEvent.getByToken(muIn_, muonHandle);
     const pat::MuonCollection& muons {*muonHandle};
 
-    edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
-    iEvent.getByToken(packedCandToken_, packedCands);
+    edm::Handle<pat::PackedCandidateCollection> packedCandHandle;
+    iEvent.getByToken(packedCandToken_, packedCandHandle);
+    const pat::PackedCandidateCollection& packedCands{*packedCandHandle};
 
     edm::ESHandle<MagneticField> magneticFieldHandle;
     iSetup.get<IdealMagneticFieldRecord>().get(magneticFieldHandle);
@@ -1039,6 +1063,13 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         return;
     }
     std::vector<size_t> etMuonSorted{IndexSorter<std::vector<float>>(muonEts, true)()};
+
+    packedCandEts.clear();
+    for ( const auto& cand : packedCands ) {
+        double et{cand.et()};
+        packedCandEts.emplace_back(et);
+    }
+    std::vector<size_t> etSortedPackedCands{IndexSorter<std::vector<float>>(packedCandEts, true)()};
 
     // muon tracks
     // vectors to store muon track refs and indices for later
@@ -1176,19 +1207,22 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
         muonSortedNumMatches[ID][numMuo[ID] - 1] = muo.numberOfMatches();
         muonSortedIsPFMuon[ID][numMuo[ID] - 1] = muo.isPFMuon();
 
-        // Get index ref to packed cand collection
-        unsigned int nSourcePackedCands = muo.numberOfSourceCandidatePtrs(), numPackedCands{0};
+	// Get index ref to packed cand collection
+        unsigned int nSourcePackedCands = muo.numberOfSourceCandidatePtrs();
+        int numPackedCands{0};
         int pfCandPtrIndex {-1};
 
         if ( nSourcePackedCands > 0 ) {
             for ( unsigned int j = 0; j < nSourcePackedCands; j++ ) {
                 reco::CandidatePtr muonPtr = muo.sourceCandidatePtr(j);
-                for ( unsigned int k = 0; k != packedCands->size() && numPackedCands < numeric_cast<unsigned int>(NPACKEDCANDSMAX); k++ ) {
-                    reco::CandidatePtr pfCandPtr(packedCands, k);
-                    if (pfCandPtr->pt() < 0.5) continue;
+                for (size_t iCand{0}; iCand < etSortedPackedCands.size() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); ++iCand) {
+                    size_t jCand{etSortedPackedCands[iCand]};
+                    const pat::PackedCandidate& packedCand{packedCands[jCand]};
+                    if (packedCand.pt() < 0.5) continue;
+
+                    reco::CandidatePtr pfCandPtr(packedCandHandle, jCand);
                     if (pfCandPtr.isNonnull() && muonPtr == pfCandPtr) {
-//                         std::cout << "pfCandPtr->pdgId(): " << pfCandPtr->pdgId() << std::endl;
-                       pfCandPtrIndex = numPackedCands;
+                        pfCandPtrIndex = numPackedCands;
                         break;
                     } // end ptr comparison if ptrs match
                     numPackedCands++;
@@ -1198,7 +1232,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
 
         muonSortedNumSourceCandidates[ID][numMuo[ID] - 1] = nSourcePackedCands;
         muonSortedPackedCandIndex[ID][numMuo[ID] - 1] = pfCandPtrIndex;
-
+	
         // Gen muon stuff
 
         // if (muo.genParticleRef().ref().isValid())
@@ -2614,7 +2648,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 //    int photonIndex {-1};
     int jetIndex {-1};
 
-    reco::CandidatePtr pfCandPtr(packedCandHandle, numPackedCands);
+    reco::CandidatePtr pfCandPtr(packedCandHandle, jCand);
 //    reco::CandidatePtr pfCandPtr(std::vector<pat::PackedCandidate>, index);
 
     // loop over electrons
@@ -2661,11 +2695,12 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             for (unsigned int k = 0; k < pho.numberOfSourceCandidatePtrs(); k++) { // Loop over all packed pf cands associated with this photon
                 reco::CandidatePtr photonPtr = pho.sourceCandidatePtr(k);
                 if ( photonPtr.isNonnull() && pfCandPtr == photonPtr )) { // If photon ptr == packed pf ptr
-                    photonIndex = ipho;
+                    photonIndex = numPho;
                     break;
                 } // End if ptrs matches
             } // End loop over packed pf cands associated with this photon
         } // End if there's at least one packed cand assoc with this photon
+        numPho++;
     } // End loop over photons
 */
 
@@ -2678,12 +2713,12 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
             for (unsigned int k = 0; k < jet.numberOfSourceCandidatePtrs(); k++) { // Loop over all packed pf cands associated with this jet
                 reco::CandidatePtr jetPtr = jet.sourceCandidatePtr(k);
                 if ( jetPtr.isNonnull() && pfCandPtr == jetPtr ) {  // If jet ptr == packed pf ptr
-                    jetIndex = ijet;
+                    jetIndex = numJet;
                     break;
                 } // End if ptrs matches
             } // End loop over packed pf cands associated with this jet
         } // End if there's at least one packed cand assoc with this jet
-    numJet++;
+        numJet++;
     } // End loop over jets
 
     packedCandsElectronIndex[numPackedCands] = electronIndex;
