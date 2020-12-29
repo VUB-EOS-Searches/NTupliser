@@ -1009,7 +1009,7 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
     // ran_muonloop_ = true;
     edm::Handle<pat::MuonCollection> muonHandle;
     iEvent.getByToken(muIn_, muonHandle);
-    const pat::MuonCollection& muons = *muonHandle;
+    const pat::MuonCollection& muons {*muonHandle};
 
     edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
     iEvent.getByToken(packedCandToken_, packedCands);
@@ -2479,8 +2479,18 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     if (ran_packedCands_) return;
     ran_packedCands_ = true;
 
-    edm::Handle<std::vector<pat::PackedCandidate>> packedCands;
-    iEvent.getByToken(packedCandToken_, packedCands);
+    edm::Handle<pat::PackedCandidateCollection> packedCandHandle;
+    iEvent.getByToken(packedCandToken_, packedCandHandle);
+    const pat::PackedCandidateCollection& packedCands{*packedCandHandle};
+
+    // Sort packed cands by eT
+    packedCandEts.clear();
+    for ( const auto& cand : packedCands ) {
+        double et{cand.et()};
+        packedCandEts.emplace_back(et);
+    }
+
+    std::vector<size_t> etSortedPackedCands{IndexSorter<std::vector<float>>(packedCandEts, true)()};
 
     // Get reco'ed electron, muon, tau, photon and jet collections for index matching
 
@@ -2501,7 +2511,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     edm::Handle<pat::MuonCollection> muonHandle;
     iEvent.getByToken(patMuonsToken_, muonHandle);
     // Sort muons by eT like in fillMuons()
-    const pat::MuonCollection& muons = *muonHandle;
+    const pat::MuonCollection& muons{*muonHandle};
     muonEts.clear();
     for (const auto& muon : muons) {
         double et{muon.et()}; // should already be corrected
@@ -2555,7 +2565,6 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 
     std::vector<size_t> etJetSorted {IndexSorter<std::vector<float>>(correctedJetEts, true)()};
 
-
     edm::ESHandle<MagneticField> magneticFieldHandle;
     iSetup.get<IdealMagneticFieldRecord>().get(magneticFieldHandle);
     const MagneticField* theMagneticField = magneticFieldHandle.product();
@@ -2566,36 +2575,38 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 
     numPackedCands = 0;
 
-    for (auto it{packedCands->begin()}; it != packedCands->end() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); it++) {
+    for (size_t iCand{0}; iCand < etSortedPackedCands.size() && numPackedCands < numeric_cast<int>(NPACKEDCANDSMAX); ++iCand) {
+        size_t jCand{etSortedPackedCands[iCand]};
+        const pat::PackedCandidate& packedCand{packedCands[jCand]};
 
-//       if ( !it->hasTrackDetails() || std::abs(it->pdgId()) != 211 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
-//       if ( it->charge() == 0 ) continue; // NO neutral objects
-       if ( it->pt() < 0.5 ) continue; // want low or high precision track info
+//       if ( !packedCand.hasTrackDetails() || std::abs(packedCand.pdgId()) != 211 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
+//       if ( packedCand.charge() == 0 ) continue; // NO neutral objects
+       if ( packedCand.pt() < 0.5 ) continue; // want low or high precision track info
 
-//        packedCandsPt[numPackedCands] = it->pt();
-        packedCandsPx[numPackedCands] = it->px();
-        packedCandsPy[numPackedCands] = it->py();
-        packedCandsPz[numPackedCands] = it->pz();
-        packedCandsE[numPackedCands] = it->energy();
-//        packedCandsEta[numPackedCands] = it->eta();
-//        packedCandsTheta[numPackedCands] = it->theta();
-//        packedCandsPhi[numPackedCands] = it->phi();
-        packedCandsCharge[numPackedCands] = it->charge();
-        packedCandsPdgId[numPackedCands] = it->pdgId();
-        packedCandsTime[numPackedCands] = it->time();
+//        packedCandsPt[numPackedCands] = packedCand.pt();
+        packedCandsPx[numPackedCands] = packedCand.px();
+        packedCandsPy[numPackedCands] = packedCand.py();
+        packedCandsPz[numPackedCands] = packedCand.pz();
+        packedCandsE[numPackedCands] = packedCand.energy();
+//        packedCandsEta[numPackedCands] = packedCand.eta();
+//        packedCandsTheta[numPackedCands] = packedCand.theta();
+//        packedCandsPhi[numPackedCands] = packedCand.phi();
+        packedCandsCharge[numPackedCands] = packedCand.charge();
+        packedCandsPdgId[numPackedCands] = packedCand.pdgId();
+        packedCandsTime[numPackedCands] = packedCand.time();
 
-//        packedCandsFromPV[numPackedCands] = it->fromPV();
-//        packedCandsPVquality[numPackedCands] = it->pvAssociationQuality();
-        packedCandsVx[numPackedCands] = it->vx();
-        packedCandsVy[numPackedCands] = it->vy();
-        packedCandsVz[numPackedCands] = it->vz();
-//        packedCandsVEta[numPackedCands] = it->etaAtVtx();
-//        packedCandsVPhi[numPackedCands] = it->phiAtVtx();
-//        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (it->dxy(beamSpotPoint_));
-        packedCandsDz[numPackedCands] = it->dz();
-        packedCandsDxy[numPackedCands] = it->dxy();
-//        packedCandsDzAssocPV[numPackedCands] = it->dzAssociatedPV();
-//        packedCandsVtxChi2Norm[numPackedCands] = it->vertexNormalizedChi2();
+//        packedCandsFromPV[numPackedCands] = packedCand.fromPV();
+//        packedCandsPVquality[numPackedCands] = packedCand.pvAssociationQuality();
+        packedCandsVx[numPackedCands] = packedCand.vx();
+        packedCandsVy[numPackedCands] = packedCand.vy();
+        packedCandsVz[numPackedCands] = packedCand.vz();
+//        packedCandsVEta[numPackedCands] = packedCand.etaAtVtx();
+//        packedCandsVPhi[numPackedCands] = packedCand.phiAtVtx();
+//        packedCandsBeamSpotCorrectedD0[numPackedCands] = -1. * (packedCand.dxy(beamSpotPoint_));
+        packedCandsDz[numPackedCands] = packedCand.dz();
+        packedCandsDxy[numPackedCands] = packedCand.dxy();
+//        packedCandsDzAssocPV[numPackedCands] = packedCand.dzAssociatedPV();
+//        packedCandsVtxChi2Norm[numPackedCands] = packedCand.vertexNormalizedChi2();
 
     int electronIndex {-1};
     int muonIndex {-1};
@@ -2603,7 +2614,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 //    int photonIndex {-1};
     int jetIndex {-1};
 
-    reco::CandidatePtr pfCandPtr(packedCands, numPackedCands);
+    reco::CandidatePtr pfCandPtr(packedCandHandle, numPackedCands);
 //    reco::CandidatePtr pfCandPtr(std::vector<pat::PackedCandidate>, index);
 
     // loop over electrons
@@ -2681,36 +2692,36 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
 //    packedCandsPhotonIndex[numPackedCands] = photonIndex;
     packedCandsJetIndex[numPackedCands] = jetIndex;
 
-        packedCandsHasTrackDetails[numPackedCands] = it->hasTrackDetails();
-        if ( it->hasTrackDetails() ) {
+        packedCandsHasTrackDetails[numPackedCands] = packedCand.hasTrackDetails();
+        if ( packedCand.hasTrackDetails() ) {
 
-            packedCandsDzError[numPackedCands] = it->dzError();
-            packedCandsDxyError[numPackedCands] = it->dxyError();
-            packedCandsTimeError[numPackedCands] = it->timeError();
+            packedCandsDzError[numPackedCands] = packedCand.dzError();
+            packedCandsDxyError[numPackedCands] = packedCand.dxyError();
+            packedCandsTimeError[numPackedCands] = packedCand.timeError();
 
-            packedCandsPseudoTrkPt[numPackedCands] = it->pseudoTrack().pt();
-            packedCandsPseudoTrkPx[numPackedCands] = it->pseudoTrack().px();
-            packedCandsPseudoTrkPy[numPackedCands] = it->pseudoTrack().py();
-            packedCandsPseudoTrkPz[numPackedCands] = it->pseudoTrack().pz();
-            packedCandsPseudoTrkEta[numPackedCands] = it->pseudoTrack().eta();
-            packedCandsPseudoTrkPhi[numPackedCands] = it->pseudoTrack().phi();
-            packedCandsPseudoTrkCharge[numPackedCands] = it->pseudoTrack().charge();
-            packedCandsPseudoTrkVx[numPackedCands] = it->pseudoTrack().vx();
-            packedCandsPseudoTrkVy[numPackedCands] = it->pseudoTrack().vy();
-            packedCandsPseudoTrkVz[numPackedCands] = it->pseudoTrack().vz();
-            packedCandsPseudoTrkChi2Norm[numPackedCands] = it->pseudoTrack().normalizedChi2();
-            packedCandsPseudoTrkNumberOfHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidTrackerHits();
-            packedCandsPseudoTrkNumberOfPixelHits[numPackedCands] = it->pseudoTrack().hitPattern().numberOfValidPixelHits();
-//            packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().pixelLayersWithMeasurement();
-//            packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().stripLayersWithMeasurement();
-//            packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = it->pseudoTrack().hitPattern().trackerLayersWithMeasurement();
-            packedCandsHighPurityTrack[numPackedCands] = it->trackHighPurity();
+            packedCandsPseudoTrkPt[numPackedCands] = packedCand.pseudoTrack().pt();
+            packedCandsPseudoTrkPx[numPackedCands] = packedCand.pseudoTrack().px();
+            packedCandsPseudoTrkPy[numPackedCands] = packedCand.pseudoTrack().py();
+            packedCandsPseudoTrkPz[numPackedCands] = packedCand.pseudoTrack().pz();
+            packedCandsPseudoTrkEta[numPackedCands] = packedCand.pseudoTrack().eta();
+            packedCandsPseudoTrkPhi[numPackedCands] = packedCand.pseudoTrack().phi();
+            packedCandsPseudoTrkCharge[numPackedCands] = packedCand.pseudoTrack().charge();
+            packedCandsPseudoTrkVx[numPackedCands] = packedCand.pseudoTrack().vx();
+            packedCandsPseudoTrkVy[numPackedCands] = packedCand.pseudoTrack().vy();
+            packedCandsPseudoTrkVz[numPackedCands] = packedCand.pseudoTrack().vz();
+            packedCandsPseudoTrkChi2Norm[numPackedCands] = packedCand.pseudoTrack().normalizedChi2();
+            packedCandsPseudoTrkNumberOfHits[numPackedCands] = packedCand.pseudoTrack().hitPattern().numberOfValidTrackerHits();
+            packedCandsPseudoTrkNumberOfPixelHits[numPackedCands] = packedCand.pseudoTrack().hitPattern().numberOfValidPixelHits();
+//            packedCandsPseudoTrkPixelLayersWithMeasurement[numPackedCands] = packedCand.pseudoTrack().hitPattern().pixelLayersWithMeasurement();
+//            packedCandsPseudoTrkStripLayersWithMeasurement[numPackedCands] = packedCand.pseudoTrack().hitPattern().stripLayersWithMeasurement();
+//            packedCandsPseudoTrkTrackerLayersWithMeasurement[numPackedCands] = packedCand.pseudoTrack().hitPattern().trackerLayersWithMeasurement();
+            packedCandsHighPurityTrack[numPackedCands] = packedCand.trackHighPurity();
 
             // Store packed cands track refs for post muon loop tracking analysis
-            if ( std::abs(it->pdgId()) == 211 && it->charge() != 0 && it->pseudoTrack().pt() > 2.9 ) { // only store charged hadrons
+            if ( std::abs(packedCand.pdgId()) == 211 && packedCand.charge() != 0 && packedCand.pseudoTrack().pt() > 2.9 ) { // only store charged hadrons
                 chsTkIndices.push_back( numPackedCands );
-                chsTrackRefs.push_back( it->pseudoTrack() );
-                reco::TransientTrack tmpTransient( (it->pseudoTrack()), theMagneticField);
+                chsTrackRefs.push_back( packedCand.pseudoTrack() );
+                reco::TransientTrack tmpTransient( (packedCand.pseudoTrack()), theMagneticField);
                 chsTransTracks.push_back( std::move( tmpTransient ) );
             }
 
