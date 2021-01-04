@@ -3,6 +3,9 @@
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
 # with command line options: genproductions/genfragments/ThirteenTeV/HToSS/NLO_HToSSTodddd_MH125_MS15_ctauS1_13TeV.py --mc --eventcontent RAWSIM --conditions 102X_upgrade2018_realistic_v9 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN,SIM --nThreads 8 --geometry DB:Extended --era Run2_2018 --filein file:step-1.root --fileout file:step0.root --no_exec
+
+### DO NOT USE OUTSIDE OF CMSSW 10_2_X as it has not been tested outside 10_2_0
+
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
