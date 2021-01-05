@@ -180,6 +180,7 @@ MakeTopologyNtupleMiniAOD::MakeTopologyNtupleMiniAOD(
     , is2016rereco_{iConfig.getParameter<bool>("is2016rereco")}
     , isttbar_{iConfig.getParameter<bool>("isttBar")}
     , ttGenEvent_{iConfig.getParameter<edm::InputTag>("ttGenEvent")}
+    , scalarPid_{iConfig.getParameter<int>("scalarPid")}
     , externalLHEToken_{mayConsume<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("externalLHEToken"))}
     , pdfIdStart_{iConfig.getParameter<int>("pdfIdStart")}
     , pdfIdEnd_{iConfig.getParameter<int>("pdfIdEnd")}
@@ -1004,24 +1005,50 @@ void MakeTopologyNtupleMiniAOD::fillElectrons(const edm::Event& iEvent, const ed
             genElectronSortedPt[ID][numEle[ID] - 1] = ele.genLepton()->pt();
             genElectronSortedEt[ID][numEle[ID] - 1] = ele.genLepton()->et();
             genElectronSortedEta[ID][numEle[ID] - 1] = ele.genLepton()->eta();
-            genElectronSortedTheta[ID][numEle[ID] - 1] =
-                ele.genLepton()->theta();
+            genElectronSortedTheta[ID][numEle[ID] - 1] = ele.genLepton()->theta();
             genElectronSortedPhi[ID][numEle[ID] - 1] = ele.genLepton()->phi();
             genElectronSortedPx[ID][numEle[ID] - 1] = ele.genLepton()->px();
             genElectronSortedPy[ID][numEle[ID] - 1] = ele.genLepton()->py();
             genElectronSortedPz[ID][numEle[ID] - 1] = ele.genLepton()->pz();
-            genElectronSortedCharge[ID][numEle[ID] - 1] =
-                ele.genLepton()->charge();
-            genElectronSortedPdgId[ID][numEle[ID] - 1] =
-                ele.genLepton()->pdgId();
-            genElectronSortedMotherId[ID][numEle[ID] - 1] =
-                ele.genLepton()->mother()->pdgId();
-            genElectronSortedPromptDecayed[ID][numEle[ID] - 1] =
-                ele.genLepton()->isPromptDecayed();
-            genElectronSortedPromptFinalState[ID][numEle[ID] - 1] =
-                ele.genLepton()->isPromptFinalState();
-            genElectronSortedHardProcess[ID][numEle[ID] - 1] =
-                ele.genLepton()->isHardProcess();
+            genElectronSortedCharge[ID][numEle[ID] - 1] = ele.genLepton()->charge();
+            genElectronSortedPdgId[ID][numEle[ID] - 1] = ele.genLepton()->pdgId();
+            genElectronSortedMotherId[ID][numEle[ID] - 1] = ele.genLepton()->mother()->pdgId();
+            genElectronSortedPromptDecayed[ID][numEle[ID] - 1] = ele.genLepton()->isPromptDecayed();
+            genElectronSortedPromptFinalState[ID][numEle[ID] - 1] = ele.genLepton()->isPromptFinalState();
+            genElectronSortedHardProcess[ID][numEle[ID] - 1] = ele.genLepton()->isHardProcess();
+            genElectronSortedPythiaSixStatusThree[ID][numEle[ID] - 1] = ele.genLepton()->fromHardProcessBeforeFSR();
+
+            genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 0;
+            if ( std::abs(ele.genLepton()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+            else if ( ele.genLepton()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->pdgId()) == 11 ) {	// 1
+                if ( std::abs(ele.genLepton()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                else if ( ele.genLepton()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->pdgId()) == 11 ) { // 2
+                    if ( std::abs(ele.genLepton()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                    else if ( ele.genLepton()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->mother()->pdgId()) == 11 ) { // 3
+                        if (std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                        else if ( ele.genLepton()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 4
+                            if (std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                            else if ( ele.genLepton()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) {	// 5        
+                                if (std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                else if ( ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 6
+                                    if (std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                    else if ( ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 7
+                                        if (std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                        else if ( ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 8
+                                             if (std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                             else if ( ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 9
+                                                 if (std::abs(ele.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genElectronSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                             }
+                                         }
+                                     }
+                                 }
+                             }
+                         }
+                    }
+                }
+            }
+
+            genElectronSortedHadronicScalarAncestor[ID][numEle[ID] - 1] = 0;
         }
     }
 }
@@ -1251,6 +1278,40 @@ void MakeTopologyNtupleMiniAOD::fillMuons(const edm::Event& iEvent, const edm::E
             genMuonSortedPromptDecayed[ID][numMuo[ID] - 1] = muo.genLepton()->isPromptDecayed();
             genMuonSortedPromptFinalState[ID][numMuo[ID] - 1] = muo.genLepton()->isPromptFinalState();
             genMuonSortedHardProcess[ID][numMuo[ID] - 1] = muo.genLepton()->isHardProcess();
+            genMuonSortedPythiaSixStatusThree[ID][numMuo[ID] - 1] = muo.genLepton()->fromHardProcessBeforeFSR(); 
+
+            genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 0;
+            if ( std::abs(muo.genLepton()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+            else if ( muo.genLepton()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->pdgId()) == 11 ) {	// 1
+                if ( std::abs(muo.genLepton()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                else if ( muo.genLepton()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->pdgId()) == 11 ) { // 2
+                    if ( std::abs(muo.genLepton()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                    else if ( muo.genLepton()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->mother()->pdgId()) == 11 ) { // 3
+                        if (std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                        else if ( muo.genLepton()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 4
+                            if (std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                            else if ( muo.genLepton()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) {	// 5        
+                                if (std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                else if ( muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 6
+                                    if (std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                    else if ( muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 7
+                                        if (std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                        else if ( muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 8
+                                             if (std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                             else if ( muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 && std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == 11 ) { // 9
+                                                 if (std::abs(muo.genLepton()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genMuonSortedDirectScalarAncestor[ID][numEle[ID] - 1] = 1;
+                                             }
+                                         }
+                                     }
+                                 }
+                             }
+                         }
+                    }
+                }
+            }
+
+            genMuonSortedHadronicScalarAncestor[ID][numEle[ID] - 1] = 0;
+
         } // End gen muon loop
 
     }
@@ -1666,19 +1727,30 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet, const siz
             genJetSortedPID[ID][jetindex] = constituent->pdgId();
             genJetSortedMotherPID[ID][jetindex] = constituent->mother()->pdgId();
             genJetSortedScalarAncestor[ID][jetindex] = 0;
-            int scalarPid = 9000006;
 
-            if ( std::abs(constituent->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-            else if ( constituent->mother()->numberOfMothers() != 0 ) {
-                if ( std::abs(constituent->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-       	        else if ( constituent->mother()->mother()->numberOfMothers() != 0 ) {
-                    if ( std::abs(constituent->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                    else if ( constituent->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                        if (std::abs(constituent->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                        else if ( constituent->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                            if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                            else if ( constituent->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) {
-                                if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+            if ( std::abs(constituent->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+            else if ( constituent->mother()->numberOfMothers() != 0 ) { // 1
+                if ( std::abs(constituent->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+       	        else if ( constituent->mother()->mother()->numberOfMothers() != 0 ) { // 2
+                    if ( std::abs(constituent->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                    else if ( constituent->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 3
+                        if (std::abs(constituent->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                        else if ( constituent->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 4
+                            if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                            else if ( constituent->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 5
+                                if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                                else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 6
+                                    if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                                    else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 7
+                                        if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                                        else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 8
+                                            if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                                            else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 9
+                                                if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -3149,6 +3221,9 @@ void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID){
     genElectronSortedPromptDecayed[ID].clear();
     genElectronSortedPromptFinalState[ID].clear();
     genElectronSortedHardProcess[ID].clear();
+    genElectronSortedPythiaSixStatusThree[ID].clear();
+    genElectronSortedDirectScalarAncestor[ID].clear();
+    genElectronSortedHadronicScalarAncestor[ID].clear();
 }
 
 void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
@@ -3256,6 +3331,9 @@ void MakeTopologyNtupleMiniAOD::clearmuonarrays(const std::string& ID){
     genMuonSortedPromptDecayed[ID].clear();
     genMuonSortedPromptFinalState[ID].clear();
     genMuonSortedHardProcess[ID].clear();
+    genMuonSortedPythiaSixStatusThree[ID].clear();
+    genMuonSortedDirectScalarAncestor[ID].clear();
+    genMuonSortedHadronicScalarAncestor[ID].clear();
 
     numMuonTrackPairs[ID] = 0;
     muonTkPairSortedIndex1[ID].clear(); 
@@ -4525,6 +4603,9 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID, cons
     genElectronSortedPromptDecayed[ID] = tempVecI;
     genElectronSortedPromptFinalState[ID] = tempVecI;
     genElectronSortedHardProcess[ID] = tempVecI;
+    genElectronSortedPythiaSixStatusThree[ID] = tempVecI;
+    genElectronSortedDirectScalarAncestor[ID] = tempVecI;
+    genElectronSortedHadronicScalarAncestor[ID] = tempVecI;
 
     std::string prefix{"ele" + name};
     mytree_->Branch(("numEle" + name).c_str(),
@@ -4828,9 +4909,6 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID, cons
     mytree_->Branch((prefix + "NumSourceCandidates").c_str(), &electronSortedNumSourceCandidates[ID][0], (prefix + "NumSourceCandidates[numEle" + name + "]/I").c_str());
     mytree_->Branch((prefix + "PackedCandIndex").c_str(), &electronSortedPackedCandIndex[ID][0], (prefix + "PackedCandIndex[numEle" + name + "]/I").c_str());
 
-    std::map<std::string, std::vector<int>> muonSortedNumSourceCandidates;
-    std::map<std::string, std::vector<int>> muonSortedPackedCandIndex;
-
 
     if (runMCInfo_)
     {
@@ -4888,11 +4966,10 @@ void MakeTopologyNtupleMiniAOD::bookElectronBranches(const std::string& ID, cons
             &genElectronSortedPromptFinalState[ID][0],
             ("genEle" + name + "ElePromptFinalState[numEle" + name + "]/I")
                 .c_str());
-        mytree_->Branch(
-            ("genEle" + name + "HardProcess").c_str(),
-            &genElectronSortedHardProcess[ID][0],
-            ("genEle" + name + "ElePromptHardProcess[numEle" + name + "]/I")
-                .c_str());
+        mytree_->Branch(("genEle" + name + "HardProcess").c_str(), &genElectronSortedHardProcess[ID][0], ("genEle" + name + "ElePromptHardProcess[numEle" + name + "]/I").c_str());
+        mytree_->Branch(("genEle" + name + "PythiaSixStatusThree").c_str(), &genElectronSortedPythiaSixStatusThree[ID][0], ("genEle" + name + "ElePythiaSixStatusThree[numEle" + name + "]/I").c_str());
+        mytree_->Branch(("genEle" + name + "DirectScalarAncestor").c_str(), &genElectronSortedDirectScalarAncestor[ID][0], ("genEle" + name + "EleDirectScalarAncestor[numEle" + name + "]/I").c_str());
+        mytree_->Branch(("genEle" + name + "HadronicScalarAncestor").c_str(), &genElectronSortedHadronicScalarAncestor[ID][0], ("genEle" + name + "EleHadronicScalarAncestor[numEle" + name + "]/I").c_str());
     }
 
     // Also handle z candidates
@@ -5001,6 +5078,9 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
     genMuonSortedPromptDecayed[ID] = tempVecI;
     genMuonSortedPromptFinalState[ID] = tempVecI;
     genMuonSortedHardProcess[ID] = tempVecI;
+    genMuonSortedPythiaSixStatusThree[ID] = tempVecI;
+    genMuonSortedDirectScalarAncestor[ID] = tempVecI;
+    genMuonSortedHadronicScalarAncestor[ID] = tempVecI;
 
     // Initialise maps to prevent root panicing.
     std::vector<float> tempVecF2(NMUONTKPAIRMAX);
@@ -5157,6 +5237,9 @@ void MakeTopologyNtupleMiniAOD::bookMuonBranches(const std::string& ID, const st
         mytree_->Branch((prefix + "PromptDecayed").c_str(), &genMuonSortedPromptDecayed[ID][0], (prefix + "PromptDecayed[numMuon" + name + "]/I").c_str());
         mytree_->Branch( (prefix + "PromptFinalState").c_str(), &genMuonSortedPromptFinalState[ID][0], (prefix + "PromptFinalState[numMuon" + name + "]/I").c_str());
         mytree_->Branch((prefix + "HardProcess").c_str(), &genMuonSortedHardProcess[ID][0], (prefix + "HardProcess[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "PythiaSixStatusThree").c_str(), &genMuonSortedPythiaSixStatusThree[ID][0], (prefix + "PythiaSixStatusThree[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "DirectScalarAncestor").c_str(), &genMuonSortedDirectScalarAncestor[ID][0], (prefix + "DirectScalarAncestor[numMuon" + name + "]/I").c_str());
+        mytree_->Branch((prefix + "HadronicScalarAncestor").c_str(), &genMuonSortedHadronicScalarAncestor[ID][0], (prefix + "DirectScalarAncestor[numMuon" + name + "]/I").c_str());
     }
 
     mytree_->Branch(("numMuonTrackPairs" + name).c_str(), &numMuonTrackPairs[ID], ("numMuonTrackPairs" + name + "/I").c_str());

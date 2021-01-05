@@ -96,6 +96,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     edm::InputTag ttGenEvent_;
 
     // Generator level info
+    int scalarPid_;
     edm::EDGetTokenT<LHEEventProduct> externalLHEToken_;
     int pdfIdStart_{};
     int pdfIdEnd_{};
@@ -547,6 +548,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genElectronSortedPromptDecayed;
     std::map<std::string, std::vector<int>> genElectronSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genElectronSortedHardProcess;
+    std::map<std::string, std::vector<int>> genElectronSortedPythiaSixStatusThree;
+    std::map<std::string, std::vector<int>> genElectronSortedDirectScalarAncestor;
+    std::map<std::string, std::vector<int>> genElectronSortedHadronicScalarAncestor;
 
     // hardcoded, do NOT change unless you also change the size of the arrays
     // that are saved in the root tree...
@@ -806,6 +810,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genMuonSortedPromptDecayed;
     std::map<std::string, std::vector<int>> genMuonSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genMuonSortedHardProcess;
+    std::map<std::string, std::vector<int>> genMuonSortedPythiaSixStatusThree;
+    std::map<std::string, std::vector<int>> genMuonSortedDirectScalarAncestor;
+    std::map<std::string, std::vector<int>> genMuonSortedHadronicScalarAncestor;
 
     static constexpr size_t NMUONTKPAIRMAX{100};
     std::map<std::string, std::vector<int>>   muonTkPairSortedIndex1;
