@@ -1673,37 +1673,7 @@ void MakeTopologyNtupleMiniAOD::fillMCJetInfo(const reco::GenJet& jet, const siz
         {
             genJetSortedPID[ID][jetindex] = constituent->pdgId();
             genJetSortedMotherPID[ID][jetindex] = constituent->mother()->pdgId();
-            genJetSortedScalarAncestor[ID][jetindex] = 0;
-
-            if ( std::abs(constituent->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-            else if ( constituent->mother()->numberOfMothers() != 0 ) { // 1
-                if ( std::abs(constituent->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-       	        else if ( constituent->mother()->mother()->numberOfMothers() != 0 ) { // 2
-                    if ( std::abs(constituent->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                    else if ( constituent->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 3
-                        if (std::abs(constituent->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                        else if ( constituent->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 4
-                            if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                            else if ( constituent->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 5
-                                if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 6
-                                    if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                    else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 7
-                                        if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                        else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 8
-                                            if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                            else if ( constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->numberOfMothers() != 0 ) { // 9
-                                                if (std::abs(constituent->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->mother()->pdgId()) == scalarPid_ ) genJetSortedScalarAncestor[ID][jetindex] = 1;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
+            genJetSortedScalarAncestor[ID][jetindex] = jetScalarAncestor(constituent->mother());
         }
         else
         {
@@ -5971,6 +5941,13 @@ bool MakeTopologyNtupleMiniAOD::leptonScalarAncestor(const reco::Candidate* genP
     else if ( directDecay && std::abs(genPar->mother()->pdgId()) == lepId ) return leptonScalarAncestor(genPar->mother(), directDecay, lepId);
     else if ( directDecay && std::abs(genPar->mother()->pdgId()) != lepId ) return false;
     else return leptonScalarAncestor(genPar->mother());
+}
+
+bool MakeTopologyNtupleMiniAOD::jetScalarAncestor(const reco::Candidate* genJet) {
+    if ( debugMode_ ) std::cout << "jetScalarAncestor - mother Id: " << std::abs(genJet->pdgId()) << std::endl;
+    if ( std::abs(genJet->pdgId()) == scalarPid_ ) return true;
+    else if ( genJet->numberOfMothers() == 0 ) return false;
+    else return jetScalarAncestor(genJet->mother());
 }
 
 // ------------ method called once each job just before starting event loop

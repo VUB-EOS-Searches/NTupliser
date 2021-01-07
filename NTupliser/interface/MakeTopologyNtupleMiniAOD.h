@@ -245,6 +245,7 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
 
     // Check reco particle gen ancestry
     bool leptonScalarAncestor(const reco::Candidate*, const bool& directDecay = false, const int& lepId = 0);
+    bool jetScalarAncestor(const reco::Candidate*);
 
     TTree* mytree_{};
 
