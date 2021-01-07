@@ -5935,19 +5935,22 @@ void MakeTopologyNtupleMiniAOD::bookSVbranches() {
 }
 
 bool MakeTopologyNtupleMiniAOD::leptonScalarAncestor(const reco::Candidate* genPar, const bool& directDecay, const int& lepId) {
-    if (genPar->numberOfMothers() == 0) return false;
+    if ( genPar->numberOfMothers() == 0 ) return false; // if there aren't any more mothers to check , return false
     if ( debugMode_ && !directDecay ) std::cout << "leptonScalarAncestor - mother Id: " << std::abs(genPar->mother()->pdgId()) << std::endl;
-    if ( std::abs(genPar->mother()->pdgId()) == scalarPid_ ) return true;
-    else if ( directDecay && std::abs(genPar->mother()->pdgId()) == lepId ) return leptonScalarAncestor(genPar->mother(), directDecay, lepId);
-    else if ( directDecay && std::abs(genPar->mother()->pdgId()) != lepId ) return false;
-    else return leptonScalarAncestor(genPar->mother());
+
+    const int motherId {std::abs(genPar->mother()->pdgId())};
+
+    if ( motherId == scalarPid_ ) return true; // if mother is scalar, return true
+    else if ( directDecay && motherId == lepId ) return leptonScalarAncestor(genPar->mother(), directDecay, lepId); // If looking for chained muon decays from scalar, check mother == 13, and search that muon's mother
+    else if ( directDecay && motherId != lepId ) return false; // if looking for chained muon decays from scalar, and mother != 13 (or scalarId implicitly above), return false;
+    else return leptonScalarAncestor(genPar->mother()); // if not looking for chained muon decays from scalar, check this particle's mother Id
 }
 
-bool MakeTopologyNtupleMiniAOD::jetScalarAncestor(const reco::Candidate* genJet) {
-    if ( debugMode_ ) std::cout << "jetScalarAncestor - mother Id: " << std::abs(genJet->pdgId()) << std::endl;
-    if ( std::abs(genJet->pdgId()) == scalarPid_ ) return true;
-    else if ( genJet->numberOfMothers() == 0 ) return false;
-    else return jetScalarAncestor(genJet->mother());
+bool MakeTopologyNtupleMiniAOD::jetScalarAncestor(const reco::Candidate* genJetMother) {
+    if ( debugMode_ ) std::cout << "jetScalarAncestor - mother Id: " << std::abs(genJetMother->pdgId()) << std::endl;
+    if ( std::abs(genJetMother->pdgId()) == scalarPid_ ) return true;
+    else if ( genJetMother->numberOfMothers() == 0 ) return false;
+    else return jetScalarAncestor(genJetMother->mother());
 }
 
 // ------------ method called once each job just before starting event loop

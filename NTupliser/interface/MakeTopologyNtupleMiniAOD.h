@@ -99,12 +99,12 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     edm::InputTag ttGenEvent_;
 
     // Generator level info
-    int scalarPid_;
+    const int scalarPid_;
     edm::EDGetTokenT<LHEEventProduct> externalLHEToken_;
-    int pdfIdStart_{};
-    int pdfIdEnd_{};
-    int alphaIdStart_{};
-    int alphaIdEnd_{};
+    const int pdfIdStart_{};
+    const int pdfIdEnd_{};
+    const int alphaIdStart_{};
+    const int alphaIdEnd_{};
     edm::EDGetTokenT<GenEventInfoProduct> pdfInfoToken_;
     edm::EDGetTokenT<GenEventInfoProduct> generatorToken_;
 
