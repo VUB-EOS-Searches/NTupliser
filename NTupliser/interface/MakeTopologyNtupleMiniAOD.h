@@ -243,6 +243,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     void bookPVbranches(void); // called by bookBranches, makes PV branches.
     void bookSVbranches(void); // called by bookBranches, makes SV branches.
 
+    // Check reco particle gen ancestry
+    bool leptonScalarAncestor(const reco::Candidate*, const bool& directDecay = false, const int& lepId = 0);
+
     TTree* mytree_{};
 
     double weight_muF0p5_{};
