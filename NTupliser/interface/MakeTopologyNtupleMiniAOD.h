@@ -87,6 +87,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     const bool hasGeneralTracks_;
     edm::EDGetTokenT<reco::TrackCollection> generalTracksToken_;
 
+    // Debug flag
+    const bool debugMode_{};
+
     // Sets stuff for 2016 rereco, namely ele IDs
     const bool is2016rereco_{};
 
@@ -549,8 +552,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genElectronSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genElectronSortedHardProcess;
     std::map<std::string, std::vector<int>> genElectronSortedPythiaSixStatusThree;
+    std::map<std::string, std::vector<int>> genElectronSortedScalarAncestor;
     std::map<std::string, std::vector<int>> genElectronSortedDirectScalarAncestor;
-    std::map<std::string, std::vector<int>> genElectronSortedHadronicScalarAncestor;
 
     // hardcoded, do NOT change unless you also change the size of the arrays
     // that are saved in the root tree...
@@ -811,8 +814,8 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genMuonSortedPromptFinalState;
     std::map<std::string, std::vector<int>> genMuonSortedHardProcess;
     std::map<std::string, std::vector<int>> genMuonSortedPythiaSixStatusThree;
+    std::map<std::string, std::vector<int>> genMuonSortedScalarAncestor;
     std::map<std::string, std::vector<int>> genMuonSortedDirectScalarAncestor;
-    std::map<std::string, std::vector<int>> genMuonSortedHadronicScalarAncestor;
 
     static constexpr size_t NMUONTKPAIRMAX{100};
     std::map<std::string, std::vector<int>>   muonTkPairSortedIndex1;

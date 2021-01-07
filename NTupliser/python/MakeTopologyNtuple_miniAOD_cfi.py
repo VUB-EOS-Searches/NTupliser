@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
+                                           debugMode              = cms.bool(True),
 					   is2016rereco = cms.bool(False),
                                            # "Calo"
                                            packedCandToken        = cms.InputTag("packedPFCandidates"),
@@ -43,11 +44,11 @@ makeTopologyNtupleMiniAOD = cms.EDAnalyzer('MakeTopologyNtupleMiniAOD',
 					   isLHEflag              = cms.bool(True),
 					   externalLHEToken       = cms.InputTag("externalLHEProducer"), # "externalLHEProducer", "source" for THQ 
 
-					   pdfIdStart             = cms.int32(1011),
-					   pdfIdEnd               = cms.int32(1112),
+					   pdfIdStart             = cms.int32(2001),
+					   pdfIdEnd               = cms.int32(2102),
 					   hasAlphaWeightFlag     = cms.bool(True),
-					   alphaIdStart           = cms.int32(1111),
-					   alphaIdEnd             = cms.int32(1112),
+					   alphaIdStart           = cms.int32(2101),
+					   alphaIdEnd             = cms.int32(2102),
 
                                            scalarPid              = cms.int32(9000006),
 					   pdfInfoFixingToken     = cms.InputTag("pdfInfoFixing"),
