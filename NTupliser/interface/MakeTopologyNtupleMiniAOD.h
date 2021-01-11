@@ -623,6 +623,12 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     std::map<std::string, std::vector<int>> genPhotonSortedIsPhoton;
     std::map<std::string, std::vector<int>> genPhotonSortedIsConvertedPhoton;
     std::map<std::string, std::vector<int>> genPhotonSortedIsJet;
+    std::map<std::string, std::vector<int>> genPhotonSortedPromptDecayed;
+    std::map<std::string, std::vector<int>> genPhotonSortedPromptFinalState;
+    std::map<std::string, std::vector<int>> genPhotonSortedHardProcess;
+    std::map<std::string, std::vector<int>> genPhotonSortedPythiaSixStatusThree;
+    std::map<std::string, std::vector<int>> genPhotonSortedScalarAncestor;
+    std::map<std::string, std::vector<int>> genPhotonSortedDirectScalarAncestor;
 
     // gen branches
 

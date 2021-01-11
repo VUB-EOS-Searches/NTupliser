@@ -559,19 +559,18 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
   
   std::vector<size_t> etSortedIndex{IndexSorter<std::vector<float>>(photonEts, true)()};
 
-    packedCandEts.clear();
-    for ( const auto& cand : packedCands ) {
-        double et{cand.et()};
-        packedCandEts.emplace_back(et);
-    }
-    std::vector<size_t> etSortedPackedCands{IndexSorter<std::vector<float>>(packedCandEts, true)()};
-
+  packedCandEts.clear();
+  for ( const auto& cand : packedCands ) {
+      double et{cand.et()};
+      packedCandEts.emplace_back(et);
+  }
+  std::vector<size_t> etSortedPackedCands{IndexSorter<std::vector<float>>(packedCandEts, true)()};
 
   // Primary vertex
   edm::Handle<reco::VertexCollection> pvHandle;
   iEvent.getByToken(pvLabel_, pvHandle);
   
-  numEle[ID] = 0;
+  numPho[ID] = 0;
   
   for (size_t ipho{0}; ipho < etSortedIndex.size() && numPho[ID] < numeric_cast<int>(NPHOTONSMAX); ++ipho) {
     size_t jpho{etSortedIndex[ipho]};
@@ -666,10 +665,10 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
                 numPackedCands++;
             } // loop over entire packed pf cand collection
         } // loop over each assoc packed pf cand
-    } // if there's at least one packed pf cand assoc with this PAT electron
+    } // if there's at least one packed pf cand assoc with this PAT photon
 
-    photonSortedNumSourceCandidates[ID][numPho[ID] - 1] = nSourcePackedCands;
-    photonSortedPackedCandIndex[ID][numPho[ID] - 1] = pfCandPtrIndex;
+    photonSortedNumSourceCandidates[ID][numMuo[ID] - 1] = nSourcePackedCands;
+    photonSortedPackedCandIndex[ID][numMuo[ID] - 1] = pfCandPtrIndex;
 
     if (!pho.genParticleRef().isNull()) {
       genPhotonSortedPt[ID][numPho[ID] - 1] = pho.genPhoton()->pt();
@@ -686,6 +685,12 @@ void MakeTopologyNtupleMiniAOD::fillPhotons( const edm::Event& iEvent, const edm
       genPhotonSortedIsPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isPhoton();
       genPhotonSortedIsConvertedPhoton[ID][numPho[ID] - 1] = pho.genPhoton()->isConvertedPhoton();
       genPhotonSortedIsJet[ID][numPho[ID] - 1] = pho.genPhoton()->isJet();
+//      genPhotonSortedPromptDecayed[ID][numPho[ID] - 1] = pho.genPhoton()->isPromptDecayed();
+//      genPhotonSortedPromptFinalState[ID][numPho[ID] - 1] = pho.genPhoton()->isPromptFinalState();
+//      genPhotonSortedHardProcess[ID][numPho[ID] - 1] = pho.genPhoton()->isHardProcess();
+//      genPhotonSortedPythiaSixStatusThree[ID][numPho[ID] - 1] = pho.genPhoton()->fromHardProcessBeforeFSR();
+      genPhotonSortedScalarAncestor[ID][numPho[ID] - 1] = leptonScalarAncestor( pho.genPhoton() );
+      genPhotonSortedDirectScalarAncestor[ID][numPho[ID] - 1] = leptonScalarAncestor( pho.genPhoton(), true, 22 );
     }
   }  
 }
@@ -2543,7 +2548,6 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     std::vector<size_t> etMuonSorted {};
     if ( muonEts.size() != 0 ) etMuonSorted = IndexSorter<std::vector<float>>(muonEts, true)();
 
-/*
     // Get Photons
     edm::Handle<pat::PhotonCollection> photonHandle;
     iEvent.getByToken(patPhotonsToken_, photonHandle);
@@ -2556,7 +2560,6 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     }
     std::vector<size_t> etPhotonSorted {};
     if ( photonEts.size() != 0 ) etPhotonSorted = IndexSorter<std::vector<float>>(photonEts, true)();
-*/
 
     // Get Jets
     edm::Handle<pat::JetCollection> jetHandle;
@@ -2602,8 +2605,6 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
         size_t jCand{etSortedPackedCands[iCand]};
         const pat::PackedCandidate& packedCand{packedCands[jCand]};
 
-//       if ( !packedCand.hasTrackDetails() || std::abs(packedCand.pdgId()) != 211 ) continue; //Due to the lack of the particle ID all the tracks for cms are pions(ID==211)
-//       if ( packedCand.charge() == 0 ) continue; // NO neutral objects
        if ( packedCand.pt() < 0.5 ) continue; // want low or high precision track info
 
 //        packedCandsPt[numPackedCands] = packedCand.pt();
@@ -2634,11 +2635,10 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     int electronIndex {-1};
     int muonIndex {-1};
 //    int tauIndex {-1};
-//    int photonIndex {-1};
+    int photonIndex {-1};
     int jetIndex {-1};
 
-    reco::CandidatePtr pfCandPtr(packedCandHandle, jCand);
-//    reco::CandidatePtr pfCandPtr(std::vector<pat::PackedCandidate>, index);
+    reco::CandidatePtr pfCandPtr(packedCandHandle, jCand); // reco::CandidatePtr pfCandPtr(std::vector<pat::PackedCandidate>, index);
 
     // loop over electrons
     int numEle = 0;
@@ -2674,7 +2674,6 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     numMuo++;
     } // End loop over muons
 
-/*
     // loop over photons
     int numPho = 0;
     for (size_t ipho{0}; ipho < etPhotonSorted.size() && numPho < numeric_cast<int>(NPHOTONSMAX); ++ipho) { // Loop over photons
@@ -2683,7 +2682,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
        	if (pho.numberOfSourceCandidatePtrs() > 0 ) { // If there's at least one packed pf cands associated with this photon
             for (unsigned int k = 0; k < pho.numberOfSourceCandidatePtrs(); k++) { // Loop over all packed pf cands associated with this photon
                 reco::CandidatePtr photonPtr = pho.sourceCandidatePtr(k);
-                if ( photonPtr.isNonnull() && pfCandPtr == photonPtr )) { // If photon ptr == packed pf ptr
+                if ( photonPtr.isNonnull() && pfCandPtr == photonPtr ) { // If photon ptr == packed pf ptr
                     photonIndex = numPho;
                     break;
                 } // End if ptrs matches
@@ -2691,7 +2690,6 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
         } // End if there's at least one packed cand assoc with this photon
         numPho++;
     } // End loop over photons
-*/
 
     // loop over jets
     int numJet = 0;
@@ -2713,7 +2711,7 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     packedCandsElectronIndex[numPackedCands] = electronIndex;
     packedCandsMuonIndex[numPackedCands] = muonIndex; 
 //    packedCandsTauIndex[numPackedCands] = tauIndex;
-//    packedCandsPhotonIndex[numPackedCands] = photonIndex;
+    packedCandsPhotonIndex[numPackedCands] = photonIndex;
     packedCandsJetIndex[numPackedCands] = jetIndex;
 
         packedCandsHasTrackDetails[numPackedCands] = packedCand.hasTrackDetails();
@@ -3012,7 +3010,12 @@ void MakeTopologyNtupleMiniAOD::clearPhotonArrays(const std::string& ID){
     genPhotonSortedIsPhoton[ID].clear();
     genPhotonSortedIsConvertedPhoton[ID].clear();
     genPhotonSortedIsJet[ID].clear();
-
+//    genPhotonSortedPromptDecayed[ID].clear();
+//    genPhotonSortedPromptFinalState[ID].clear();
+//    genPhotonSortedHardProcess[ID].clear();
+//    genPhotonSortedPythiaSixStatusThree[ID].clear();
+    genPhotonSortedScalarAncestor[ID].clear();
+    genPhotonSortedDirectScalarAncestor[ID].clear();
 }
 void MakeTopologyNtupleMiniAOD::clearelectronarrays(const std::string& ID){
     numEle[ID] = 0;
@@ -3675,7 +3678,7 @@ void MakeTopologyNtupleMiniAOD::clearPackedCandsArrays() {
         packedCandsElectronIndex[i] = -1;
         packedCandsMuonIndex[i] = -1;
 //        packedCandsTauIndex[i] = -1;
-//        packedCandsPhotonIndex[i] = -1;
+        packedCandsPhotonIndex[i] = -1;
         packedCandsJetIndex[i] = -1;
 
         packedCandsHasTrackDetails[i] = -1;
@@ -3899,7 +3902,7 @@ void MakeTopologyNtupleMiniAOD::analyze(const edm::Event& iEvent, const edm::Eve
     fillMuons           (iEvent, iSetup, patMuonsToken_, "PF");
 
     fillElectrons(iEvent, iSetup, patElectronsToken_, "PF", eleLabel_);
- //   fillPhotons(iEvent, iSetup, patPhotonsToken_, "PF", phoLabel_);
+    fillPhotons(iEvent, iSetup, patPhotonsToken_, "PF", phoLabel_);
 //    fillPhotons(iEvent, iSetup, patOOTphotonsToken_, "OOT", ootPhoLabel_);
 
     // fillJets(iEvent, iSetup, jetLabel_, "Calo");
@@ -4000,7 +4003,7 @@ void MakeTopologyNtupleMiniAOD::bookBranches() {
     bookPFJetBranches("PF", "PF2PAT");
     bookMETBranches("PF", "PF2PAT");
 //    bookTauBranches("PF", "PF2PAT");
-//    bookPhotonBranches("PF", "PF2PAT");
+    bookPhotonBranches("PF", "PF2PAT");
 //    bookPhotonBranches("OOT", "OOT_PF2PAT");
 
     // bookJetBranches("AK5PF", "AK5PF");
@@ -4211,6 +4214,12 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID, const 
     genPhotonSortedIsPhoton[ID] = tempVecI;
     genPhotonSortedIsConvertedPhoton[ID] = tempVecI;
     genPhotonSortedIsJet[ID] = tempVecI;
+//    genPhotonSortedPromptDecayed[ID] = tempVecI;
+//    genPhotonSortedPromptFinalState[ID] = tempVecI;
+//    genPhotonSortedHardProcess[ID] = tempVecI;
+//    genPhotonSortedPythiaSixStatusThree[ID] = tempVecI;
+    genPhotonSortedScalarAncestor[ID] = tempVecI;
+    genPhotonSortedDirectScalarAncestor[ID] = tempVecI;
 
     std::string prefix{"pho" + name};
     mytree_->Branch(("numPho" + name).c_str(),
@@ -4392,6 +4401,24 @@ void MakeTopologyNtupleMiniAOD::bookPhotonBranches(const std::string& ID, const 
       mytree_->Branch(("genPho" + name + "IsJet").c_str(),
                       &genPhotonSortedIsJet[ID][0],
                       ("genPho" + name + "PhoIsJet[numPho" + name + "]/I").c_str());
+//      mytree_->Branch(("genPho" + name + "PromptDecayed").c_str(),
+//                      &genPhotonSortedPromptDecayed[ID][0],
+//                      ("genPho" + name + "PromptDecayed[numPho" + name + "]/I").c_str());
+//      mytree_->Branch(("genPho" + name + "PromptFinalState").c_str(),
+//                      &genPhotonSortedPromptFinalState[ID][0],
+//                      ("genPho" + name + "PromptFinalState[numPho" + name + "]/I").c_str());
+//      mytree_->Branch(("genPho" + name + "HardProcess").c_str(),
+//                      &genPhotonSortedHardProcess[ID][0],
+//                      ("genPho" + name + "HardProcess[numPho" + name + "]/I").c_str());
+//      mytree_->Branch(("genPho" + name + "PythiaSixStatusThree").c_str(),
+//                      &genPhotonSortedPythiaSixStatusThree[ID][0],
+//                      ("genPho" + name + "PythiaSixStatusThree[numPho" + name + "]/I").c_str());
+      mytree_->Branch(("genPho" + name + "ScalarAncestor").c_str(),
+                      &genPhotonSortedScalarAncestor[ID][0],
+                      ("genPho" + name + "ScalarAncestor[numPho" + name + "]/I").c_str());
+      mytree_->Branch(("genPho" + name + "DirectScalarAncestor").c_str(),
+                      &genPhotonSortedDirectScalarAncestor[ID][0],
+                      ("genPho" + name + "DirectScalarAncestor[numPho" + name + "]/I").c_str());
     }
 }
 
@@ -5796,7 +5823,7 @@ void MakeTopologyNtupleMiniAOD::bookPackedCandsBranches() {
     mytree_->Branch("packedCandsElectronIndex", &packedCandsElectronIndex, "packedCandsElectronIndex[numPackedCands]/I");
     mytree_->Branch("packedCandsMuonIndex", &packedCandsMuonIndex, "packedCandsMuonIndex[numPackedCands]/I");
 //    mytree_->Branch("packedCandsTauIndex", &packedCandsTauIndex, "packedCandsTauIndex[numPackedCands]/I");
-//    mytree_->Branch("packedCandsPhotonIndex", &packedCandsPhotonIndex, "packedCandsPhotonIndex[numPackedCands]/I");
+    mytree_->Branch("packedCandsPhotonIndex", &packedCandsPhotonIndex, "packedCandsPhotonIndex[numPackedCands]/I");
     mytree_->Branch("packedCandsJetIndex", &packedCandsJetIndex, "packedCandsJetIndex[numPackedCands]/I");
 
     mytree_->Branch("packedCandsHasTrackDetails", &packedCandsHasTrackDetails, "packedCandsHasTrackDetails[numPackedCands]/I");
