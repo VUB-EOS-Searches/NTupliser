@@ -2551,15 +2551,13 @@ void MakeTopologyNtupleMiniAOD::fillPackedCands(const edm::Event& iEvent, const 
     // Get Photons
     edm::Handle<pat::PhotonCollection> photonHandle;
     iEvent.getByToken(patPhotonsToken_, photonHandle);
-    // Sort photons by eT like in fillPhotons()
     const pat::PhotonCollection& photons{*photonHandle};
     photonEts.clear();
     for (const auto& photon : photons) {
-        double et{photon.et()};
-        photonEts.emplace_back(et);
+      double et{photon.et()};
+      photonEts.emplace_back(et);
     }
-    std::vector<size_t> etPhotonSorted {};
-    if ( photonEts.size() != 0 ) etPhotonSorted = IndexSorter<std::vector<float>>(photonEts, true)();
+    std::vector<size_t> etPhotonSorted{IndexSorter<std::vector<float>>(photonEts, true)()};
 
     // Get Jets
     edm::Handle<pat::JetCollection> jetHandle;
