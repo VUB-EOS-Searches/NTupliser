@@ -9,6 +9,12 @@ Dataset = namedtuple("Dataset", "process dataset")
 ## 2017 Datasets
 
 # HToSS
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS0",       "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS0_2017_210114/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS0_2017_210114-ced4163d91151f0189837681d2149b3e/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS1",       "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS1_2017_210114/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS1_2017_210114-ced4163d91151f0189837681d2149b3e/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS10",      "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS10_2017_210114/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS10_2017_210114-ced4163d91151f0189837681d2149b3e/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS100",     "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS100_2017_210114/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS100_2017_210114-ced4163d91151f0189837681d2149b3e/USER")
+#dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS1000",    "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS1000_2017_210114/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS0p6_ctauS1000_2017_210114-ced4163d91151f0189837681d2149b3e/USER")
+
 #dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS0",         "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS0_2017_2012015/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS0_2017_201217-23f87f5615a6835682f606e5f9e057d3/USER")
 #dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1",         "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200925/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS1_2017_200929-bad2de9deaf599d514e00022b724d349/USER")
 #dataset = Dataset("HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10",        "/NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200925/almorton-CRAB3_PAT_miniAOD_NLO_ggH_HToSS_SmuonHadronFiltered_MH125_MS1_ctauS10_2017_200929-bad2de9deaf599d514e00022b724d349/USER")
