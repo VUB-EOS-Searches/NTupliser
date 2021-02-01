@@ -1148,9 +1148,9 @@ class MakeTopologyNtupleMiniAOD : public edm::EDAnalyzer
     float genParE[NGENPARMAX]{};
     float genParPt[NGENPARMAX]{};
     int genParId[NGENPARMAX]{};
-    int genParVx[NGENPARMAX]{};
-    int genParVy[NGENPARMAX]{};
-    int genParVz[NGENPARMAX]{};
+    float genParVx[NGENPARMAX]{};
+    float genParVy[NGENPARMAX]{};
+    float genParVz[NGENPARMAX]{};
     int genParNumMothers[NGENPARMAX]{}; 
     int genParMotherId[NGENPARMAX]{}; 
     int genParMotherIndex[NGENPARMAX]{}; 
